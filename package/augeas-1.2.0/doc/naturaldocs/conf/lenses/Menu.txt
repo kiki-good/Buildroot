@@ -1,0 +1,271 @@
+Format: 1.51
+
+
+Title: Augeas Documentation
+SubTitle: Modules
+
+# You can add a footer to your documentation like this:
+# Footer: [text]
+# If you want to add a copyright notice, this would be the place to do it.
+
+# You can add a timestamp to your documentation like one of these:
+# Timestamp: Generated on month day, year
+# Timestamp: Updated mm/dd/yyyy
+# Timestamp: Last updated mon day
+#
+#   m     - One or two digit month.  January is "1"
+#   mm    - Always two digit month.  January is "01"
+#   mon   - Short month word.  January is "Jan"
+#   month - Long month word.  January is "January"
+#   d     - One or two digit day.  1 is "1"
+#   dd    - Always two digit day.  1 is "01"
+#   day   - Day with letter extension.  1 is "1st"
+#   yy    - Two digit year.  2006 is "06"
+#   yyyy  - Four digit year.  2006 is "2006"
+#   year  - Four digit year.  2006 is "2006"
+
+
+# --------------------------------------------------------------------------
+# 
+# Cut and paste the lines below to change the order in which your files
+# appear on the menu.  Don't worry about adding or removing files, Natural
+# Docs will take care of that.
+# 
+# You can further organize the menu by grouping the entries.  Add a
+# "Group: [name] {" line to start a group, and add a "}" to end it.
+# 
+# You can add text and web links to the menu by adding "Text: [text]" and
+# "Link: [name] ([URL])" lines, respectively.
+# 
+# The formatting and comments are auto-generated, so don't worry about
+# neatness when editing the file.  Natural Docs will clean it up the next
+# time it is run.  When working with groups, just deal with the braces and
+# forget about the indentation and comments.
+# 
+# --------------------------------------------------------------------------
+
+
+Group: Main Site  {
+
+   Link: Main  (/index.html)
+   Link: Documentation  (/docs/index.html)
+   }  # Group: Main Site
+
+Group: Specific Modules  {
+
+   File: Access  (access.aug)
+   File: ActiveMQ_Conf  (activemq_conf.aug)
+   File: ActiveMQ_XML  (activemq_xml.aug)
+   File: Aliases  (aliases.aug)
+   File: Anacron  (anacron.aug)
+   File: Approx  (approx.aug)
+   File: Apt_Update_Manager  (apt_update_manager.aug)
+   File: AptCacherNGSecurity  (aptcacherngsecurity.aug)
+   File: AptConf  (aptconf.aug)
+   File: AptPreferences  (aptpreferences.aug)
+   File: Aptsources  (aptsources.aug)
+   File: Authorized_Keys  (authorized_keys.aug)
+   File: Automaster  (automaster.aug)
+   File: Automounter  (automounter.aug)
+   File: Avahi  (avahi.aug)
+   File: BackupPCHosts  (backuppchosts.aug)
+   File: BootConf  (bootconf.aug)
+   File: Cachefilesd  (cachefilesd.aug)
+   File: Carbon  (carbon.aug)
+   File: Cgconfig  (no auto-title, cgconfig.aug)
+   File: Cgrules  (no auto-title, cgrules.aug)
+   File: Channels  (channels.aug)
+   File: Collectd  (collectd.aug)
+   File: Cron  (cron.aug)
+   File: Crypttab  (crypttab.aug)
+   File: Cups  (cups.aug)
+   File: Debctrl  (no auto-title, debctrl.aug)
+   File: Desktop  (desktop.aug)
+   File: Dhcpd  (dhcpd.aug)
+   File: Dovecot  (dovecot.aug)
+   File: Dpkg  (dpkg.aug)
+   File: Exports  (exports.aug)
+   File: FAI_DiskConfig  (fai_diskconfig.aug)
+   File: Fonts  (fonts.aug)
+   File: Fuse  (fuse.aug)
+   File: Grub  (grub.aug)
+   File: GtkBookmarks  (gtkbookmarks.aug)
+   File: Host_Conf  (host_conf.aug)
+   File: Hostname  (hostname.aug)
+   File: Hosts_Access  (hosts_access.aug)
+   File: Htpasswd  (htpasswd.aug)
+   File: Inputrc  (inputrc.aug)
+   File: JettyRealm  (jettyrealm.aug)
+   File: JMXAccess  (jmxaccess.aug)
+   File: JMXPassword  (jmxpassword.aug)
+   File: Iptables  (iptables.aug)
+   File: Kdump  (kdump.aug)
+   File: Keepalived  (keepalived.aug)
+   File: Koji  (koji.aug)
+   File: Ldif  (ldif.aug)
+   File: Ldso  (no auto-title, ldso.aug)
+   File: Lightdm  (lightdm.aug)
+   File: Login_defs  (login_defs.aug)
+   File: Lokkit  (lokkit.aug)
+   File: LVM  (lvm.aug)
+   File: MCollective  (mcollective.aug)
+   File: Memcached  (memcached.aug)
+   File: Mke2fs  (mke2fs.aug)
+   File: Modprobe  (modprobe.aug)
+   File: MongoDBServer  (mongodbserver.aug)
+   File: Modules  (modules.aug)
+   File: Modules_conf  (modules_conf.aug)
+   File: NagiosCfg  (no auto-title, nagioscfg.aug)
+   File: NagiosObjects  (nagiosobjects.aug)
+   File: Netmasks  (netmasks.aug)
+   File: NetworkManager  (networkmanager.aug)
+   File: Networks  (networks.aug)
+   File: Nginx  (nginx.aug)
+   File: Nrpe  (nrpe.aug)
+   File: Nsswitch  (nsswitch.aug)
+   File: Ntpd  (ntpd.aug)
+   File: OpenShift_Config  (openshift_config.aug)
+   File: OpenShift_Http  (openshift_http.aug)
+   File: OpenShift_Quickstarts  (openshift_quickstarts.aug)
+   File: Pam  (pam.aug)
+   File: PamConf  (pamconf.aug)
+   File: Pbuilder  (pbuilder.aug)
+   File: Pg_Hba  (pg_hba.aug)
+   File: Postfix_Transport  (postfix_transport.aug)
+   File: Postfix_Virtual  (postfix_virtual.aug)
+   File: Postgresql  (postgresql.aug)
+   File: Protocols  (protocols.aug)
+   File: PuppetFileserver  (no auto-title, puppetfileserver.aug)
+   File: Puppet_Auth  (no auto-title, puppet_auth.aug)
+   File: Qpid  (qpid.aug)
+   File: Rabbitmq  (rabbitmq.aug)
+   File: Redis  (redis.aug)
+   File: Reprepro_Uploaders  (reprepro_uploaders.aug)
+   File: Resolv  (resolv.aug)
+   File: Rsyslog  (rsyslog.aug)
+   File: Schroot  (schroot.aug)
+   File: Services  (services.aug)
+   File: Shells  (shells.aug)
+   File: Shellvars  (shellvars.aug)
+   File: Simplelines  (simplelines.aug)
+   File: Simplevars  (simplevars.aug)
+   File: Sip_Conf  (sip_conf.aug)
+   File: SmbUsers  (smbusers.aug)
+   File: Splunk  (splunk.aug)
+   File: Solaris_System  (solaris_system.aug)
+   File: Ssh  (ssh.aug)
+   File: Sshd  (sshd.aug)
+   File: Sssd  (no auto-title, sssd.aug)
+   File: Subversion  (subversion.aug)
+   File: Sudoers  (sudoers.aug)
+   File: Sysconfig_Route  (sysconfig_route.aug)
+   File: Sysctl  (sysctl.aug)
+   File: Syslog  (syslog.aug)
+   File: Systemd  (systemd.aug)
+   File: Thttpd  (thttpd.aug)
+   File: Up2date  (up2date.aug)
+   File: VWware_Config  (vmware_config.aug)
+   File: Vfstab  (vfstab.aug)
+   File: Xinetd  (xinetd.aug)
+   File: Xymon  (xymon.aug)
+   File: XymonAlerting (xymonalerting.aug)
+   File: Xorg  (xorg.aug)
+   }  # Group: Specific Modules
+
+Group: Generic Modules  {
+
+   File: Build  (build.aug)
+   File: Erlang  (erlang.aug)
+   File: IniFile  (inifile.aug)
+   File: Quote  (quote.aug)
+   File: Rx  (rx.aug)
+   File: Sep  (sep.aug)
+   File: Util  (util.aug)
+   }  # Group: Generic Modules
+
+Group: Tests and Examples  {
+
+   File: Test_Access  (tests/test_access.aug)
+   File: Test_ActiveMQ_Conf  (tests/test_activemq_conf.aug)
+   File: Test_ActiveMQ_XML  (tests/test_activemq_xml.aug)
+   File: Test_Aliases  (tests/test_aliases.aug)
+   File: Test_Anacron  (tests/test_anacron.aug)
+   File: Test_Approx  (tests/test_approx.aug)
+   File: Test_Apt_Update_Manager  (tests/test_apt_update_manager.aug)
+   File: Test_Authorized_Keys  (tests/test_authorized_keys.aug)
+   File: Test_BootConf  (tests/test_bootconf.aug)
+   File: Test_Build  (tests/test_build.aug)
+   File: Test_Carbon  (tests/test_carbon.aug)
+   File: Test_Channels  (tests/test_channels.aug)
+   File: Test_Collectd  (tests/test_collectd.aug)
+   File: Test_Cups  (tests/test_cups.aug)
+   File: Test_Dovecot  (tests/test_dovecot.aug)
+   File: Test_Erlang  (tests/test_erlang.aug)
+   File: Test_FAI_DiskConfig  (tests/test_fai_diskconfig.aug)
+   File: Test_Fonts  (tests/test_fonts.aug)
+   File: Test_Fuse  (tests/test_fuse.aug)
+   File: Test_GtkBookmarks  (tests/test_gtkbookmarks.aug)
+   File: Test_Htpasswd  (tests/test_htpasswd.aug)
+   File: Test_IniFile  (tests/test_inifile.aug)
+   File: Test_Inputrc  (tests/test_inputrc.aug)
+   File: Test_JettyRealm  (tests/test_jettyrealm.aug)
+   File: Test_JMXAccess  (tests/test_jmxaccess.aug)
+   File: Test_JMXPassword  (tests/test_jmxpassword.aug)
+   File: Test_Keepalived  (tests/test_keepalived.aug)
+   File: Test_Koji  (tests/test_koji.aug)
+   File: Test_Ldso  (tests/test_ldso.aug)
+   File: Test_Lightdm  (tests/test_lightdm.aug)
+   File: Test_LVM  (tests/test_lvm.aug)
+   File: Test_MCollective  (tests/test_mcollective.aug)
+   File: Test_Memcached  (tests/test_memcached.aug)
+   File: Test_MongoDBServer  (tests/test_mongodbserver.aug)
+   File: Test_NagiosCfg  (tests/test_nagioscfg.aug)
+   File: Test_NetworkManager  (tests/test_networkmanager.aug)
+   File: Test_Nginx  (tests/test_nginx.aug)
+   File: Test_Ntpd  (tests/test_ntpd.aug)
+   File: Test_OpenShift_Config  (tests/test_openshift_config.aug)
+   File: Test_OpenShift_Http  (tests/test_openshift_http.aug)
+   File: Test_OpenShift_Quickstarts  (tests/test_openshift_quickstarts.aug)
+   File: Test_Postfix_Transport  (tests/test_postfix_transport.aug)
+   File: Test_Postfix_Virtual  (tests/test_postfix_virtual.aug)
+   File: Test_Postgresql  (tests/test_postgresql.aug)
+   File: Test_Protocols  (tests/test_protocols.aug)
+   File: Test_Puppet_Auth  (tests/test_puppet_auth.aug)
+   File: Test_Qpid  (tests/test_qpid.aug)
+   File: Test_Quote  (tests/test_quote.aug)
+   File: Test_Rabbitmq  (tests/test_rabbitmq.aug)
+   File: Test_Redis  (tests/test_redis.aug)
+   File: Test_Reprepro_Uploaders  (tests/test_reprepro_uploaders.aug)
+   File: Test_Rsyslog  (tests/test_rsyslog.aug)
+   File: Test_Simplelines  (tests/test_simplelines.aug)
+   File: Test_Simplevars  (tests/test_simplevars.aug)
+   File: Test_SmbUsers  (tests/test_smbusers.aug)
+   File: Test_Subversion  (tests/test_subversion.aug)
+   File: Test_Sysconfig_Route  (tests/test_sysconfig_route.aug)
+   File: Test_Sysctl  (tests/test_sysctl.aug)
+   File: Test_Systemd  (tests/test_systemd.aug)
+   File: Test_Thttpd  (tests/test_thttpd.aug)
+   File: Test_Up2date  (tests/test_up2date.aug)
+   File: Test_VMware_Config  (tests/test_vmware_config.aug)
+   File: Test_Xml  (tests/test_xml.aug)
+   File: Test_Xymon  (tests/test_xymon.aug)
+   File: Test_XymonAlerting  (tests/test_xymonalerting.aug)
+   File: Test_Yum  (tests/test_yum.aug)
+   File: Test_login_defs  (tests/test_login_defs.aug)
+   File: Test_sssd  (tests/test_sssd.aug)
+   File: Test_sudoers  (no auto-title, tests/test_sudoers.aug)
+   File: Test_ssh  (tests/test_ssh.aug)
+   File: Test_sshd  (tests/test_sshd.aug)
+   }  # Group: Tests and Examples
+
+Group: Index  {
+
+   Augeas Lens Index: Lenses
+   Augeas Module Index: Modules
+   Augeas Variable Index: Variables
+   Augeas Test Index: Tests
+   Index: Everything
+   File Index: Files
+   Variable Index: Variables
+   }  # Group: Index
+

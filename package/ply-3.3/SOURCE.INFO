@@ -1,0 +1,7 @@
+Package: ply
+Version: 3.3
+Location: http://www.dabeaz.com/ply
+License: BSD
+Description: PLY (Python Lex-Yacc) is an implementation of lex and yacc
+parsing tools for Python.
+Copyright: README

@@ -1,0 +1,146 @@
+config-parser-trivial.o: \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/bus/config-parser-trivial.c \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h \
+ ../config.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/bus/config-parser-common.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/bus/config-parser-trivial.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus.h \
+ ../dbus/dbus-arch-deps.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-macros.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-address.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-types.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stddef.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-errors.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-protocol.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-bus.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-connection.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-memory.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-message.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdarg.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-shared.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-misc.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-pending-call.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-server.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-signature.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-syntax.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-threads.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-string.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-list.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-internals.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-sysdeps.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdint.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdint.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/features.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/cdefs.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wordsize.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/gnu/stubs.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wchar.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/inttypes.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-file.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/string.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/xlocale.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/poll.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/poll.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/sigset.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/time.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/types.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/typesizes.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-threads-internal.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-hash.h \
+ /home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/bus/utils.h
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h:
+
+../config.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/bus/config-parser-common.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/bus/config-parser-trivial.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus.h:
+
+../dbus/dbus-arch-deps.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-macros.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-address.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-types.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stddef.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-errors.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-protocol.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-bus.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-connection.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-memory.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-message.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdarg.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-shared.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-misc.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-pending-call.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-server.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-signature.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-syntax.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-threads.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-string.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-list.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-internals.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-sysdeps.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdint.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdint.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/features.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/cdefs.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wordsize.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/gnu/stubs.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wchar.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/inttypes.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-file.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/string.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/xlocale.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/poll.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/poll.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/sigset.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/time.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/types.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/typesizes.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-threads-internal.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/dbus/dbus-hash.h:
+
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20/bus/utils.h:

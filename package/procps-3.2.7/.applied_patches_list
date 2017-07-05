@@ -1,0 +1,5 @@
+procps-3.2.7-fedora.patch
+procps-pmap-nptl.patch
+procps-remove-flags.patch
+procps-remove-index.patch
+procps-wchar.patch

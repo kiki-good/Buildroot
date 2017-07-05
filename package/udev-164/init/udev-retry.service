@@ -1,0 +1,10 @@
+[Unit]
+Description=udev Retry Failed Events
+DefaultDependencies=no
+After=local-fs.target udev.service
+Before=basic.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=${exec_prefix}/sbin/udevadm trigger --type=failed --action=add

@@ -1,0 +1,52 @@
+printf-args.lo: printf-args.c \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h \
+ ../../config.h ../../config-post.h printf-args.h stddef.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stddef.h \
+ wchar.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/features.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/cdefs.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wordsize.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/gnu/stubs.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/wchar.h \
+ stdio.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdio.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdarg.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wchar.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/xlocale.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wchar2.h
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h:
+
+../../config.h:
+
+../../config-post.h:
+
+printf-args.h:
+
+stddef.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stddef.h:
+
+wchar.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/features.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/cdefs.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wordsize.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/gnu/stubs.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/wchar.h:
+
+stdio.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdio.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdarg.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wchar.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/xlocale.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wchar2.h:

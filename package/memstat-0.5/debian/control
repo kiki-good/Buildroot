@@ -1,0 +1,15 @@
+Source: memstat
+Section: admin
+Priority: optional
+Maintainer: Michael Meskes <meskes@debian.org>
+Standards-Version: 3.8.0
+Build-Depends: debhelper (>= 7)
+
+Package: memstat
+Architecture: any
+Priority: optional
+Depends: ${shlibs:Depends}
+Description: Identify what's using up virtual memory
+ Lists all the processes, executables, and shared libraries
+ that are using up virtual memory. It's helpful to see how the
+ shared memory is used and which 'old' libs are loaded.

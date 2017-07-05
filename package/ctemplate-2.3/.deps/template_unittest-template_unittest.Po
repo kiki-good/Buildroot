@@ -1,0 +1,493 @@
+template_unittest-template_unittest.o: src/tests/template_unittest.cc \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h \
+ src/tests/config_for_unittests.h src/config.h src/ctemplate/template.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/time.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/features.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/cdefs.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wordsize.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/gnu/stubs.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stddef.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/time.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/types.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/typesizes.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/timex.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/xlocale.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/string \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/c++config.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/os_defines.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/cpu_defines.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stringfwd.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/memoryfwd.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/char_traits.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_algobase.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/functexcept.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/exception_defines.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/cpp_type_traits.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/type_traits.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/numeric_traits.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_pair.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/move.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/concept_check.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_iterator_base_types.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_iterator_base_funcs.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/debug/debug.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_iterator.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/postypes.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/cwchar \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/wchar.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdio.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdarg.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wchar.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/allocator.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/c++allocator.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/new_allocator.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/new \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/exception \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/atomic_lockfree_defines.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/localefwd.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/c++locale.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/clocale \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/locale.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/locale.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/iosfwd \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/cctype \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/ctype.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/endian.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/endian.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/byteswap.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/byteswap-16.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/ostream_insert.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/cxxabi_forced.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_function.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/backward/binders.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/range_access.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/basic_string.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/atomicity.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/gthr.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/gthr-default.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/pthread.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sched.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/sched.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/pthreadtypes.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/setjmp.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/atomic_word.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/basic_string.tcc \
+ src/ctemplate/template_cache.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/unordered_map \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/utility \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_relops.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/type_traits \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/functional_hash.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/hashtable.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/hashtable_policy.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/unordered_map.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/vector \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_construct.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/alloc_traits.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_uninitialized.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_vector.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_bvector.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/vector.tcc \
+ src/ctemplate/template_emitter.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/types.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/select.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/select.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/sigset.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/sysmacros.h \
+ src/ctemplate/template_enums.h src/ctemplate/template_string.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/string.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/assert.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdint.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdint.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/inttypes.h \
+ src/ctemplate/per_expand_data.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdlib.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/waitflags.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/waitstatus.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/alloca.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/stdlib-float.h \
+ src/ctemplate/template_dictionary.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/functional \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/map \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_tree.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_map.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_multimap.h \
+ src/ctemplate/str_ref.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/cstddef \
+ src/ctemplate/template_dictionary_interface.h \
+ src/ctemplate/template_modifiers.h src/ctemplate/template_namelist.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/unordered_set \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/unordered_set.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/libio.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/_G_config.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/stdio_lim.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/sys_errlist.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/unistd.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/posix_opt.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/environments.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/confname.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/getopt.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/list \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_list.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/list.tcc \
+ src/ctemplate/template_annotator.h src/ctemplate/template_pathops.h \
+ src/tests/template_test_util.h src/tests/config_for_unittests.h \
+ src/base/util.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/errno.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/errno.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/linux/errno.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/asm/errno.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/asm-generic/errno.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/asm-generic/errno-base.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/iostream \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ostream \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ios \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/ios_base.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/locale_classes.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/locale_classes.tcc \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/streambuf \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/streambuf.tcc \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/basic_ios.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/locale_facets.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/cwctype \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/wctype.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/ctype_base.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/streambuf_iterator.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/ctype_inline.h \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/locale_facets.tcc \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/basic_ios.tcc \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/ostream.tcc \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/istream \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/istream.tcc
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h:
+
+src/tests/config_for_unittests.h:
+
+src/config.h:
+
+src/ctemplate/template.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/time.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/features.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/cdefs.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wordsize.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/gnu/stubs.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stddef.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/time.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/types.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/typesizes.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/timex.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/xlocale.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/string:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/c++config.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/os_defines.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/cpu_defines.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stringfwd.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/memoryfwd.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/char_traits.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_algobase.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/functexcept.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/exception_defines.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/cpp_type_traits.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/type_traits.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/numeric_traits.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_pair.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/move.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/concept_check.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_iterator_base_types.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_iterator_base_funcs.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/debug/debug.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_iterator.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/postypes.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/cwchar:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/wchar.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdio.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdarg.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/wchar.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/allocator.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/c++allocator.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/new_allocator.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/new:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/exception:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/atomic_lockfree_defines.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/localefwd.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/c++locale.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/clocale:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/locale.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/locale.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/iosfwd:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/cctype:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/ctype.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/endian.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/endian.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/byteswap.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/byteswap-16.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/ostream_insert.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/cxxabi_forced.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_function.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/backward/binders.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/range_access.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/basic_string.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/atomicity.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/gthr.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/gthr-default.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/pthread.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sched.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/sched.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/pthreadtypes.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/setjmp.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/atomic_word.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/basic_string.tcc:
+
+src/ctemplate/template_cache.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/unordered_map:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/utility:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_relops.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/type_traits:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/functional_hash.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/hashtable.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/hashtable_policy.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/unordered_map.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/vector:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_construct.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ext/alloc_traits.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_uninitialized.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_vector.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_bvector.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/vector.tcc:
+
+src/ctemplate/template_emitter.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/types.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/select.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/select.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/sigset.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/sys/sysmacros.h:
+
+src/ctemplate/template_enums.h:
+
+src/ctemplate/template_string.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/string.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/assert.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/lib/gcc/aarch64-linux-gnu/4.8.5/include/stdint.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdint.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/inttypes.h:
+
+src/ctemplate/per_expand_data.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdlib.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/waitflags.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/waitstatus.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/alloca.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/stdlib-float.h:
+
+src/ctemplate/template_dictionary.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/functional:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/map:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_tree.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_map.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_multimap.h:
+
+src/ctemplate/str_ref.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/cstddef:
+
+src/ctemplate/template_dictionary_interface.h:
+
+src/ctemplate/template_modifiers.h:
+
+src/ctemplate/template_namelist.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/unordered_set:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/tr1/unordered_set.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/libio.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/_G_config.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/stdio_lim.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/sys_errlist.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/unistd.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/posix_opt.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/environments.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/confname.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/getopt.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/list:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/stl_list.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/list.tcc:
+
+src/ctemplate/template_annotator.h:
+
+src/ctemplate/template_pathops.h:
+
+src/tests/template_test_util.h:
+
+src/tests/config_for_unittests.h:
+
+src/base/util.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/errno.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/bits/errno.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/linux/errno.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/asm/errno.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/asm-generic/errno.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/asm-generic/errno-base.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/iostream:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ostream:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/ios:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/ios_base.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/locale_classes.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/locale_classes.tcc:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/streambuf:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/streambuf.tcc:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/basic_ios.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/locale_facets.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/cwctype:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/wctype.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/ctype_base.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/streambuf_iterator.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/aarch64-linux-gnu/bits/ctype_inline.h:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/locale_facets.tcc:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/basic_ios.tcc:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/ostream.tcc:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/istream:
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/include/c++/4.8.5/bits/istream.tcc:

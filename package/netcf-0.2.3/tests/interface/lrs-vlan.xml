@@ -1,0 +1,9 @@
+<interface type="vlan" name="eth0.43">
+  <start mode="onboot"/>
+  <protocol family="ipv4">
+    <ip address="192.168.43.5" prefix="24"/>
+  </protocol>
+  <vlan tag="43">
+    <interface name="eth0"/>
+  </vlan>
+</interface>

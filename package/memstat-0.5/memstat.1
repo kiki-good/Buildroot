@@ -1,0 +1,94 @@
+.\"  This page Copyright (C) 1997 Joshua Yelon <jyelon@uiuc.edu>
+.\"  Distribution subject to the terms of the GPL.
+.\"  minor fixes by Bernd Eckenfels <ecki@debian.org> 1998-04-18
+.\"  minor fixes by Bernd Eckenfels <ecki@debian.org> 1998-11-01
+.TH MEMSTAT 1 "01 November 1998 " "Debian" "Linux Programmer's Manual"
+.SH NAME
+memstat \- Identify what's using up virtual memory.
+.SH SYNOPSIS
+.ft B
+.B memstat
+.RB [ "\-w" ]
+.br
+.SH DESCRIPTION
+\fBmemstat\fP lists all the processes, executables, and shared libraries
+that are using up virtual memory.  
+
+First, the processes are listed.  An amount of memory is shown along
+with a process ID and the name of the executable which the process is
+running.  The amount of memory shown does not include shared memory:
+it only includes memory which is private to that process.  So, if a
+process is using a shared library like libc, the memory used to hold
+that library is not included.  The memory used to hold the
+executable's text-segment is also not included, since that too is
+shareable.
+
+After the processes, the shared objects are listed.  An amount of
+memory is shown along with the filename of the shared object, followed
+by a list of the processes using the shared object.
+
+Finally, a grand total is shown.  Note that this program shows the
+amount of \fBvirtual\fP (not real) memory used by the various items.
+
+\fBmemstat\fP gets its input from the /proc filesystem.  This must be
+compiled into your kernel and mounted for \fBmemstat\fP to work.  The
+pathnames shown next to the shared objects are determined by scanning
+the disk.  \fBmemstat\fP uses a configuration file, /etc/memstat.conf,
+to determine which directories to scan.  This file should include all
+the major bin and lib directories in your system, as well as the /dev
+directory.  If you run an executable which is not in one of these
+directories, it will be listed by memstat as ``[0dev]:<inode>''.
+
+.SS Options
+The \fB-w\fP switch causes a wide printout: lines are not truncated at
+80 columns.
+.PP
+.SH NOTES
+These reports are intended to help identify programs that are using an
+excessive amount of memory, and to reduce overall memory waste.
+.PP
+.SH FILES
+.ta
+.nf
+/etc/memstat.conf
+/proc/*/maps
+.fi
+
+.SH "SEE ALSO"
+ps(1), top(1), free(1), vmstat(8), lsof(8), /usr/doc/memstat/memstat-tutorial.txt.gz
+.PP
+.SH BUGS
+
+If you do the math, you'll see that ps and memstat don't always agree
+about how much virtual memory a process is using.  This is because
+most processes seem to map certain shared pages twice.  memstat counts
+these pages once, ps counts them twice.  I'm not sure which is
+the ``right'' way to measure it.
+
+The proc filesystem identifies files by their device number and inode
+number.  To be useful, these numbers must be translated back into
+filenames.  This requires searching the disk (and thus the awkward
+configuration file memstst.conf).  There should be some way around
+this, perhaps by adding the dev/inode info to the locate db?
+
+The stat system call returns a dev_t type, but the proc filesystem
+contains a device readout in the form of a string.  I have improvised
+a routine to convert the device readout string into a dev_t, but I'm
+not sure it will work on all architectures.
+
+It is possible to confuse \fBmemstat\fP by using mmap in combination
+with a block-device.  In the original version, \fBmemstat\fP treated
+block devices just like any other file, and if you mmap'ed one of
+them, they would show up on the shared-object list.  This worked for
+mmap'ed hard disks and floppies, but it produced absurd results with
+block devices like /dev/zero and /dev/mem.  As a partial fix,
+\fBmemstat\fP now ignores all mapped block devices, though this may
+cause \fBmemstat\fP to ignore some memory usage.
+
+We really ought to show some real-memory usage statistics, but it's
+just not there in /proc.
+
+Memory used by the kernel itself is not listed.
+.SH AUTHOR
+Written by Joshua Yelon <jyelon@uiuc.edu> and patched by Bernd Eckenfels
+<ecki@debian.org>

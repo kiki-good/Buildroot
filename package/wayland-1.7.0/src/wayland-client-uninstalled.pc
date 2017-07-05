@@ -1,0 +1,8 @@
+libdir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/wayland-1.7.0/src/.libs
+includedir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/wayland-1.7.0/src
+ 
+Name: Wayland Client
+Description: Wayland client side library (not installed)
+Version: 1.7.0
+Cflags: -I${includedir}
+Libs: -L${libdir} -lwayland-client

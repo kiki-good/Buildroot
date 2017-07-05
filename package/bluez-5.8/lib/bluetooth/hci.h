@@ -1,0 +1,1 @@
+/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/bluez-5.8/lib/hci.h

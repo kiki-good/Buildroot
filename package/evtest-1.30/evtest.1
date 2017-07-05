@@ -1,0 +1,82 @@
+'\" t
+.\"     Title: evtest
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
+.\"      Date: 02/14/2017
+.\"    Manual: \ \&
+.\"    Source: \ \&
+.\"  Language: English
+.\"
+.TH "EVTEST" "1" "02/14/2017" "\ \&" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+evtest \- Input device event monitor and query tool
+.SH "SYNOPSIS"
+.sp
+.nf
+evtest /dev/input/eventX
+.fi
+.sp
+.nf
+evtest \-\-query /dev/input/eventX <type> <value>
+.fi
+.SH "DESCRIPTION"
+.sp
+The first invocation type displayed above ("capture mode") causes evtest to display information about the specified input device, including all the events supported by the device\&. It then monitors the device and displays all the events layer events generated\&.
+.sp
+In the second invocation type ("query mode"), evtest performs a one\-shot query of the state of a specific key \fBvalue\fR of an event \fBtype\fR\&.
+.sp
+\fBtype\fR is one of: \fBEV_KEY\fR, \fBEV_SW\fR, \fBEV_SND\fR, \fBEV_LED\fR (or the numerical value)
+.sp
+\fBvalue\fR can be either a decimal representation (e\&.g\&. 44), hex (e\&.g\&. 0x2c), or the constant name (e\&.g\&. KEY_Z) of the key/switch/sound/LED being queried\&.
+.sp
+If the state bit is set (key pressed, switch on, \&...), evtest exits with code 10\&. If the state bit is unset (key depressed, switch off, \&...), evtest exits with code 0\&. No other output is generated\&.
+.sp
+evtest needs to be able to read from the device; in most cases this means it must be run as root\&.
+.sp
+evtest is commonly used to debug issues with input devices in X\&.Org\&. The output of evtest shows the information presented by the kernel; based on this information it can be determined whether a bug may be a kernel or an X\&.Org issue\&.
+.SH "DIAGNOSTICS"
+.sp
+If evtest does not show any events even though the device is being used, the device may be grabbed by a process (EVIOCGRAB)\&. This is usually the case when debugging a synaptics device from within X\&. VT switching to a TTY or shutting down the X server terminates this grab and synaptics devices can be debugged\&.
+.SH "EXIT CODE"
+.sp
+evtest returns 1 on error\&.
+.sp
+When used to query state, evtest returns 0 if the state bit is unset and 10 if the state bit is set\&.
+.SH "SEE ALSO"
+.sp
+inputattach(1)
+.SH "AUTHOR"
+.sp
+evtest was written by Vojtech Pavlik <\m[blue]\fBvojtech@suse\&.cz\fR\m[]\&\s-2\u[1]\d\s+2>\&.
+.sp
+This manual page was written by Stephen Kitt <\m[blue]\fBsteve@sk2\&.org\fR\m[]\&\s-2\u[2]\d\s+2>, based on that present in the lineakd package, for the Debian GNU/Linux system (but may be used by others)\&.
+.SH "NOTES"
+.IP " 1." 4
+vojtech@suse.cz
+.RS 4
+\%mailto:vojtech@suse.cz
+.RE
+.IP " 2." 4
+steve@sk2.org
+.RS 4
+\%mailto:steve@sk2.org
+.RE

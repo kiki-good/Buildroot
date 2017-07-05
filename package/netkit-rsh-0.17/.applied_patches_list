@@ -1,0 +1,5 @@
+netkitrsh-cross-compile-fix.patch
+netkitrsh-glibc-compile-fix.patch
+netkitrsh-patch_001_rexecd.patch
+netkitrsh-patch_001_rshd.patch
+netkitrsh-rshd-disable-auth-hack.patch

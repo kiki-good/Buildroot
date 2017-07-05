@@ -1,0 +1,37 @@
+NETCF_1.0.0 {
+    global:
+      ncf_init;
+      ncf_close;
+      ncf_num_of_interfaces;
+      ncf_list_interfaces;
+      ncf_lookup_by_name;
+      ncf_lookup_by_mac_string;
+      ncf_define;
+      ncf_if_name;
+      ncf_if_mac_string;
+      ncf_if_up;
+      ncf_if_down;
+      ncf_if_undefine;
+      ncf_if_xml_desc;
+      ncf_if_free;
+      ncf_error;
+    local:
+      *;
+};
+
+NETCF_1.2.0 {
+    global:
+      ncf_if_xml_state;
+} NETCF_1.0.0;
+
+NETCF_1.3.0 {
+    global:
+      ncf_if_status;
+} NETCF_1.2.0;
+
+NETCF_1.4.0 {
+    global:
+      ncf_change_begin;
+      ncf_change_commit;
+      ncf_change_rollback;
+} NETCF_1.3.0;

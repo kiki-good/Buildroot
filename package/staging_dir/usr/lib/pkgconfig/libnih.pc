@@ -1,0 +1,10 @@
+prefix=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libnih
+Description: NIH Utility Library
+Version: 1.0.3
+Libs: -L${libdir} -lnih
+Cflags: -I${includedir}

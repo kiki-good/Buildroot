@@ -1,0 +1,6 @@
+#!/bin/sh
+# WARNING: This file was auto-generated. Do not edit!
+CC='/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//bin/aarch64-linux-gcc -Os -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/include -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/include -I/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//aarch64-linux/include -O2 -DPOSIX -c'
+LD='/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//bin/aarch64-linux-gcc -Os -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/include -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/include -I/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//aarch64-linux/include -s'
+echo 'main="$1"; shift'
+echo exec "$LD" '-o "$main" "$main".o ${1+"$@"}'

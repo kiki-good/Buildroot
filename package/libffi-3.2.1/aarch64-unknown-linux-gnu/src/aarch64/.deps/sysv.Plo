@@ -1,0 +1,11 @@
+src/aarch64/sysv.lo: ../src/aarch64/sysv.S \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h \
+ fficonfig.h include/ffi.h include/ffitarget.h
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h:
+
+fficonfig.h:
+
+include/ffi.h:
+
+include/ffitarget.h:

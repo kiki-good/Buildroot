@@ -1,0 +1,804 @@
+# Tests for aug_srun
+
+# Blank lines and lines starting with '#' are ignored. This file is
+# processed by test-run.c
+#
+# The syntax for a test specification is
+#   test NAME RESULT ERRCODE
+#   [use MODULE]
+#     COMMANDS
+#   prints
+#     OUTPUT
+#
+# where
+#   NAME     - the name printed to identify the test
+#   RESULT   - an integer that is compared against the return code
+#              of aug_srun
+#   ERRCODE  - one of the error codes defined in enum errcode_t in augeas.h
+#              without the AUG_ prefix, i.e. NOERROR, EMMATCH etc. If ERRCODE
+#              is ommitted, it defaults to NOERROR
+#   MODULE   - the name of a module that should be loaded before the test
+#   COMMANDS - the commands to hand to aug_srun; can be multiple lines,
+#              which are passed as one string.
+#   OUTPUT   - the string that aug_srun should print on the OUT file stream
+#
+# The prints keyword and OUTPUT are optional; if they are not provided, the
+# output of aug_srun must be empty
+#
+# Leading spaces are stripped from COMMANDS and OUTPUT; a leading or trailing
+# ':' is also stripped, but the rest of the line is used verbatim.
+#
+# A test passes when RESULT and ERRCODE agree with what aug_srun given
+# COMMANDS produces, and OUTPUT coincides with what aug_srun prints on its
+# OUT stream.
+#
+# The test is run against a tree initialized with AUG_NO_STDINC|AUG_NO_LOAD
+# and file system root /dev/null. The Hosts module is loaded
+
+
+#
+# Various corner cases
+#
+test null 0
+
+test empty 0
+  :
+
+test quit -2
+  quit
+
+test quit-2 -2
+  get /augeas
+  quit
+prints
+  /augeas (none)
+
+test two-commands 2
+  get /augeas/root
+  get /augeas/span
+prints
+  /augeas/root = /dev/null/
+  /augeas/span = disable
+
+test comment 1
+  :# Get /augeas
+  get /augeas
+prints
+  /augeas (none)
+
+test get_wspace 2
+  :  get /augeas 	:
+  :  rm /augeas/root 	:
+prints
+  /augeas (none)
+  rm : /augeas/root 1
+
+test get_wspace_between 1
+  :  get 	 /augeas
+prints
+  /augeas (none)
+
+test unknown-cmd -1 ECMDRUN
+  nocommand
+
+test help 1
+  help
+prints something
+
+#
+# ls tests
+#
+test ls-root 1
+  ls /
+prints
+  augeas/ = (none)
+  files = (none)
+
+test ls-bad-pathx -1 EPATHX
+  ls /files[]
+
+#
+# match tests
+#
+test match-root 1
+  match /
+prints
+  /augeas = (none)
+  /files = (none)
+
+test match-context 1
+  match .
+prints
+  /files = (none)
+
+test match-root-star 1
+  match /*
+prints
+  /augeas = (none)
+  /files = (none)
+
+test match-bad-pathx -1 EPATHX
+  match /files[]
+
+test match-nothing 1
+  match /not-there
+prints
+  :  (no matches)
+
+#
+# test rm
+#
+test rm-save-modes 1
+  rm /augeas/version/save
+prints
+  rm : /augeas/version/save 5
+
+test rm-bad-pathx -1 EPATHX
+  rm /files[]
+
+#
+# test mv
+#
+test mv 1
+  mv /augeas/version /files
+
+test mv-not-there -1 ENOMATCH
+  mv /not-there /files
+
+test mv-to-not-there 1
+  mv /files /new-node
+
+test mv-into-descendant -1 EMVDESC
+  mv /augeas /augeas/version
+
+test mv-into-self -1 EMVDESC
+  mv /augeas /augeas
+
+test mv-into-multiple -1 EMMATCH
+  mv /files /augeas/version/save/*
+
+test mv-multiple -1 EMMATCH
+  mv /augeas/version/save/* /files
+
+test mv-tree1 3
+  set /a/b/c value
+  mv /a/b/c /x
+  print /*[ label() != 'augeas' and label() != 'files']
+prints
+  /a
+  /a/b
+  /x = "value"
+
+test mv-tree2 3
+  set /a/b/c value
+  mv /a/b/c /a/x
+  print /*[ label() != 'augeas' and label() != 'files']
+prints
+  /a
+  /a/b
+  /a/x = "value"
+
+test mv-tree3 3
+  set /a/b/c value
+  mv /a/b/c /x/y
+  print /*[ label() != 'augeas' and label() != 'files']
+prints
+  /a
+  /a/b
+  /x
+  /x/y = "value"
+
+test mv-tree4 -1 EMVDESC
+  set /a/b/c value
+  mv /a/b/c /a/b/c/d
+  print /*[ label() != 'augeas' and label() != 'files']
+
+test mv-tree5 3
+  set /a/b/c value
+  mv /a/b/c /a/b/d
+  print /*[ label() != 'augeas' and label() != 'files']
+prints
+  /a
+  /a/b
+  /a/b/d = "value"
+
+test mv-tree6 3
+  set /a/b/c value
+  mv /a /x/y
+  print /*[ label() != 'augeas' and label() != 'files']
+prints
+  /x
+  /x/y
+  /x/y/b
+  /x/y/b/c = "value"
+
+#
+# test rename
+#
+test rename 1
+  rename /augeas/version version2
+prints
+  rename : /augeas/version to version2 1
+
+test rename-into-self 1
+  rename /augeas augeas
+prints
+  rename : /augeas to augeas 1
+
+test rename-tree1 3
+  set /a/b/c value
+  rename /a/b/c x
+  print /*[ label() != 'augeas' and label() != 'files']
+prints
+  rename : /a/b/c to x 1
+  /a
+  /a/b
+  /a/b/x = "value"
+
+test rename-tree2 4
+  set /a/b/c value
+  set /a/b/d value2
+  rename /a/b/c x
+  print /*[ label() != 'augeas' and label() != 'files']
+prints
+  rename : /a/b/c to x 1
+  /a
+  /a/b
+  /a/b/x = "value"
+  /a/b/d = "value2"
+
+test rename-multiple 4
+  set /a/b/d value
+  set /a/c/d value2
+  rename //d x
+  print /*[ label() != 'augeas' and label() != 'files']
+prints
+  rename : //d to x 2
+  /a
+  /a/b
+  /a/b/x = "value"
+  /a/c
+  /a/c/x = "value2"
+
+test rename-slash -1 ELABEL
+  set /a/b/c value
+  rename /a/b/c va/lue
+
+#
+# test set
+#
+test set-not-there 2
+  set /foo value
+  get /foo
+prints
+  /foo = value
+
+test set-existing 2
+  set /files value
+  get /files
+prints
+  /files = value
+
+test set-trailing-slash 2
+  set /files/ value
+  get /files
+prints
+  /files = value
+
+test set-bad-pathx -1 EPATHX
+  set /files[] 1
+
+test set-multiple -1 EMMATCH
+  set /augeas/version/save/mode value
+
+test set-args 2
+  set /files
+  get /files
+prints
+  /files (none)
+#
+# test clear
+#
+test clear-not-there 2
+  clear /foo
+  get /foo
+prints
+  /foo (none)
+
+test clear-existing 2
+  clear /files
+  get /files
+prints
+  /files (none)
+
+test clear-bad-pathx -1 EPATHX
+  clear /files[]
+
+test clear-multiple -1 EMMATCH
+  clear /augeas/version/save/mode
+
+test clear-args -1 ECMDRUN
+  clear /files value
+
+#
+# test get
+#
+test get-save-mode 1
+  get /augeas/version/save/mode[1]
+prints
+ /augeas/version/save/mode[1] = backup
+
+test get-too-many -1 EMMATCH
+  get /augeas/*
+
+test get-not-there 1
+  get /not-there
+prints
+  /not-there (o)
+
+test get-bad-pathx -1 EPATHX
+  get /files[]
+
+#
+# test transform
+#
+test transform-1 3
+  transform Test incl /tmp/bar
+  get /augeas/load/Test/lens
+  get /augeas/load/Test/incl
+prints
+  /augeas/load/Test/lens = Test.lns
+  /augeas/load/Test/incl = /tmp/bar
+
+test transform-2 4
+  transform Bar incl /tmp/foo/*
+  transform Bar incl /tmp/bar/*
+  transform Bar excl /tmp/foo/baz
+  print /augeas/load/Bar
+prints
+  /augeas/load/Bar
+  /augeas/load/Bar/lens = "Bar.lns"
+  /augeas/load/Bar/incl[1] = "/tmp/foo/*"
+  /augeas/load/Bar/incl[2] = "/tmp/bar/*"
+  /augeas/load/Bar/excl = "/tmp/foo/baz"
+
+test transform-3 2
+  transform Bar.lns incl /tmp/foo/*
+  print /augeas/load/Bar
+prints
+  /augeas/load/Bar
+  /augeas/load/Bar/lens = "Bar.lns"
+  /augeas/load/Bar/incl = "/tmp/foo/*"
+
+#
+# test print
+#
+test print-save 1
+  print /augeas/version/save
+prints
+  /augeas/version/save
+  /augeas/version/save/mode[1] = "backup"
+  /augeas/version/save/mode[2] = "newfile"
+  /augeas/version/save/mode[3] = "noop"
+  /augeas/version/save/mode[4] = "overwrite"
+
+test print-root 1
+  print /
+
+#
+# test set/get parsing with quoting, whitespace and escaping
+#
+test set-single-quotes 2
+  set /files 'a test value'
+  get /files
+prints
+  /files = a test value
+
+test set-double-quotes 2
+  set /files "a test value"
+  get /files
+prints
+  /files = a test value
+
+test set-mixed-quotes1 2
+  set /files "a 'mixed quotes' test"
+  get /files
+prints
+  /files = a 'mixed quotes' test
+
+test set-mixed-quotes2 2
+  set /files 'a "mixed quotes" test'
+  get /files
+prints
+  /files = a "mixed quotes" test
+
+test set-mixed-quotes-expr 2
+  clear /foo
+  print "/*[ label() != 'augeas' and label() != 'files']"
+prints
+  /foo
+
+test set-quote-concat 2
+  set "/fi"les test
+  get "/fi"les
+prints
+  /files = test
+
+test set-escaped-quotes 2
+  set /files "''\"''"
+  get /files
+prints
+  /files = ''"''
+
+test set-escaped-path 2
+  set /white\ space\	tab value
+  get /white\ space\	tab
+prints
+  /white space	tab = value
+
+test set-escaped-path-bracket 2
+  set /white\ space/\[section value
+  print /white\ space/\[section
+prints
+  /white space/[section = "value"
+
+test set-squote-escaped-bracket 2
+  set '/augeas/\[section' value
+  print '/augeas/\[section'
+prints
+  /augeas/[section = "value"
+
+test set-squote-escaped-path 2
+  set '/white\ space' value
+  get '/white\ space'
+prints
+  /white\ space = value
+
+test set-dquote-escaped-path 2
+  set "/white\ space" value
+  get "/white\ space"
+prints
+  /white\ space = value
+
+test set-tabnline 2
+  set /files newl\ntab\tend
+  get /files
+prints
+  /files = newl
+tab	end
+
+test set-tabnline-squote 2
+  set /files 'newl\ntab\tend'
+  get /files
+prints
+  /files = newl
+tab	end
+
+test set-tabnline-dquote 2
+  set /files "newl\ntab\tend"
+  get /files
+prints
+  /files = newl
+tab	end
+
+# Combinations of quotes in values, some unmatched
+# Tests from David Schmitt (Puppet bug #12199)
+test quot_sq -1 ECMDRUN
+  set /test '
+
+test quot_sq_sq -1 ECMDRUN
+  set /test '''
+
+test quot_sq_dq 2
+  set /test "'"
+  get /test
+prints
+  /test = '
+
+test quot_sqsq 2
+  set /test ''
+  get /test
+prints
+  /test = :
+
+test quot_sqsq_sq 2
+  set /test ''''
+  get /test
+prints
+  /test = :
+
+test quot_sqsq_dq 2
+  set /test "''"
+  get /test
+prints
+  /test = ''
+
+test quot_sqsqsq -1 ECMDRUN
+  set /test '''
+
+test quot_sqsqsq_sq -1 ECMDRUN
+  set /test '''''
+
+test quot_sqsqsq_dq 2
+  set /test "'''"
+  get /test
+prints
+  /test = '''
+
+test quot_sqsqsqsq 2
+  set /test ''''
+  get /test
+prints
+  /test = :
+
+test quot_sqsqsqsq_sq 2
+  set /test ''''''
+  get /test
+prints
+  /test = :
+
+test quot_sqsqsqsq_dq 2
+  set /test "''''"
+  get /test
+prints
+  /test = ''''
+
+test quot_dq -1 ECMDRUN
+  set /test "
+
+test quot_dq_sq 2
+  set /test '"'
+  get /test
+prints
+  /test = "
+
+test quot_dq_dq -1 ECMDRUN
+  set /test """
+
+test quot_dqdq 2
+  set /test ""
+  get /test
+prints
+  /test = :
+
+test quot_dqdq_sq 2
+  set /test '""'
+  get /test
+prints
+  /test = ""
+
+test quot_dqdq_dq 2
+  set /test """"
+  get /test
+prints
+  /test = :
+
+test quot_dqdqdq -1 ECMDRUN
+  set /test """
+
+test quot_dqdqdq_sq 2
+  set /test '"""'
+  get /test
+prints
+  /test = """
+
+test quot_dqdqdq_dq -1 ECMDRUN
+  set /test """""
+
+test quot_dqdqdqdq 2
+  set /test """"
+  get /test
+prints
+  /test = :
+
+test quot_dqdqdqdq_sq 2
+  set /test '""""'
+  get /test
+prints
+  /test = """"
+
+test quot_dqdqdqdq_dq 2
+  set /test """"""
+  get /test
+prints
+  /test = :
+
+test quot_truncated_dq 2
+  set /test "s"bc"d"ef
+  get /test
+prints
+  /test = sbcdef
+
+test quot_truncated_dq_sq 2
+  set /test '"s"bc"d"ef'
+  get /test
+prints
+  /test = "s"bc"d"ef
+
+test quot_truncated_dq_dq 2
+  set /test ""s"bc"d"ef"
+  get /test
+prints
+  /test = sbcdef
+
+test quot_truncated_sq 2
+  set /test 's'bc'd'ef
+  get /test
+prints
+  /test = sbcdef
+
+test quot_truncated_sq_sq 2
+  set /test ''s'bc'd'ef'
+  get /test
+prints
+  /test = sbcdef
+
+test quot_truncated_sq_dq 2
+  set /test "'s'bc'd'ef"
+  get /test
+prints
+  /test = 's'bc'd'ef
+
+test quot_truncated_dq_mix 2
+  set /test "s"bc'd'ef
+  get /test
+prints
+  /test = sbcdef
+
+test quot_truncated_dq_mix_sq 2
+  set /test '"s"bc'd'ef'
+  get /test
+prints
+  /test = "s"bcdef
+
+test quot_truncated_dq_mix_dq 2
+  set /test ""s"bc'd'ef"
+  get /test
+prints
+  /test = sbc'd'ef
+
+test quot_truncated_sq_mix 2
+  set /test 's'bc"d"ef
+  get /test
+prints
+  /test = sbcdef
+
+test quot_truncated_sq_mix_sq 2
+  set /test ''s'bc"d"ef'
+  get /test
+prints
+  /test = sbc"d"ef
+
+test quot_truncated_sq_mix_dq 2
+  set /test "'s'bc"d"ef"
+  get /test
+prints
+  /test = 's'bcdef
+
+test quot_truncated_space -1 ECMDRUN
+  set /test before after
+
+test quot_truncated_space_sq 2
+  set /test 'before after'
+  get /test
+prints
+  /test = before after
+
+test quot_truncated_space_dq 2
+  set /test "before after"
+  get /test
+prints
+  /test = before after
+
+test quot_mix -1 ECMDRUN
+  set /test a"b'c"d'e
+
+test quot_mix_sq -1 ECMDRUN
+  set /test 'a"b'c"d'e'
+
+test quot_mix_dq -1 ECMDRUN
+  set /test "a"b'c"d'e"
+
+#
+# Tests for aug_text_store
+#
+test store_hosts 3
+ use Hosts
+  set /text/in/t1 "192.168.0.1 rtr.example.com foo\n"
+  store Hosts.lns /text/in/t1 /text/tree/t1
+  print /text/tree/t1
+prints
+  /text/tree/t1
+  /text/tree/t1/1
+  /text/tree/t1/1/ipaddr = "192.168.0.1"
+  /text/tree/t1/1/canonical = "rtr.example.com"
+  /text/tree/t1/1/alias = "foo"
+
+test store_nolens -1 ENOLENS
+  set /text/in/t1 "192.168.0.1 rtr.example.com foo\n"
+  store Nomodule.lns /text/in/t1 /text/tree/t1
+
+test store_epathx_node -1 EPATHX
+ use Hosts
+  store Hosts.lns [garbage] /text/tree/t1
+
+test store_epathx_path -1 EPATHX
+ use Hosts
+  store Hosts.lns /text/in/t1 [garbage]
+
+test store_null_text -1 ENOMATCH
+ use Hosts
+  store Hosts.lns /text/in/t1 /text/tree/t1
+
+test store_esyntax 3
+ use Hosts
+  set /text/in/t1 "not a hosts file entry"
+  store Hosts.lns /text/in/t1 /text/tree/t1
+  match /augeas/text/text/tree/t1/error
+prints
+  /augeas/text/text/tree/t1/error = parse_failed
+
+# Bug #283; /text is actually NULL
+test store_null -1 ENOMATCH
+ use Hosts
+  set /text/1 "192.168.0.1 toto\n"
+  store Hosts.lns /text /hosts
+
+#
+# Tests for aug_text_retrieve
+#
+test retrieve_hosts 5
+ use Hosts
+  set /text/in/t1 "192.168.0.1 rtr.example.com foo\n"
+  store Hosts.lns /text/in/t1 /text/tree/t1
+  set /text/tree/t1/1/alias[1] bar
+  retrieve Hosts.lns /text/in/t1 /text/tree/t1 /text/out/t1
+  print /text/out/t1
+prints
+  /text/out/t1 = "192.168.0.1 rtr.example.com bar\n"
+
+test retrieve_nolens -1 ENOLENS
+  set /text/in/t1 "192.168.0.1 rtr.example.com foo\n"
+  store Hosts.lns /text/in/t1 /text/tree/t1
+  retrieve Nomodule.lns /text/in/t1 /text/tree/t1 /text/out/t1
+
+test retrieve_epathx_node_in -1 EPATHX
+ use Hosts
+  retrieve Hosts.lns [garbage] /text/tree/t1 /text/out/t1
+
+test retrieve_epathx_path -1 EPATHX
+ use Hosts
+  retrieve Hosts.lns /text/in/t1 [garbage] /text/out/t1
+
+test retrieve_epathx_node_out -1 EPATHX
+ use Hosts
+  set /text/in/t1 "192.168.0.1 rtr.example.com foo\n"
+  retrieve Hosts.lns /text/in/t1 /text/tree/t1 [garbage]
+
+test retrieve_no_node_in -1 ENOMATCH
+ use Hosts
+  retrieve Hosts.lns /text/in/t1 /text/tree/t1 /text/out/t1
+
+test retrieve_no_tree 3
+ use Hosts
+  set /text/in/t1 "192.168.0.1 rtr.example.com foo\n"
+  retrieve Hosts.lns /text/in/t1 /text/tree/t1 /text/out/t1
+  print /text/out/t1
+prints
+  /text/out/t1 = ""
+
+test retrieve_esyntax 5
+ use Hosts
+  set /text/in/t1 "192.168.0.1 rtr.example.com foo\n"
+  store Hosts.lns /text/in/t1 /text/tree/t1
+  set /text/in/t1 "not a hosts file entry"
+  retrieve Hosts.lns /text/in/t1 /text/tree/t1 /text/out/t1
+  match /augeas//error
+prints
+  /augeas/text/text/tree/t1/error = parse_skel_failed
+
+# Bug #283; /text is actually NULL
+test retrieve_null -1 ENOMATCH
+ use Hosts
+  set /text/1 "192.168.0.1 toto\n"
+  retrieve Hosts.lns /text /hosts /out

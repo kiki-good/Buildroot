@@ -1,0 +1,18 @@
+#
+# Kbuild file for xz
+#
+
+EXTRA_KLIBCCFLAGS := -DXZ_DEC_ARM -DXZ_DEC_ARMTHUMB -DXZ_DEC_ANY_CHECK -DXZ_USE_CRC64
+
+# The xzminidec executable
+static-y := bunxz
+xzminidec-y   := bunxz.o
+
+# Additional targets
+always := bunxz
+
+# Cleaning
+targets := bunxz
+
+# Targets to install
+install-y := bunxz

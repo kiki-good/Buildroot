@@ -1,0 +1,9 @@
+strace_001_configure.patch
+strace-100-arm-eabi-syscall-fix.patch
+strace-101-arm-mempolicy-syscall.patch
+strace-dont-use-REG_SYSCALL-for-sh.patch
+strace-fix-arm-bad-syscall.patch
+strace-fix-disabled-largefile-syscalls.patch
+strace-statfs64-check.patch
+strace-uclibc-fix.patch
+strace-undef-CTL_PROC.patch

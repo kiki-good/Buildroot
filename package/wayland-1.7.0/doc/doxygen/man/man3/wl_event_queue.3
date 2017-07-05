@@ -1,0 +1,179 @@
+.TH "wl_event_queue" 3 "Fri Feb 13 2015" "Version 1.7.0" "Wayland" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wl_event_queue \- 
+.PP
+A queue for \fBwl_proxy\fP object events\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <wayland-client\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBwl_event_queue_destroy\fP (struct \fBwl_event_queue\fP *queue)"
+.br
+.ti -1c
+.RI "struct \fBwl_event_queue\fP * \fBwl_display_create_queue\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_roundtrip_queue\fP (struct \fBwl_display\fP *display, struct \fBwl_event_queue\fP *queue)"
+.br
+.ti -1c
+.RI "int \fBwl_display_prepare_read_queue\fP (struct \fBwl_display\fP *display, struct \fBwl_event_queue\fP *queue)"
+.br
+.ti -1c
+.RI "int \fBwl_display_dispatch_queue\fP (struct \fBwl_display\fP *display, struct \fBwl_event_queue\fP *queue)"
+.br
+.ti -1c
+.RI "int \fBwl_display_dispatch_queue_pending\fP (struct \fBwl_display\fP *display, struct \fBwl_event_queue\fP *queue)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+A queue for \fBwl_proxy\fP object events\&. 
+
+Event queues allows the events on a display to be handled in a thread-safe manner\&. See \fBwl_display\fP for details\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "struct \fBwl_event_queue\fP * wl_display_create_queue (struct \fBwl_display\fP *display)"
+Create a new event queue for this display
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+A new event queue associated with this display or NULL on failure\&. 
+.RE
+.PP
+
+.SS "int wl_display_dispatch_queue (struct \fBwl_display\fP *display, struct \fBwl_event_queue\fP *queue)"
+Dispatch events in an event queue
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.br
+\fIqueue\fP The event queue to dispatch 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The number of dispatched events on success or -1 on failure
+.RE
+.PP
+Dispatch all incoming events for objects assigned to the given event queue\&. On failure -1 is returned and errno set appropriately\&.
+.PP
+The behaviour of this function is exactly the same as the behaviour of \fBwl_display_dispatch()\fP, but it dispatches events on given queue, not on the default queue\&.
+.PP
+This function blocks if there are no events to dispatch (if there are, it only dispatches these events and returns immediately)\&. When this function returns after blocking, it means that it read events from display's fd and queued them to appropriate queues\&. If among the incoming events were some events assigned to the given queue, they are dispatched by this moment\&.
+.PP
+\fBNote:\fP
+.RS 4
+Since Wayland 1\&.5 the display has an extra queue for its own events (i\&. e\&. delete_id)\&. This queue is dispatched always, no matter what queue we passed as an argument to this function\&. That means that this function can return non-0 value even when it haven't dispatched any event for the given queue\&.
+.RE
+.PP
+This function has the same constrains for using in multi-threaded apps as \fBwl_display_dispatch()\fP\&.
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_dispatch()\fP, \fBwl_display_dispatch_pending()\fP, \fBwl_display_dispatch_queue_pending()\fP 
+.RE
+.PP
+
+.SS "int wl_display_dispatch_queue_pending (struct \fBwl_display\fP *display, struct \fBwl_event_queue\fP *queue)"
+Dispatch pending events in an event queue
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.br
+\fIqueue\fP The event queue to dispatch 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The number of dispatched events on success or -1 on failure
+.RE
+.PP
+Dispatch all incoming events for objects assigned to the given event queue\&. On failure -1 is returned and errno set appropriately\&. If there are no events queued, this function returns immediately\&.
+.PP
+\fBSince:\fP
+.RS 4
+1\&.0\&.2 
+.RE
+.PP
+
+.SS "int wl_display_prepare_read_queue (struct \fBwl_display\fP *display, struct \fBwl_event_queue\fP *queue)"
+Prepare to read events from the display to this queue
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.br
+\fIqueue\fP The event queue to use 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success or -1 if event queue was not empty
+.RE
+.PP
+Atomically makes sure the queue is empty and stops any other thread from placing events into this (or any) queue\&. Caller must eventually call either \fBwl_display_cancel_read()\fP or \fBwl_display_read_events()\fP, usually after waiting for the display fd to become ready for reading, to release the lock\&.
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_prepare_read\fP 
+.RE
+.PP
+
+.SS "int wl_display_roundtrip_queue (struct \fBwl_display\fP *display, struct \fBwl_event_queue\fP *queue)"
+Block until all pending request are processed by the server
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.br
+\fIqueue\fP The queue on which to run the roundtrip 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The number of dispatched events on success or -1 on failure
+.RE
+.PP
+Blocks until the server process all currently issued requests and sends out pending events on the event queue\&.
+.PP
+\fBNote:\fP
+.RS 4
+This function uses \fBwl_display_dispatch_queue()\fP internally\&. If you are using \fBwl_display_read_events()\fP from more threads, don't use this function (or make sure that calling \fBwl_display_roundtrip_queue()\fP doesn't interfere with calling \fBwl_display_prepare_read()\fP and \fBwl_display_read_events()\fP)
+.RE
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_roundtrip()\fP 
+.RE
+.PP
+
+.SS "void wl_event_queue_destroy (struct \fBwl_event_queue\fP *queue)"
+Destroy an event queue
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueue\fP The event queue to be destroyed
+.RE
+.PP
+Destroy the given event queue\&. Any pending event on that queue is discarded\&.
+.PP
+The \fBwl_display\fP object used to create the queue should not be destroyed until all event queues created with it are destroyed with this function\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Wayland from the source code\&.

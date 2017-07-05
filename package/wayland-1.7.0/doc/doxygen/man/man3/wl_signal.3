@@ -1,0 +1,101 @@
+.TH "wl_signal" 3 "Fri Feb 13 2015" "Version 1.7.0" "Wayland" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wl_signal \- 
+.PP
+A source of a type of observable event\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <wayland-server\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBwl_signal_init\fP (struct \fBwl_signal\fP *signal)"
+.br
+.ti -1c
+.RI "static void \fBwl_signal_add\fP (struct \fBwl_signal\fP *signal, struct \fBwl_listener\fP *listener)"
+.br
+.ti -1c
+.RI "static struct \fBwl_listener\fP * \fBwl_signal_get\fP (struct \fBwl_signal\fP *signal, wl_notify_func_t notify)"
+.br
+.ti -1c
+.RI "static void \fBwl_signal_emit\fP (struct \fBwl_signal\fP *signal, void *data)"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBwl_list\fP \fBlistener_list\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+A source of a type of observable event\&. 
+
+Signals are recognized points where significant events can be observed\&. Compositors as well as the server can provide signals\&. Observers are \fBwl_listener\fP's that are added through \fBwl_signal_add\fP\&. Signals are emitted using \fBwl_signal_emit\fP, which will invoke all listeners until that listener is removed by wl_list_remove() (or whenever the signal is destroyed)\&.
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_listener\fP for more information on using \fBwl_signal\fP 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "static void wl_signal_add (struct \fBwl_signal\fP *signal, struct \fBwl_listener\fP *listener)\fC [inline]\fP"
+Add the specified listener to this signal\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsignal\fP The signal that will emit events to the listener 
+.br
+\fIlistener\fP The listener to add 
+.RE
+.PP
+
+.SS "static void wl_signal_emit (struct \fBwl_signal\fP *signal, void *data)\fC [inline]\fP"
+Emits this signal, notifying all registered listeners\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsignal\fP The signal object that will emit the signal 
+.br
+\fIdata\fP The data that will be emitted with the signal 
+.RE
+.PP
+
+.SS "static struct \fBwl_listener\fP * wl_signal_get (struct \fBwl_signal\fP *signal, wl_notify_func_tnotify)"
+Gets the listener struct for the specified callback\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsignal\fP The signal that contains the specified listener 
+.br
+\fInotify\fP The listener that is the target of this search 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+the list item that corresponds to the specified listener, or NULL if none was found 
+.RE
+.PP
+
+.SS "static void wl_signal_init (struct \fBwl_signal\fP *signal)\fC [inline]\fP"
+Initialize a new \fBwl_signal\fP for use\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsignal\fP The signal that will be initialized 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Wayland from the source code\&.

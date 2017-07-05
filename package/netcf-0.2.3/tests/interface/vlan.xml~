@@ -1,0 +1,9 @@
+<interface type="vlan" name="eth1.42">
+  <start mode="onboot"/>
+  <protocol family="ipv4">
+    <dhcp peerdns="no"/>
+  </protocol>
+  <vlan tag="42">
+    <interface name="eth1"/>
+  </vlan>
+</interface>

@@ -1,0 +1,70 @@
+memstat (0.5) unstable; urgency=low
+
+  * New maintainer, closes: #485998
+  * Aknowledged NMU, closes: #322749
+  * Fixed compiler warnings by applying patch, closes: #356024
+  * Fixed wrong pathname problem by applying patch, closes: #294635, #279117
+  * Bumped Standards-Version to 3.8.0.
+  * Bumped debhelper compat version to 7.
+  * Simplified rules file.
+
+ -- Michael Meskes <meskes@debian.org>  Fri, 13 Jun 2008 16:54:39 +0200
+
+memstat (0.4.0.0.1) unstable; urgency=low
+
+  * Non-maintainer upload (take two.. where did the first one go?)
+  * Complete /usr/doc transition. Closes: #322749
+
+ -- Joey Hess <joeyh@debian.org>  Tue, 10 Jan 2006 01:28:34 -0500
+
+memstat (0.4) unstable; urgency=high
+
+  * make fscanf buffer bigger and more dynamic (Closes: Bug#5544)
+  * less verbose postinst (Closes: Bug#97400)
+
+ -- Bernd Eckenfels <ecki@debian.org>  Fri, 12 Jul 2002 05:37:51 +0200
+
+memstat (0.3) unstable; urgency=low
+
+  * catch null pointer in reallof (Closes Bug: #108767)
+  * new policy version (3.5.6) and use of strip/debug switches
+  * includes Build-Depends now
+  * lintian clean (added Priority, fixed spelling, added -isp)
+
+ -- Bernd Eckenfels <ecki@debian.org>  Thu, 23 May 2002 04:26:51 +0200
+
+memstat (0.2) unstable; urgency=low
+
+  * support for path in maps files (#23099, #31043, #49855, #50700, #22674)
+  * added libc5 compat dirs (#34326)
+  * started to maintain the package upstream
+  * no compiler warnings and lintian clean (support for /usr/share)
+  * new standards version
+
+ -- Bernd Eckenfels <ecki@debian.org>  Sat, 20 Nov 1999 18:40:23 +0100
+
+memstat (0.1-3) unstable; urgency=low
+
+  * removed double /usr/local/bin in conffile (Bug#22674)
+  * moved man page to section 1 and meminfo -> memstat (Bug#23096)
+  * added debian/conffiles to .deb archives control dir (Bug#27818)
+
+ -- Bernd Eckenfels <ecki@debian.org>  Sun,  1 Nov 1998 09:08:05 +0100
+
+memstat (0.1-2) unstable; urgency=low
+
+  * modified manpage to show new 'unknown' format and fix Bug#21360
+
+ -- Bernd Eckenfels <ecki@debian.org>  Sat, 18 Apr 1998 21:58:23 +0200
+
+
+memstat (0.1-1) unstable; urgency=low
+
+  * changed the output from unknown files to "[<dev>]:<inode>"
+  * Initial Release
+
+ -- Bernd Eckenfels <ecki@debian.org>  Mon,  6 Apr 1998 22:56:41 +0200
+
+Local variables:
+mode: debian-changelog
+End:

@@ -1,0 +1,72 @@
+'\" t
+.\"     Title: evtest-capture
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
+.\"      Date: 02/14/2017
+.\"    Manual: \ \&
+.\"    Source: \ \&
+.\"  Language: English
+.\"
+.TH "EVTEST\-CAPTURE" "1" "02/14/2017" "\ \&" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+evtest-capture \- Input device event capture program
+.SH "SYNOPSIS"
+.sp
+.nf
+evtest\-capture "/dev/input/eventX" [evtest\-capture\&.xml]
+.fi
+.SH "DESCRIPTION"
+.sp
+evtest\-capture captures the information and events from the input device specified on the command line and writes it to the xml file given\&. If no filename is given for the output file, evtest\-capture\&.xml is chosen as default\&.
+.sp
+evtest\-capture needs to be able to read from the device; in most cases this means it must be run as root\&.
+.sp
+Together with with evtest\-create\-device\&.xsl, a simple uinput\-based software input device can be created that replays the events as if the same input was performed on the physical device\&. This can be useful to replicate bugs with input devices in upper layers of the stack\&.
+.sp
+To convert evtest\-capture\&.xml into such a uinput device, run:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+xsltproc evtest\-create\-device\&.xls evtest\-capture\&.xml > mydevice\&.c
+gcc \-o mydevice mydevice\&.c
+\&./mydevice
+.fi
+.if n \{\
+.RE
+.\}
+.SH "DIAGNOSTICS"
+.sp
+If evtest\-capture does not see any events even though the device is being used, the device may be grabbed by a process (EVIOCGRAB)\&. This is usually the case when debugging a synaptics device from within X\&. VT switching to a TTY or shutting down the X server terminates this grab and synaptics devices can be debugged\&.
+.SH "SEE ALSO"
+.sp
+evtest(1)
+.SH "AUTHOR"
+.sp
+evtest\-capture was written by Peter Hutterer <\m[blue]\fBpeter\&.hutterer@redhat\&.com\fR\m[]\&\s-2\u[1]\d\s+2>\&.
+.SH "NOTES"
+.IP " 1." 4
+peter.hutterer@redhat.com
+.RS 4
+\%mailto:peter.hutterer@redhat.com
+.RE

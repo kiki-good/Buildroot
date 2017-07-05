@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=${exec_prefix}/lib
+includedir=/usr/include
+
+Name: iksemel
+Description: XML parser library for Jabber
+Version: 1.4
+Libs: -L${libdir} -liksemel
+Cflags: -I${includedir}

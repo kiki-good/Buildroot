@@ -1,0 +1,5 @@
+libnss-arch.mk.patch
+libnss-cross.patch
+libnss-link-with-zlib.patch
+libnss-shlibsign.patch
+libnss-uclibc.patch

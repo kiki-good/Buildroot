@@ -1,0 +1,18 @@
+
+To install, enter just enter the command make.
+You will be prompted for the installation locations.
+
+If the binary doesn't work, delete it and re-compile.
+
+Send me (sadd@msc.cornell.edu) any problems with
+installation.
+
+	Mike Sadd
+
+
+Change Log:
+
+Sept. 16, 1996:  Addes code to allow rexec to pass signals to 
+		 the remote process. (Version 1.1)
+
+Sept. 12, 1996:  Original code (Version 1)

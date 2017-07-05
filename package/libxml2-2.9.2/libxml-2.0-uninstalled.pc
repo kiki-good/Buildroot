@@ -1,0 +1,12 @@
+prefix=
+exec_prefix=
+libdir=${pcfiledir}
+includedir=${pcfiledir}/include
+
+
+Name: libXML
+Version: 2.9.2
+Description: libXML library version2.
+Requires:
+Libs: -L${libdir} -lxml2   -lz   -liconv -lm -L/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/lib -L/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/lib
+Cflags: -I${includedir} -I${includedir}/libxml2 

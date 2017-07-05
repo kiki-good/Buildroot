@@ -1,0 +1,28 @@
+# bash.pc.in
+
+prefix=/usr
+exec_prefix=/usr
+includedir=/usr/include
+libdir=/lib
+
+loadablesdir=${libdir}/bash
+headersdir=${includedir}/bash
+
+LOCAL_CFLAGS = 
+LOCAL_DEFS = -DSHELL
+CCFLAGS = ${LOCAL_DEFS} ${LOCAL_CFLAGS}
+
+CC = /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//bin/aarch64-linux-gcc -Os  -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/include -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/include -I/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//aarch64-linux/include
+SHOBJ_CC = /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//bin/aarch64-linux-gcc -Os -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/include -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/include -I/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//aarch64-linux/include
+SHOBJ_CFLAGS = -fPIC
+SHOBJ_LD = ${CC}
+SHOBJ_LDFLAGS = -shared -Wl,-soname,$@
+SHOBJ_XLDFLAGS = 
+SHOBJ_LIBS = 
+
+Name: bash
+Description: Bash headers for bash loadable builtins
+Version: 4.4-release
+Url: 
+Libs: ${SHOBJ_LIBS}
+Cflags: ${SHOBJ_CFLAGS} ${CCFLAGS} -I${headersdir} -I${headersdir}/builtins -I${headersdir}/include

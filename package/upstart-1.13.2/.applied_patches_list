@@ -1,0 +1,6 @@
+upstart-1.13.2-armv7.patch
+upstart-1.13.2-disableTelinit.patch
+upstart-1.13.2-hardening-upstart-new-user-access.patch
+upstart-1.13.2-mount-options.patch
+upstart-1.13.2-poweroff-halt.patch
+upstart-1.13.2-upstartDbusBridge.patch

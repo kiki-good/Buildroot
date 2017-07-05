@@ -1,0 +1,22 @@
+This is Debian GNU/Linux's prepackaged version of Joshua M. Yelon's memstat,
+now maintained upstream by Bernd Eckenfels <ecki@debian.org>
+
+ * This software copyright 1997 Joshua M. Yelon.
+ * Distribution subject to the terms of the GPL.
+
+This package was put together by me, Bernd Eckenfels <ecki@debian.org>, 
+from the sources, which I obtained from
+http://charm.cs.uiuc.edu/~jyelon/software.html
+
+The debian/* Files are based on Ian Jacksons hello Package.
+
+All patches by me are subject to the GPL.
+
+Original Copyright from memstat.c:
+
+ * This software copyright 1997 Joshua M. Yelon.
+ * Distribution subject to the terms of the GPL.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License (Version 2.0) can be found in `/usr/share/common-licenses/GPL'.
+

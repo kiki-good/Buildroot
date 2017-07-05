@@ -1,0 +1,24 @@
+# Dummy pkg-config file to allow lang bindings
+# to build against a libvirt source tree eg
+# export PKG_CONFIG_PATH=/path/to/libvirt/git/src
+
+prefix=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/libvirt-1.2.18.2
+exec_prefix=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/libvirt-1.2.18.2
+libdir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/libvirt-1.2.18.2/src/.libs
+includedir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/libvirt-1.2.18.2/include
+source_includedir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/libvirt-1.2.18.2/include
+datarootdir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/libvirt-1.2.18.2
+
+libvirt_api=${datarootdir}/docs/libvirt-api.xml
+
+# For compat with older versions - also present
+# in libvirt-qemu.pc / libvirt-lxc.pc
+libvirt_qemu_api=${datarootdir}/docs/libvirt-qemu-api.xml
+libvirt_lxc_api=${datarootdir}/docs/libvirt-lxc-api.xml
+
+Name: libvirt
+Version: 1.2.18.2
+Description: libvirt library
+Requires:
+Libs: -L${libdir} -lvirt
+Cflags: -I${includedir} -I${source_includedir}

@@ -1,0 +1,144 @@
+0.2.3 - 2012-12-21
+
+  - eliminate calls to nl_cache_mngt_provide(), to avoid
+    non-threadsafe code in libnl (and because it isn't needed
+    anyway)
+  - portability fixes for FreeBSD
+  - fix bug when a config file has two config parameters with
+    identical names
+  - add HACKING document
+  - always bail immediately if get_augeas fails (doing otherwise
+    could lead to a segfault)
+
+0.2.2 - 2012-08-25
+
+  - specfile: require libnl3-devel for rpm builds on Fedora 18+ and
+    RHEL7+. Likewise, force libnl1 for F17- and RHEL6.x-, even if
+    libnl3-devel is installed.
+
+0.2.1 - 2012-08-10
+  - update gnulib to fix broken build on systems with nwer glibc (which no
+    longer provides gets()).
+  - add ncftool manpage
+  - interfaces are only "active" if both UP and RUNNING.
+
+0.2.0 - 2012-07-20
+  - add support for Ubuntu, debian, and Suse Linux. Also an
+    unfinished port for MS Windows.
+  - added support for libnl-3 (which is incompatible with libnl-1 -
+    netcf will use whichever is available, preferring libnl-3 unless
+    told otherwise during configure stage)
+  - add "bundled(gnulib)" to specfile to indicate that we use a local
+    copy of gnulib sources (used by Fedora/RHEL when determining the scope
+    of security bugs).
+  - Fix ipcalc_netmask, which was trimming off the last digit in
+    character representations of full-length netmasks (all 4 octets
+    having 3 chars each)
+  - other minor bugfixes
+
+0.1.9 - 2011-07-26
+  - always add <bridge> element to bridge, even if there is no physdev present
+    (resolves: https://bugzilla.redhat.com/show_bug.cgi?id=713180)
+  - don't log error if interface isn't found in kernel during status report
+    (resolves: https://bugzilla.redhat.com/show_bug.cgi?id=713286
+               https://bugzilla.redhat.com/show_bug.cgi?id=698108
+  - allow building with C++
+  - update gnulib
+
+0.1.8 - 2011-06-03
+  - new transactional change APIs: ncf_change_(begin|commit|rollback)
+  - add stdout/stderr to error text when an external program fails
+  - make error reporting of failed execs more exact/correct
+  - add "--system" to autogen.sh - sets all directories for standard system
+    install.
+  - change sysconfdir and localstatedir during config if basedir is /usr.
+  - Remove unnecessary "Requires" of libxml2 and augeas from pkgconfig file
+    to pulling in extra packages when building an application that uses netcf.
+  - Reorganize code to simplify porting to other platforms.
+
+0.1.7 - 2010-09-24
+  - remove code that modifies iptables config for bridges
+  - register gnulib as a proper submodule
+  - don't delete physical interface config when defining a vlan
+  - properly handle quoted entries in sysconfig files.
+  - make miimon/arpmon optional
+
+0.1.6 - 2010-04-15
+  - only list devices that have an ifcfg file (BZ 580348)
+  - improve run_program to close all open file descriptors before exec.
+  - add missing includes for stat in src/dutil.c
+  - add --debug option to ncftool - sets NETCF_DEBUG env variable
+  - allow a one shot, non-interactive command in ncftool
+
+0.1.5 - 2009-11-30
+  - fix a couple of memory leaks (BZ 540521 and 540472)
+  - do not require bridge module for succesful initialization
+
+0.1.4 - 2009-11-05
+  - ncf_if_xml_state: fill in details for bridge, bond, and vlan. The
+    returned XML will now validate against interface.rng (except bonds,
+    which are still missing the miimon or arpmon elements)
+  - ncf_close: allow passing in a NULL ncf, or a partially initialized ncf
+  - ncf_init: set *ncf to NULL when returning -2
+
+0.1.3 - 2009-10-27
+  - The interface.rng schema now allows specifying IPv4 and IPv6 addresses
+    in any order
+  - ncf_if_status: new API call
+  - ncf_if_xml_state: only report information about the live interface, and
+    none of the information from configuration files; report interface
+    type; report all addresses assigned to an interface; report MAC address
+    of an interface
+  - ncf_list_interfaces, ncf_num_interfaces, ncf_if_xml_state: fix bugs
+    when dealing with interfaces that are down
+  - ncf_if_mac_string: do not report error when MAC is not known, simply
+    return NULL
+  - use libnl to determine information about live interfaces
+
+0.1.2 - 2009-09-25
+  - Configure IPv6 addresses on interfaces (see tests/interface/ipv6-*.xml)
+  - ncf_if_xml_state: new API call to get currently assigned IP of an
+    interface (Laine Stump)
+
+0.1.1 - 2009-09-16
+  - Bridge: allow setting forward delay
+  - Bridge: allow bridges with nothing enslaved
+  - Bridge: allow enslaving a bond
+  - Bond: properly translate numeric modes into textual modes
+  - Lookup MAC's without regarding case (bz 512955)
+  - Fix initialization of libxslt-1.1.24; this works around a threading bug
+    in libxslt exposed by using netcf with libvirt (Daniel Veillard)
+  - Print augeas initialization errors only when the environment variable
+    NETCF_DEBUG exists (bz 513212)
+  - Ignore the same backup etc. files ignored by the initscripts (bz 512950)
+  - Search interface config files in the same manner as initscripts'
+    need_config (bz 512950)
+  - Only read/modify iptables and system-config-firewall when
+    net.bridge.bridge-nf-call-iptables sysctl is 1 (bz 517617)
+  - Respect PREFIX in ifcfg file; if it's not there, continue to derive it
+    from NETMASK
+  - Properly propagate errors from running ifup/ifdown
+  - ncf_define: fix removal of old interface config before redefining it
+  - ncf_define: do not crash when defining a VLAN interface without a name
+    (commit fb0543cc)
+  - Move code around for upcoming SuSe driver (Jonas Eriksson)
+
+0.1.0 - 2009-07-14
+  - Stable API and XML schema; from now on, API and XML schema will only
+    change in backwards compatible ways
+  - Various schema changes and schema cleanup
+  - Add MII and ARP monitoring for bonds
+  - Add VLAN's
+  - Allow adding a VLAN to a bridge
+  - toplevel interfaces are no longer required to have an address
+  - ncf_lookup_by_mac_string: return multiple interfaces
+  - ncf_num_of_interfaces, ncf_list_interfaces: allow filtering
+    active/inactive interfaces (Laine Stump)
+  - ncf_close: return int instead of void
+  - initscripts driver: bring bridges up/down properly
+
+0.0.2 - 2009-04-15
+  - Fix pkgconfig and RPM specfile
+
+0.0.1 - 2009-04-02
+  - Initial release

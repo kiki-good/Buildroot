@@ -1,0 +1,68 @@
+.TH "wl_argument" 3 "Fri Feb 13 2015" "Version 1.7.0" "Wayland" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wl_argument \- 
+.PP
+A union representing all of the basic data types that can be passed along the wayland wire format\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <wayland-util\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "int32_t \fBi\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBu\fP"
+.br
+.ti -1c
+.RI "wl_fixed_t \fBf\fP"
+.br
+.ti -1c
+.RI "const char * \fBs\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_object\fP * \fBo\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBn\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_array\fP * \fBa\fP"
+.br
+.ti -1c
+.RI "int32_t \fBh\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+A union representing all of the basic data types that can be passed along the wayland wire format\&. 
+
+This union represents all of the basic data types that can be passed in the wayland wire format\&. It is used by dispatchers and runtime-friendly versions of the event and request marshaling functions\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "struct \fBwl_array\fP* wl_argument::a"
+array 
+.SS "wl_fixed_t wl_argument::f"
+fixed point 
+.SS "int32_t wl_argument::h"
+file descriptor 
+.SS "int32_t wl_argument::i"
+signed integer 
+.SS "uint32_t wl_argument::n"
+new_id 
+.SS "struct \fBwl_object\fP* wl_argument::o"
+object 
+.SS "const char* wl_argument::s"
+string 
+.SS "uint32_t wl_argument::u"
+unsigned integer 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Wayland from the source code\&.

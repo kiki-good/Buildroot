@@ -1,0 +1,143 @@
+23-Jul-2000:
+	General audit for setuid/setgid/initgroups/etc. calls that didn't
+	  check for error.
+
+22-Jul-2000:
+	Use getdtablesize() instead of OPEN_MAX. (Olaf Kirch, okir@caldera.de)
+
+5-Jan-2000:
+	Fix to PAM handling. (Olaf Kirch, okir@caldera.de)
+	Other PAM changes in rlogind. (Jeff Johnson, jbj@redhat.com,
+	  munged by yours truly.)
+
+17-Dec-1999:
+	Fix bug in rshd (hangs forever with zombie offspring).
+	Also fix problems with rlogind.
+	To be posted as patch 1, making netkit-rsh-0.16.1.
+
+14-Dec-1999:
+	netkit-rsh-0.16 is released.
+
+14-Sep-1999:
+	Close all files >= 3 before execing, in case libc has left
+	  something open. Also merge a Caldera doc fix.
+	  (Olaf Kirch, okir@caldera.de)
+
+1-Aug-1999:
+	Complete y2k and y2038 audit.
+
+31-Jul-1999:
+	Redid makefiles/config stuff for new confgen version.
+
+3-Mar-1999:
+	Add rexec client written by Michael Sadd (sadd@msc.cornell.edu).
+	(I trust distributing this in netkit is ok; if not, it'll go away.)
+
+22-Sep-1997:
+	Clear crypt()'s internal state as well as the cleartext password.
+	At least, hopefully.
+
+27-Jul-1997:
+	Erase cleartext passwords in rexecd after use.
+
+13-Jun-1997:
+	Massive cleanup of rlogind and rshd.
+
+12-Jun-1997:
+	netkit-rsh-0.10 released.
+
+08-Jun-1997:
+	Don't allow ordinary users to set SO_DEBUG in rsh. (Daniel Barlow,
+	  dan@telent.net)
+
+19-May-1997:
+	glibc fixes from Red Hat.
+
+05-Apr-1997:
+	Added configure script to generate MCONFIG.
+	rlogind sets unused ttys to mode 600 now.
+	PAM fixes from Red Hat.
+
+08-Mar-1997: 
+	Split from full NetKit package. 
+	Generated this change log from NetKit's.
+
+07-Mar-1997:
+	Fixed rlogind to not let root use hosts.equiv. (Jean-Luc Szpyrka,
+	  Jean-luc.Szpyrka@sophia.inria.fr)
+
+29-Dec-1996
+	NetKit-0.09 released.
+	Assorted alpha/glibc patches. (Erik Troan, ewt@redhat.com)
+	Assorted bug fixes from Debian. (Peter Tobias, 
+	  tobias@et-inf.fho-emden.de)
+	Hardened programs against DNS h_length spoofing attacks.
+	Use inet_aton() everywhere instead of inet_addr().
+	Rudimentary shadow support in rexecd.
+	Moved opening of stderr in rexecd after authentication so you
+	  can't do port scans with it.
+	rlogind no longer gets mixed up when NIS or PAM does resolver
+	  operations.
+        rlogind now supports a -h option to permit root rhosts files
+	  (which are not honored by default) and a -L option to disable 
+	  all rhosts and hosts.equiv processing.
+	rshd now supports the -h option also. To achieve the equivalent of 
+	  rlogind's -L option, disable rshd entirely.
+	Fix select problems in rsh. (Felix Egli, fegli@goldnet.ch)
+	rlogin (and consequently rsh) doesn't dump core on high 
+	  baudrates. (Alan Cox)
+
+22-Aug-1996
+	NetKit-B-0.08 released.
+	(almost) everything now compiles with lots of warnings turned on.
+	Fixed rexecd to use fd_sets correctly.
+	Clear environment in setuid programs to protect against library
+	bugs.
+
+25-Jul-1996
+	NetKit-B-0.07A released.
+
+23-Jul-1996
+	NetKit-B-0.07 released.
+	Integrated a collection of patches that had been lurking on the net,
+	  including the 256-ptys support for telnetd and passive mode ftp.
+	Major security fixes, including to fingerd, lpr, rlogin, rsh, talkd, 
+	  and telnetd. Do *not* use the sliplogin from earlier versions of this
+	  package, either.
+	Much of the code builds without libbsd.a or bsd includes.
+	Massive code cleanup. Almost everything compiles clean with gcc
+	  -Wall now. rusers and rusersd do not; patches to rpcgen to fix
+	  this would be appreciated if anyone feels like it.
+	Kerberos support has been removed. It didn't work anyway, and
+	  proper Kerberos tools come with Kerberos.
+	Added experimental support for PAM (Pluggable Authentication
+	  Modules) which may or may not actually work...
+	New maintainer:  David A. Holland, dholland@hcs.harvard.edu
+
+date not known
+	NetKit-B-0.06 released.
+	rsh was exiting before all of the output from the remote command
+	  was finished. This only happened together with Solaris machines,
+	  not SunOS 4.1.
+	  (Mark Weaver Mark_Weaver@brown.edu)
+	  Could you all please give rsh a very hard test?
+
+date not known
+	NetKit-B-0.05 released.
+	Fixed writing entries to /var/adm/wtmp by ftpd, rlogind and
+	  telnetd. (logwtmp.c) Florian
+	  This is only necessary for the GNU last, not for the one 
+	  in util-linux...
+	Changed rsh to stop looking for options after the first
+	  non-option. (See POSIXLY_CORRECT environment and "+" as first
+	  option for GNU getopt.)
+
+date not known
+	NetKit-B-0.04 released.
+
+date not known
+	NetKit-B-0.03 released.
+	I found a bug-fix on of the news groups by Ulf Rimkus
+	  ulf@pc0435.psychologie.uni-marburg.de. 'rexecd' didn't set the
+	  environment at all. (Though it prepares all data for it...)
+

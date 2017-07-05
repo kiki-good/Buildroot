@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Wayland.ent">
+%BOOK_ENTITIES;
+]>
+<bookinfo id="book-Wayland-Wayland">
+  <title>Wayland</title>
+  <subtitle>The Wayland display server</subtitle>
+  <productname>Documentation</productname>
+  <productnumber>0.1</productnumber>
+  <edition>1</edition>
+  <pubsnumber>0</pubsnumber>
+  <abstract>
+    <para>
+      Wayland is a protocol for a compositor to talk to
+      its clients as well as a C library implementation of
+      that protocol. The compositor can be a standalone
+      display server running on Linux kernel modesetting
+      and evdev input devices, an X application, or a
+      Wayland client itself. The clients can be
+      traditional applications, X servers (rootless or
+      fullscreen) or other display servers.
+    </para>
+  </abstract>
+  <corpauthor>
+    <inlinemediaobject>
+      <imageobject>
+	<imagedata fileref="images/wayland.png" format="PNG" />
+      </imageobject>
+      <textobject>
+        <phrase>
+          Wayland logo
+        </phrase>
+      </textobject>
+    </inlinemediaobject>
+  </corpauthor>
+
+  <legalnotice lang="en-US">
+    <para>
+      Copyright <trademark class="copyright"></trademark> &YEAR; &HOLDER;
+    </para>
+
+    <para>
+      Permission to use, copy, modify, distribute, and sell this
+      software and its documentation for any purpose is hereby granted
+      without fee, provided that the above copyright notice appear in
+      all copies and that both that copyright notice and this
+      permission notice appear in supporting documentation, and that
+      the name of the copyright holders not be used in advertising or
+      publicity pertaining to distribution of the software without
+      specific, written prior permission.  The copyright holders make
+      no representations about the suitability of this software for
+      any purpose.  It is provided "as is" without express or implied
+      warranty.
+    </para>
+
+    <para>
+      THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO
+      THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF
+      MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL THE COPYRIGHT
+      HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL
+      DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+      DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+      OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
+      USE OR PERFORMANCE OF THIS SOFTWARE.
+    </para>
+  </legalnotice>
+
+
+  <xi:include href="Author_Group.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+</bookinfo>

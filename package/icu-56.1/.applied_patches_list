@@ -1,0 +1,6 @@
+icu-56.1-0001-dont-build-static-dynamic-twice.patch
+icu-56.1-0002-workaround-toolchain-bugs.patch
+icu-56.1-0003-detect-compiler-symbol-prefix.patch
+icu-56.1-0004-link-icudata-as-data-only.patch
+icu-56.1-0005-fix-static-linking-with-icu-uc.patch
+icu-56.1-0006-fix-Error-allocating-memory-for-pkgDataFlags.patch

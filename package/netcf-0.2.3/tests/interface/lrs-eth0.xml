@@ -1,0 +1,7 @@
+<interface type="ethernet" name="eth0">
+  <start mode="onboot"/>
+  <mac address="00:1F:E2:18:4F:B7"/>
+  <protocol family="ipv4">
+    <ip address="10.24.3.2" prefix="24"/>
+  </protocol>
+</interface>

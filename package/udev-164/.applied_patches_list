@@ -1,0 +1,11 @@
+udev-164-001-config.patch
+udev-164-002-DMS_permission_fix.patch
+udev-164-003-eglibc.patch
+udev-164-004-rules_fix.patch
+udev-164-005-Adding_Null_urandom_ToSystemGroup.patch
+udev-164-006-Adding_bus_usb_permission_group.patch
+udev-164-007-hardening-changes-rm3213.patch
+udev-164-008-Adding_hidraw_ToSystemGroup.patch
+udev-164-009-sdaPermissionTo660.patch
+udev-164-101-RCU-input-permission.patch
+udev-164-102-RemovingUnwantedRules.patch

@@ -1,0 +1,12 @@
+interface/libvirt_driver_interface_la-interface_driver.lo: \
+ interface/interface_driver.c \
+ /home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h \
+ ../config.h ../config-post.h interface/interface_driver.h
+
+/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5/aarch64-linux-gnu/sys-root/usr/include/stdc-predef.h:
+
+../config.h:
+
+../config-post.h:
+
+interface/interface_driver.h:

@@ -1,0 +1,5 @@
+Name: udev
+Description: udev
+Version: 164
+
+udevdir=${exec_prefix}/libexec

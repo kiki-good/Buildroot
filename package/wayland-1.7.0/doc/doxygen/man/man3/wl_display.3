@@ -1,0 +1,592 @@
+.TH "wl_display" 3 "Fri Feb 13 2015" "Version 1.7.0" "Wayland" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wl_display \- 
+.PP
+Represents a connection to the compositor and acts as a proxy to the \fBwl_display\fP singleton object\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <wayland-client\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "struct \fBwl_client\fP * \fBwl_client_create\fP (struct \fBwl_display\fP *display, int fd)"
+.br
+.ti -1c
+.RI "struct \fBwl_display\fP * \fBwl_display_create\fP (void)"
+.br
+.ti -1c
+.RI "void \fBwl_display_destroy\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "uint32_t \fBwl_display_get_serial\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "uint32_t \fBwl_display_next_serial\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_add_socket\fP (struct \fBwl_display\fP *display, const char *name)"
+.br
+.ti -1c
+.RI "uint32_t * \fBwl_display_add_shm_format\fP (struct \fBwl_display\fP *display, uint32_t format)"
+.br
+.ti -1c
+.RI "struct \fBwl_array\fP * \fBwl_display_get_additional_shm_formats\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "struct \fBwl_display\fP * \fBwl_display_connect_to_fd\fP (int fd)"
+.br
+.ti -1c
+.RI "struct \fBwl_display\fP * \fBwl_display_connect\fP (const char *name)"
+.br
+.ti -1c
+.RI "void \fBwl_display_disconnect\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_get_fd\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_roundtrip\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_read_events\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_prepare_read\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "void \fBwl_display_cancel_read\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_dispatch\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_dispatch_pending\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "int \fBwl_display_get_error\fP (struct \fBwl_display\fP *display)"
+.br
+.ti -1c
+.RI "uint32_t \fBwl_display_get_protocol_error\fP (struct \fBwl_display\fP *display, const struct \fBwl_interface\fP **interface, uint32_t *id)"
+.br
+.ti -1c
+.RI "int \fBwl_display_flush\fP (struct \fBwl_display\fP *display)"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "struct wl_event_loop * \fBloop\fP"
+.br
+.ti -1c
+.RI "int \fBrun\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBid\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBserial\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_list\fP \fBregistry_resource_list\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_list\fP \fBglobal_list\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_list\fP \fBsocket_list\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_list\fP \fBclient_list\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_signal\fP \fBdestroy_signal\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_array\fP \fBadditional_shm_formats\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Represents a connection to the compositor and acts as a proxy to the \fBwl_display\fP singleton object\&. 
+
+A \fBwl_display\fP object represents a client connection to a Wayland compositor\&. It is created with either \fBwl_display_connect()\fP or \fBwl_display_connect_to_fd()\fP\&. A connection is terminated using \fBwl_display_disconnect()\fP\&.
+.PP
+A \fBwl_display\fP is also used as the \fBwl_proxy\fP for the \fBwl_display\fP singleton object on the compositor side\&.
+.PP
+A \fBwl_display\fP object handles all the data sent from and to the compositor\&. When a \fBwl_proxy\fP marshals a request, it will write its wire representation to the display's write buffer\&. The data is sent to the compositor when the client calls \fBwl_display_flush()\fP\&.
+.PP
+Incoming data is handled in two steps: queueing and dispatching\&. In the queue step, the data coming from the display fd is interpreted and added to a queue\&. On the dispatch step, the handler for the incoming event set by the client on the corresponding \fBwl_proxy\fP is called\&.
+.PP
+A \fBwl_display\fP has at least one event queue, called the \fIdefault queue\fP\&. Clients can create additional event queues with \fBwl_display_create_queue()\fP and assign \fBwl_proxy\fP's to it\&. Events occurring in a particular proxy are always queued in its assigned queue\&. A client can ensure that a certain assumption, such as holding a lock or running from a given thread, is true when a proxy event handler is called by assigning that proxy to an event queue and making sure that this queue is only dispatched when the assumption holds\&.
+.PP
+The default queue is dispatched by calling \fBwl_display_dispatch()\fP\&. This will dispatch any events queued on the default queue and attempt to read from the display fd if it's empty\&. Events read are then queued on the appropriate queues according to the proxy assignment\&.
+.PP
+A user created queue is dispatched with \fBwl_display_dispatch_queue()\fP\&. This function behaves exactly the same as \fBwl_display_dispatch()\fP but it dispatches given queue instead of the default queue\&.
+.PP
+A real world example of event queue usage is Mesa's implementation of eglSwapBuffers() for the Wayland platform\&. This function might need to block until a frame callback is received, but dispatching the default queue could cause an event handler on the client to start drawing again\&. This problem is solved using another event queue, so that only the events handled by the EGL code are dispatched during the block\&.
+.PP
+This creates a problem where a thread dispatches a non-default queue, reading all the data from the display fd\&. If the application would call \fIpoll(2)\fP after that it would block, even though there might be events queued on the default queue\&. Those events should be dispatched with \fBpending()\fP before flushing and blocking\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "struct \fBwl_client\fP * wl_client_create (struct \fBwl_display\fP *display, intfd)"
+Create a client for the given file descriptor
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display object 
+.br
+\fIfd\fP The file descriptor for the socket to the client 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The new client object or NULL on failure\&.
+.RE
+.PP
+Given a file descriptor corresponding to one end of a socket, this function will create a \fBwl_client\fP struct and add the new client to the compositors client list\&. At that point, the client is initialized and ready to run, as if the client had connected to the servers listening socket\&. When the client eventually sends requests to the compositor, the \fBwl_client\fP argument to the request handler will be the \fBwl_client\fP returned from this function\&.
+.PP
+The other end of the socket can be passed to \fBwl_display_connect_to_fd()\fP on the client side or used with the WAYLAND_SOCKET environment variable on the client side\&.
+.PP
+On failure this function sets errno accordingly and returns NULL\&. 
+.SS "uint32_t * wl_display_add_shm_format (struct \fBwl_display\fP *display, uint32_tformat)"
+Add support for a wl_shm pixel format
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display object 
+.br
+\fIformat\fP The wl_shm pixel format to advertise 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+A pointer to the wl_shm format that was added to the list or NULL if adding it to the list failed\&.
+.RE
+.PP
+Add the specified wl_shm format to the list of formats the wl_shm object advertises when a client binds to it\&. Adding a format to the list means that clients will know that the compositor supports this format and may use it for creating wl_shm buffers\&. The compositor must be able to handle the pixel format when a client requests it\&.
+.PP
+The compositor by default supports WL_SHM_FORMAT_ARGB8888 and WL_SHM_FORMAT_XRGB8888\&. 
+.SS "int wl_display_add_socket (struct \fBwl_display\fP *display, const char *name)"
+Add a socket to Wayland display for the clients to connect\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP Wayland display to which the socket should be added\&. 
+.br
+\fIname\fP Name of the Unix socket\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 if success\&. -1 if failed\&.
+.RE
+.PP
+This adds a Unix socket to Wayland display which can be used by clients to connect to Wayland display\&.
+.PP
+If NULL is passed as name, then it would look for WAYLAND_DISPLAY env variable for the socket name\&. If WAYLAND_DISPLAY is not set, then default wayland-0 is used\&.
+.PP
+The Unix socket will be created in the directory pointed to by environment variable XDG_RUNTIME_DIR\&. If XDG_RUNTIME_DIR is not set, then this function fails and returns -1\&.
+.PP
+The length of socket path, i\&.e\&., the path set in XDG_RUNTIME_DIR and the socket name, must not exceed the maxium length of a Unix socket path\&. The function also fails if the user do not have write permission in the XDG_RUNTIME_DIR path or if the socket name is already in use\&. 
+.SS "void wl_display_cancel_read (struct \fBwl_display\fP *display)"
+Cancel read intention on display's fd
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object
+.RE
+.PP
+After a thread successfully called \fBwl_display_prepare_read()\fP it must either call \fBwl_display_read_events()\fP or \fBwl_display_cancel_read()\fP\&. If the threads do not follow this rule it will lead to deadlock\&.
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_prepare_read()\fP, \fBwl_display_read_events()\fP 
+.RE
+.PP
+
+.SS "struct \fBwl_display\fP * wl_display_connect (const char *name)"
+Connect to a Wayland display
+.PP
+\fBParameters:\fP
+.RS 4
+\fIname\fP Name of the Wayland display to connect to 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+A \fBwl_display\fP object or \fCNULL\fP on failure
+.RE
+.PP
+Connect to the Wayland display named \fCname\fP\&. If \fCname\fP is \fCNULL\fP, its value will be replaced with the WAYLAND_DISPLAY environment variable if it is set, otherwise display 'wayland-0' will be used\&. 
+.SS "struct \fBwl_display\fP * wl_display_connect_to_fd (intfd)"
+Connect to Wayland display on an already open fd
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfd\fP The fd to use for the connection 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+A \fBwl_display\fP object or \fCNULL\fP on failure
+.RE
+.PP
+The \fBwl_display\fP takes ownership of the fd and will close it when the display is destroyed\&. The fd will also be closed in case of failure\&. 
+.SS "struct \fBwl_display\fP * wl_display_create (void)"
+Create Wayland display object\&.
+.PP
+\fBReturns:\fP
+.RS 4
+The Wayland display object\&. Null if failed to create
+.RE
+.PP
+This creates the \fBwl_display\fP object\&. 
+.SS "void wl_display_destroy (struct \fBwl_display\fP *display)"
+Destroy Wayland display object\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The Wayland display object which should be destroyed\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+None\&.
+.RE
+.PP
+This function emits the \fBwl_display\fP destroy signal, releases all the sockets added to this display, free's all the globals associated with this display, free's memory of additional shared memory formats and destroy the display object\&.
+.PP
+\fBSee Also:\fP
+.RS 4
+wl_display_add_destroy_listener 
+.RE
+.PP
+
+.SS "void wl_display_disconnect (struct \fBwl_display\fP *display)"
+Close a connection to a Wayland display
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object
+.RE
+.PP
+Close the connection to \fCdisplay\fP and free all resources associated with it\&. 
+.SS "int wl_display_dispatch (struct \fBwl_display\fP *display)"
+Process incoming events
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The number of dispatched events on success or -1 on failure
+.RE
+.PP
+Dispatch the display's default event queue\&.
+.PP
+If the default event queue is empty, this function blocks until there are events to be read from the display fd\&. Events are read and queued on the appropriate event queues\&. Finally, events on the default event queue are dispatched\&.
+.PP
+In multi-threaded environment, programmer may want to use \fBwl_display_read_events()\fP\&. However, use of \fBwl_display_read_events()\fP must not be mixed with \fBwl_display_dispatch()\fP\&. See \fBwl_display_read_events()\fP and \fBwl_display_prepare_read()\fP for more details\&.
+.PP
+\fBNote:\fP
+.RS 4
+It is not possible to check if there are events on the queue or not\&. For dispatching default queue events without blocking, see \fBwl_display_dispatch_pending()\fP\&.
+.RE
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_dispatch_pending()\fP, \fBwl_display_dispatch_queue()\fP, \fBwl_display_read_events()\fP 
+.RE
+.PP
+
+.SS "int wl_display_dispatch_pending (struct \fBwl_display\fP *display)"
+Dispatch default queue events without reading from the display fd
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The number of dispatched events or -1 on failure
+.RE
+.PP
+This function dispatches events on the main event queue\&. It does not attempt to read the display fd and simply returns zero if the main queue is empty, i\&.e\&., it doesn't block\&.
+.PP
+This is necessary when a client's main loop wakes up on some fd other than the display fd (network socket, timer fd, etc) and calls \fBwl_display_dispatch_queue()\fP from that callback\&. This may queue up events in other queues while reading all data from the display fd\&. When the main loop returns from the handler, the display fd no longer has data, causing a call to \fIpoll(2)\fP (or similar functions) to block indefinitely, even though there are events ready to dispatch\&.
+.PP
+To proper integrate the wayland display fd into a main loop, the client should always call \fBwl_display_dispatch_pending()\fP and then \fBwl_display_flush()\fP prior to going back to sleep\&. At that point, the fd typically doesn't have data so attempting I/O could block, but events queued up on the default queue should be dispatched\&.
+.PP
+A real-world example is a main loop that wakes up on a timerfd (or a sound card fd becoming writable, for example in a video player), which then triggers GL rendering and eventually eglSwapBuffers()\&. eglSwapBuffers() may call \fBwl_display_dispatch_queue()\fP if it didn't receive the frame event for the previous frame, and as such queue events in the default queue\&.
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_dispatch()\fP, \fBwl_display_dispatch_queue()\fP, \fBwl_display_flush()\fP 
+.RE
+.PP
+
+.SS "int wl_display_flush (struct \fBwl_display\fP *display)"
+Send all buffered requests on the display to the server
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The number of bytes sent on success or -1 on failure
+.RE
+.PP
+Send all buffered data on the client side to the server\&. Clients should call this function before blocking\&. On success, the number of bytes sent to the server is returned\&. On failure, this function returns -1 and errno is set appropriately\&.
+.PP
+\fBwl_display_flush()\fP never blocks\&. It will write as much data as possible, but if all data could not be written, errno will be set to EAGAIN and -1 returned\&. In that case, use poll on the display file descriptor to wait for it to become writable again\&. 
+.SS "struct \fBwl_array\fP * wl_display_get_additional_shm_formats (struct \fBwl_display\fP *display)"
+Get list of additional wl_shm pixel formats
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display object
+.RE
+.PP
+This function returns the list of addition wl_shm pixel formats that the compositor supports\&. WL_SHM_FORMAT_ARGB8888 and WL_SHM_FORMAT_XRGB8888 are always supported and not included in the array, but all formats added through \fBwl_display_add_shm_format()\fP will be in the array\&.
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_add_shm_format()\fP 
+.RE
+.PP
+
+.SS "int wl_display_get_error (struct \fBwl_display\fP *display)"
+Retrieve the last error that occurred on a display
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The last error that occurred on \fCdisplay\fP or 0 if no error occurred
+.RE
+.PP
+Return the last error that occurred on the display\&. This may be an error sent by the server or caused by the local client\&.
+.PP
+\fBNote:\fP
+.RS 4
+Errors are \fBfatal\fP\&. If this function returns non-zero the display can no longer be used\&. 
+.RE
+.PP
+
+.SS "int wl_display_get_fd (struct \fBwl_display\fP *display)"
+Get a display context's file descriptor
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Display object file descriptor
+.RE
+.PP
+Return the file descriptor associated with a display so it can be integrated into the client's main loop\&. 
+.SS "uint32_t wl_display_get_protocol_error (struct \fBwl_display\fP *display, const struct \fBwl_interface\fP **interface, uint32_t *id)"
+Retrieves the information about a protocol error:
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The Wayland display 
+.br
+\fIinterface\fP if not NULL, stores the interface where the error occurred 
+.br
+\fIid\fP if not NULL, stores the object id that generated the error\&. There's no guarantee the object is still valid; the client must know if it deleted the object\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The error code as defined in the interface specification\&.
+.RE
+.PP
+.PP
+.nf
+int err = wl_display_get_error(display);
+
+if (err == EPROTO) {
+       code = wl_display_get_protocol_error(display, &interface, &id);
+       handle_error(code, interface, id);
+}
+
+\&.\&.\&.
+.fi
+.PP
+ 
+.SS "uint32_t wl_display_get_serial (struct \fBwl_display\fP *display)"
+Get the current serial number
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display object
+.RE
+.PP
+This function returns the most recent serial number, but does not increment it\&. 
+.SS "uint32_t wl_display_next_serial (struct \fBwl_display\fP *display)"
+Get the next serial number
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display object
+.RE
+.PP
+This function increments the display serial number and returns the new value\&. 
+.SS "int wl_display_prepare_read (struct \fBwl_display\fP *display)"
+Prepare to read events from the display's file descriptor
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success or -1 if event queue was not empty
+.RE
+.PP
+This function must be called before reading from the file descriptor using \fBwl_display_read_events()\fP\&. Calling \fBwl_display_prepare_read()\fP announces the calling thread's intention to read and ensures that until the thread is ready to read and calls \fBwl_display_read_events()\fP, no other thread will read from the file descriptor\&. This only succeeds if the event queue is empty though, and if there are undispatched events in the queue, -1 is returned and errno set to EAGAIN\&.
+.PP
+If a thread successfully calls \fBwl_display_prepare_read()\fP, it must either call \fBwl_display_read_events()\fP when it's ready or cancel the read intention by calling \fBwl_display_cancel_read()\fP\&.
+.PP
+Use this function before polling on the display fd or to integrate the fd into a toolkit event loop in a race-free way\&. A correct usage would be (we left out most of error checking):
+.PP
+.PP
+.nf
+while (wl_display_prepare_read(display) != 0)
+        wl_display_dispatch_pending(display);
+wl_display_flush(display);
+
+ret = poll(fds, nfds, -1);
+if (has_error(ret))
+        wl_display_cancel_read(display);
+else
+        wl_display_read_events(display);
+
+wl_display_dispatch_pending(display);
+.fi
+.PP
+.PP
+Here we call \fBwl_display_prepare_read()\fP, which ensures that between returning from that call and eventually calling \fBwl_display_read_events()\fP, no other thread will read from the fd and queue events in our queue\&. If the call to \fBwl_display_prepare_read()\fP fails, we dispatch the pending events and try again until we're successful\&.
+.PP
+When using \fBwl_display_dispatch()\fP we'd have something like:
+.PP
+.PP
+.nf
+wl_display_dispatch_pending(display);
+wl_display_flush(display);
+poll(fds, nfds, -1);
+wl_display_dispatch(display);
+.fi
+.PP
+.PP
+This sequence in not thread-safe\&. The race is immediately after poll(), where one thread could preempt and read events before the other thread calls \fBwl_display_dispatch()\fP\&. This call now blocks and starves the other fds in the event loop\&.
+.PP
+Another race would be when using more event queues\&. When one thread calls wl_display_dispatch(_queue)(), then it reads all events from display's fd and queues them in appropriate queues\&. Then it dispatches only its own queue and the other events are sitting in their queues, waiting for dispatching\&. If that happens before the other thread managed to call poll(), it will block with events queued\&.
+.PP
+\fBwl_display_prepare_read()\fP function doesn't acquire exclusive access to the display's fd\&. It only registers that the thread calling this function has intention to read from fd\&. When all registered readers call \fBwl_display_read_events()\fP, only one (at random) eventually reads and queues the events and the others are sleeping meanwhile\&. This way we avoid races and still can read from more threads\&.
+.PP
+If the relevant queue is not the default queue, then \fBwl_display_prepare_read_queue()\fP and \fBwl_display_dispatch_queue_pending()\fP need to be used instead\&.
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_cancel_read()\fP, \fBwl_display_read_events()\fP 
+.RE
+.PP
+
+.SS "int wl_display_read_events (struct \fBwl_display\fP *display)"
+Read events from display file descriptor
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success or -1 on error\&. In case of error errno will be set accordingly
+.RE
+.PP
+This will read events from the file descriptor for the display\&. This function does not dispatch events, it only reads and queues events into their corresponding event queues\&. If no data is available on the file descriptor, \fBwl_display_read_events()\fP returns immediately\&. To dispatch events that may have been queued, call \fBwl_display_dispatch_pending()\fP or \fBwl_display_dispatch_queue_pending()\fP\&.
+.PP
+Before calling this function, \fBwl_display_prepare_read()\fP must be called first\&. When running in more threads (which is the usual case, since we'd use \fBwl_display_dispatch()\fP otherwise), every thread must call \fBwl_display_prepare_read()\fP before calling this function\&.
+.PP
+After calling \fBwl_display_prepare_read()\fP there can be some extra code before calling \fBwl_display_read_events()\fP, for example poll() or alike\&. Example of code in a thread:
+.PP
+.PP
+.nf
+while (wl_display_prepare_read(display) < 0)
+        wl_display_dispatch_pending(display);
+wl_display_flush(display);
+
+\&.\&.\&. some code \&.\&.\&.
+
+fds[0]\&.fd = wl_display_get_fd(display);
+fds[0]\&.events = POLLIN;
+poll(fds, 1, -1);
+
+if (!everything_ok()) {
+   wl_display_cancel_read(display);
+   handle_error();
+}
+
+if (wl_display_read_events(display) < 0)
+   handle_error();
+
+\&.\&.\&.
+.fi
+.PP
+.PP
+After \fBwl_display_prepare_read()\fP succeeds, other threads that enter \fBwl_display_read_events()\fP will sleep until the very last thread enters it too or cancels\&. Therefore when the display fd becomes (or already is) readable, \fBwl_display_read_events()\fP should be called as soon as possible to unblock all threads\&. If \fBwl_display_read_events()\fP will not be called, then \fBwl_display_cancel_read()\fP must be called instead to let the other threads continue\&.
+.PP
+This function must not be called simultaneously with \fBwl_display_dispatch()\fP\&. It may lead to deadlock\&. If programmer wants, for some reason, use \fBwl_display_dispatch()\fP in one thread and \fBwl_display_prepare_read()\fP with \fBwl_display_read_events()\fP in another, extra care must be taken to serialize these calls, i\&. e\&. use mutexes or similar (on whole prepare + read sequence)
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_display_prepare_read()\fP, \fBwl_display_cancel_read()\fP, \fBwl_display_dispatch_pending()\fP, \fBwl_display_dispatch()\fP 
+.RE
+.PP
+
+.SS "int wl_display_roundtrip (struct \fBwl_display\fP *display)"
+Block until all pending request are processed by the server
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdisplay\fP The display context object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The number of dispatched events on success or -1 on failure
+.RE
+.PP
+Blocks until the server process all currently issued requests and sends out pending events on the default event queue\&.
+.PP
+\fBNote:\fP
+.RS 4
+This function uses \fBwl_display_dispatch_queue()\fP internally\&. If you are using \fBwl_display_read_events()\fP from more threads, don't use this function (or make sure that calling \fBwl_display_roundtrip()\fP doesn't interfere with calling \fBwl_display_prepare_read()\fP and \fBwl_display_read_events()\fP) 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Wayland from the source code\&.

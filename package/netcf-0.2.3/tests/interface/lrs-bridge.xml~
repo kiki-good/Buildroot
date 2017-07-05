@@ -1,0 +1,12 @@
+<interface type="bridge" name="br0">
+  <start mode="none"/>
+  <mtu size="1500"/>
+  <protocol family="ipv4">
+    <ip address="192.168.80.5" prefix="24"/>
+  </protocol>
+  <bridge stp="off" delay="0.01">
+    <interface type="ethernet" name="eth0">
+      <mac address="00:1F:E2:18:4F:B7"/>
+    </interface>
+  </bridge>
+</interface>

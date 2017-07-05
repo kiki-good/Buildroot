@@ -1,0 +1,49 @@
+# WARNING: generated from the following:
+# libvirt_admin_public.syms libvirt_admin_private.syms ../config.status
+
+#
+# Officially exported symbols, for which header
+# file definitions are installed in /usr/include/libvirt
+# from libvirt-admin.h
+#
+# Versions here are *fixed* to match the libvirt version
+# at which the symbol was introduced. This ensures that
+# a new client app requiring symbol foo() can't accidentally
+# run with old libvirt-admin.so not providing foo() - the global
+# soname version info can't enforce this since we never
+# change the soname
+#
+LIBVIRT_ADMIN_1.3.0 {
+    global:
+        virAdmConnectOpen;
+        virAdmConnectClose;
+        virAdmConnectRef;
+};
+
+
+# Private symbols
+
+LIBVIRT_ADMIN_PRIVATE_1.2.18.2 {
+
+global:
+
+#
+# General private symbols for libvirt_admin. Add symbols here, and see
+# Makefile.am for more details.
+#
+# Keep this file sorted by header name, then by symbols with each header.
+#
+
+# admin/admin_protocol.x
+xdr_admin_connect_open_args;
+
+# Let emacs know we want case-insensitive sorting
+# Local Variables:
+# sort-fold-case: t
+# End:
+
+
+local:
+*;
+
+};

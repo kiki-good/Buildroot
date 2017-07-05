@@ -1,0 +1,37 @@
+.TH "wl_socket" 3 "Fri Feb 13 2015" "Version 1.7.0" "Wayland" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wl_socket \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "int \fBfd\fP"
+.br
+.ti -1c
+.RI "int \fBfd_lock\fP"
+.br
+.ti -1c
+.RI "struct sockaddr_un \fBaddr\fP"
+.br
+.ti -1c
+.RI "char \fBlock_addr\fP [UNIX_PATH_MAX+LOCK_SUFFIXLEN]"
+.br
+.ti -1c
+.RI "struct \fBwl_list\fP \fBlink\fP"
+.br
+.ti -1c
+.RI "struct wl_event_source * \fBsource\fP"
+.br
+.ti -1c
+.RI "char * \fBdisplay_name\fP"
+.br
+.in -1c
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Wayland from the source code\&.

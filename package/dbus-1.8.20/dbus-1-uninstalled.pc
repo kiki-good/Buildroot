@@ -1,0 +1,17 @@
+abs_top_builddir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/dbus-1.8.20
+abs_top_srcdir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/toolchain_build_aarch64/dbus-1.8.20
+prefix=
+exec_prefix=
+system_bus_default_address=unix:path=/DBUS/var/run/dbus/system_bus_socket
+sysconfdir=/DBUS/etc
+session_bus_services_dir=/DBUS/share/dbus-1/services
+system_bus_services_dir=/DBUS/share/dbus-1/system-services
+interfaces_dir=/DBUS/share/dbus-1/interfaces
+daemondir=/usr/bin
+
+Name: dbus
+Description: Free desktop message bus (uninstalled copy)
+Version: 1.8.20
+Libs: ${abs_top_builddir}/dbus/libdbus-1.la
+Libs.private: -lpthread   
+Cflags: -I${abs_top_srcdir} 

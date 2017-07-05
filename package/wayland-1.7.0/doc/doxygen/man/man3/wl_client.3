@@ -1,0 +1,123 @@
+.TH "wl_client" 3 "Fri Feb 13 2015" "Version 1.7.0" "Wayland" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wl_client \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBwl_client_flush\fP (struct \fBwl_client\fP *client)"
+.br
+.ti -1c
+.RI "struct \fBwl_display\fP * \fBwl_client_get_display\fP (struct \fBwl_client\fP *client)"
+.br
+.ti -1c
+.RI "void \fBwl_client_get_credentials\fP (struct \fBwl_client\fP *client, pid_t *pid, uid_t *uid, gid_t *gid)"
+.br
+.ti -1c
+.RI "struct \fBwl_resource\fP * \fBwl_client_get_object\fP (struct \fBwl_client\fP *client, uint32_t id)"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "struct wl_connection * \fBconnection\fP"
+.br
+.ti -1c
+.RI "struct wl_event_source * \fBsource\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_display\fP * \fBdisplay\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_resource\fP * \fBdisplay_resource\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBid_count\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBmask\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_list\fP \fBlink\fP"
+.br
+.ti -1c
+.RI "struct wl_map \fBobjects\fP"
+.br
+.ti -1c
+.RI "struct \fBwl_signal\fP \fBdestroy_signal\fP"
+.br
+.ti -1c
+.RI "struct ucred \fBucred\fP"
+.br
+.ti -1c
+.RI "int \fBerror\fP"
+.br
+.in -1c
+.SH "Member Function Documentation"
+.PP 
+.SS "void wl_client_flush (struct \fBwl_client\fP *client)"
+Flush pending events to the client
+.PP
+\fBParameters:\fP
+.RS 4
+\fIclient\fP The client object
+.RE
+.PP
+Events sent to clients are queued in a buffer and written to the socket later - typically when the compositor has handled all requests and goes back to block in the event loop\&. This function flushes all queued up events for a client immediately\&. 
+.SS "void wl_client_get_credentials (struct \fBwl_client\fP *client, pid_t *pid, uid_t *uid, gid_t *gid)"
+Return Unix credentials for the client
+.PP
+\fBParameters:\fP
+.RS 4
+\fIclient\fP The display object 
+.br
+\fIpid\fP Returns the process ID 
+.br
+\fIuid\fP Returns the user ID 
+.br
+\fIgid\fP Returns the group ID
+.RE
+.PP
+This function returns the process ID, the user ID and the group ID for the given client\&. The credentials come from getsockopt() with SO_PEERCRED, on the client socket fd\&. All the pointers can be NULL, if the caller is not interested in a particular ID\&.
+.PP
+Be aware that for clients that a compositor forks and execs and then connects using socketpair(), this function will return the credentials for the compositor\&. The credentials for the socketpair are set at creation time in the compositor\&. 
+.SS "struct \fBwl_display\fP * wl_client_get_display (struct \fBwl_client\fP *client)"
+Get the display object for the given client
+.PP
+\fBParameters:\fP
+.RS 4
+\fIclient\fP The client object 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The display object the client is associated with\&. 
+.RE
+.PP
+
+.SS "struct \fBwl_resource\fP * wl_client_get_object (struct \fBwl_client\fP *client, uint32_tid)"
+Look up an object in the client name space
+.PP
+\fBParameters:\fP
+.RS 4
+\fIclient\fP The client object 
+.br
+\fIid\fP The object id 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The object or NULL if there is not object for the given ID
+.RE
+.PP
+This looks up an object in the client object name space by its object ID\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Wayland from the source code\&.

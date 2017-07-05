@@ -1,0 +1,30 @@
+# Dirs
+INSTALLROOT
+BINDIR
+SBINDIR
+MANDIR
+
+# Modes
+DAEMONMODE
+MANMODE
+SUIDMODE
+
+# Compiling
+ALLWARNINGS
+CC
+WARNINGS
+CFLAGS
+LDFLAGS
+LIBS
+
+# Features
+BSDSIGNAL
+FN(snprintf)
+FN(crypt)
+FN(forkpty)
+FN(logwtmp)
+TYPE(socklen_t)
+GLIBC
+LIBTERMCAP
+PAM
+SHADOW

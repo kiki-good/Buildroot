@@ -1,0 +1,16 @@
+libvirt-1.2.18.2-001-libtool-2.4.6.patch
+libvirt-1.2.18.2-002-remove-backtrace-support.patch
+libvirt-1.2.18.2-003-lxc-report-container-init-process-failures.patch
+libvirt-1.2.18.2-004-fix-fd-leak.patch
+libvirt-1.2.18.2-005-fix-eagain-fd-race.patch
+libvirt-1.2.18.2-006-use-af-local-socket.patch
+libvirt-1.2.18.2-007-lxc-stop-mounting-proc-and-sys-read-only.patch
+libvirt-1.2.18.2-008-lxc-mount-loopback-before-switching-userns.patch
+libvirt-1.2.18.2-009-lxc-enable-gpu-cgroup-support.patch
+libvirt-1.2.18.2-010-disable-doc-build.patch
+libvirt-1.2.18.2-011-network-disable-dnsmasq.patch
+libvirt-1.2.18.2-012-setns-workaround.patch
+libvirt-1.2.18.2-013-force-ip-tool-path.patch
+libvirt-1.2.18.2-014-set-real-time-quota.patch
+libvirt-1.2.18.2-015-disable-airties-bridge-hacks.patch
+libvirt-1.2.18.2-016-add-fuse-mount-api.patch

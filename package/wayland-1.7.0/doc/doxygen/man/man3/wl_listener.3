@@ -1,0 +1,77 @@
+.TH "wl_listener" 3 "Fri Feb 13 2015" "Version 1.7.0" "Wayland" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wl_listener \- 
+.PP
+A single listener for Wayland signals\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <wayland-server\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBwl_list\fP \fBlink\fP"
+.br
+.ti -1c
+.RI "wl_notify_func_t \fBnotify\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+A single listener for Wayland signals\&. 
+
+\fBwl_listener\fP provides the means to listen for \fBwl_signal\fP notifications\&. Many Wayland objects use \fBwl_listener\fP for notification of significant events like object destruction\&.
+.PP
+Clients should create \fBwl_listener\fP objects manually and can register them as listeners to signals using \fBwl_signal_add\fP, assuming the signal is directly accessible\&. For opaque structs like wl_event_loop, adding a listener should be done through provided accessor methods\&. A listener can only listen to one signal at a time\&.
+.PP
+.PP
+.nf
+struct wl_listener your_listener;
+
+your_listener\&.notify = your_callback_method;
+
+// Direct access
+wl_signal_add(&some_object->destroy_signal, &your_listener);
+
+// Accessor access
+wl_event_loop *loop = \&.\&.\&.;
+wl_event_loop_add_destroy_listener(loop, &your_listener);
+.fi
+.PP
+.PP
+If the listener is part of a larger struct, \fBwl_container_of\fP can be used to retrieve a pointer to it:
+.PP
+.PP
+.nf
+void your_listener(struct wl_listener *listener, void *data)
+{
+        struct your_data *data;
+
+        your_data = wl_container_of(listener, data, your_member_name);
+}
+.fi
+.PP
+.PP
+If you need to remove a listener from a signal, use wl_list_remove()\&.
+.PP
+.PP
+.nf
+wl_list_remove(&your_listener\&.link);
+.fi
+.PP
+.PP
+\fBSee Also:\fP
+.RS 4
+\fBwl_signal\fP 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Wayland from the source code\&.

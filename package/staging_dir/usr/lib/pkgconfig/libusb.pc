@@ -1,0 +1,11 @@
+prefix=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libusb
+Description: USB access library
+Version: 0.1.12
+Libs: -L${libdir} -lusb
+Cflags: -I${includedir}
+

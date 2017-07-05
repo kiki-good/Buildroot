@@ -1,0 +1,12 @@
+prefix=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+enginesdir=${libdir}/engines-1.1
+
+Name: OpenSSL-libcrypto
+Description: OpenSSL cryptography library
+Version: 1.1.0d
+Libs: -L${libdir} -lcrypto
+Libs.private: -ldl 
+Cflags: -I${includedir}

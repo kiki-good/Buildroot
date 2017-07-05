@@ -1,0 +1,6 @@
+<interface type="ethernet" name="eth2">
+  <start mode="onboot"/>
+  <protocol family="ipv4">
+    <ip address="10.24.0.42" prefix="24"/>
+  </protocol>
+</interface>

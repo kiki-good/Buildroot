@@ -1,0 +1,3 @@
+netkitbase-configure-ldflags.patch
+netkitbase-gcc4.patch
+netkitbase-remove-bcopy.patch

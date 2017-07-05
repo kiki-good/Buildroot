@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: netcf
+Version: 0.2.3
+Description: Network configuration library
+Requires:
+Libs: -L${libdir} -lnetcf
+Cflags: -I${includedir}

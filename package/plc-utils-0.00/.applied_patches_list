@@ -1,0 +1,4 @@
+plc-utils-0.00-0001-RemovingOWNER-and-GROUP.patch
+plc-utils-0.00-0002-remove-getuid.patch
+plc-utils-0.00-0003-do-not-if-up.patch
+plc-utils-0.00-0004-plc-fw-check.patch

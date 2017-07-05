@@ -1,0 +1,5 @@
+EXPORTS
+    virAdmConnectOpen
+    virAdmConnectClose
+    virAdmConnectRef
+    xdr_admin_connect_open_args

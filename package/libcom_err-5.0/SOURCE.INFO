@@ -1,0 +1,6 @@
+Package: libcom_err
+Description: common error display library 
+Version: 5.0
+Location: none
+License: BSD
+Notes: Location needs to be updated

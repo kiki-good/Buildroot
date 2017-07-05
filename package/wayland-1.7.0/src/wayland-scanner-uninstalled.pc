@@ -1,0 +1,6 @@
+pkgdatadir=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/wayland-1.7.0
+wayland_scanner=/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/wayland-1.7.0/src/wayland-scanner
+ 
+Name: Wayland Scanner
+Description: Wayland scanner (not installed)
+Version: 1.7.0

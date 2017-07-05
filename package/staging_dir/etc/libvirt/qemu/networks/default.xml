@@ -1,0 +1,11 @@
+<network>
+  <name>default</name>
+  <uuid>fe533d89-d4e5-42c1-b0f6-0db05e7cb950</uuid>
+  <bridge name="virbr0"/>
+  <forward/>
+  <ip address="192.168.122.1" netmask="255.255.255.0">
+    <dhcp>
+      <range start="192.168.122.2" end="192.168.122.254"/>
+    </dhcp>
+  </ip>
+</network>

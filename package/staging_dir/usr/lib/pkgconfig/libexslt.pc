@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+
+Name: libexslt
+Version: 0.8.17
+Description: EXSLT Extension library
+Requires: libxml-2.0
+Libs: -L${libdir} -lexslt -lxslt  -L/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/lib -lxml2 -lz -liconv -lm -L/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/lib -L/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/lib -ldl -lm -lgcrypt -lgpg-error
+Cflags: -I${includedir}

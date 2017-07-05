@@ -1,0 +1,43 @@
+# Variable needed by LTLIBINTL.
+top_builddir=../..
+
+OBJEXT="o"
+EXEEXT=""
+CC="/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//bin/aarch64-linux-gcc -Os  -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/include -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/include -I/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//aarch64-linux/include -std=gnu99"
+CFLAGS="-g -O2"
+CXX="/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//bin/aarch64-linux-g++ -Os  -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/include -I/home/jqiao/spk_64bit/spk/objOutput/bskyb-brcm64bit/build_aarch64/staging_dir/usr/include -I/home/hperev/Documents/CDI/1-From-NAS/eric-same-dir/97271IP-Toolchain/stbgcc-4.8-1.5//aarch64-linux/include"
+CXXFLAGS="-g -O2"
+CPPFLAGS=""
+LDFLAGS=""
+LTLIBINTL="${top_builddir}/intl/libintl.la  "
+JAVA_CHOICE="yes"
+BUILDJAVA="yes"
+TESTJAVA="yes"
+CSHARP_CHOICE="any"
+BUILDCSHARP="no"
+TESTCSHARP="no"
+TESTLIBASPRINTF="no"
+GLIBC2="yes"
+LOCALE_FR="none"
+LOCALE_FR_UTF8="none"
+LOCALE_JA="none"
+host_os="linux-gnu"
+
+: ${GETTEXT=tstgettext}
+: ${NGETTEXT=tstngettext}
+: ${XGETTEXT=xgettext}
+: ${MSGATTRIB=msgattrib}
+: ${MSGCAT=msgcat}
+: ${MSGCMP=msgcmp}
+: ${MSGCOMM=msgcomm}
+: ${MSGCONV=msgconv}
+: ${MSGEN=msgen}
+: ${MSGEXEC=msgexec}
+: ${MSGFILTER=msgfilter}
+: ${MSGFMT=msgfmt}
+: ${MSGGREP=msggrep}
+: ${MSGINIT=msginit}
+: ${MSGMERGE=msgmerge}
+: ${MSGUNFMT=msgunfmt}
+: ${MSGUNIQ=msguniq}
+: ${RECODE=recode}
