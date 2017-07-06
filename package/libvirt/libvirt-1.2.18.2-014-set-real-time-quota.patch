@@ -1,0 +1,130 @@
+This patch modifies libvirt-lxc so that when the cgroup(s) are
+created for a container they have a default real-time schedule
+quota.
+
+We need this otherwise processes within a container can't
+switch to SCHED_RR modes and can't set their RT priorities.
+
+--- a/src/libvirt_private.syms	2016-03-29 20:32:46.499845668 +0100
++++ b/src/libvirt_private.syms	2016-03-29 21:11:56.843667999 +0100
+@@ -1225,6 +1225,8 @@
+ virCgroupSetBlkioWeight;
+ virCgroupSetCpuCfsPeriod;
+ virCgroupSetCpuCfsQuota;
++virCgroupSetCpuRTPeriod;
++virCgroupSetCpuRTRuntime;
+ virCgroupSetCpusetCpus;
+ virCgroupSetCpusetMemoryMigrate;
+ virCgroupSetCpusetMems;
+--- a/src/util/vircgroup.c	2016-03-29 20:32:46.507845566 +0100
++++ b/src/util/vircgroup.c	2016-03-29 21:11:56.847667657 +0100
+@@ -1637,6 +1637,29 @@
+ 
+ 
+ static int
++virCgroupGetGlobalCpuRTRuntime(long long *rt_runtime_us)
++{
++    FILE *fp;
++
++    if (!(fp = fopen("/proc/sys/kernel/sched_rt_runtime_us", "r"))) {
++        virReportSystemError(errno, "%s",
++                             _("unable to open /proc/sys/kernel/sched_rt_runtime_us"));
++        return -1;
++    }
++
++    if (fscanf(fp, "%lld\n", rt_runtime_us) != 1) {
++        virReportError(VIR_ERR_INVALID_ARG,
++                       _("failed to read sched_rt_runtime_us value"));
++        VIR_FORCE_FCLOSE(fp);
++        return -1;
++    }
++
++    VIR_FORCE_FCLOSE(fp);
++    return 0;
++}
++
++
++static int
+ virCgroupNewMachineManual(const char *name,
+                           const char *drivername,
+                           pid_t pidleader,
+@@ -1646,6 +1669,7 @@
+ {
+     virCgroupPtr parent = NULL;
+     int ret = -1;
++    long long global_rt_runtime;
+ 
+     VIR_DEBUG("Fallback to non-systemd setup");
+     if (virCgroupNewPartition(partition,
+@@ -1658,6 +1682,25 @@
+         goto cleanup;
+     }
+ 
++    /* [Sky] Set a default realtime quota for the cgroup(s).
++     *
++     * This is needed on Sky boxes as we run all processes using SCHED_RR and
++     * this means that by default the root process in a container also runs
++     * as SCHED_RR and therefore we need to set a RT quota otherwise it will
++     * fail to launch.
++     *
++     * An alternative option would be to change to SCHED_OTHER in the LXC driver
++     * but in the long term we want processes/threads within a container to
++     * be able to run in SCHED_RR mode.
++     */
++    if (virCgroupGetGlobalCpuRTRuntime(&global_rt_runtime) < 0 ||
++        global_rt_runtime <= 0) {
++        global_rt_runtime = 950000;
++    }
++
++    virCgroupSetCpuRTRuntime(parent, global_rt_runtime);
++
++
+     if (virCgroupNewDomainPartition(parent,
+                                     drivername,
+                                     name,
+@@ -1665,6 +1708,8 @@
+                                     group) < 0)
+         goto cleanup;
+ 
++    virCgroupSetCpuRTRuntime(*group, 10000);
++
+     if (virCgroupAddTask(*group, pidleader) < 0) {
+         virErrorPtr saved = virSaveLastError();
+         virCgroupRemove(*group);
+@@ -3305,6 +3350,24 @@
+ }
+ 
+ 
++int
++virCgroupSetCpuRTPeriod(virCgroupPtr group, long long rt_period_us)
++{
++    return virCgroupSetValueI64(group,
++                                VIR_CGROUP_CONTROLLER_CPU,
++                                "cpu.rt_period_us", rt_period_us);
++}
++
++
++int
++virCgroupSetCpuRTRuntime(virCgroupPtr group, long long rt_runtime_us)
++{
++    return virCgroupSetValueI64(group,
++                                VIR_CGROUP_CONTROLLER_CPU,
++                                "cpu.rt_runtime_us", rt_runtime_us);
++}
++
++
+ int
+ virCgroupGetCpuacctPercpuUsage(virCgroupPtr group, char **usage)
+ {
+--- a/src/util/vircgroup.h	2016-03-29 20:32:46.507845566 +0100
++++ b/src/util/vircgroup.h	2016-03-29 21:11:56.851667354 +0100
+@@ -246,6 +246,9 @@
+ int virCgroupSetCpuCfsQuota(virCgroupPtr group, long long cfs_quota);
+ int virCgroupGetCpuCfsQuota(virCgroupPtr group, long long *cfs_quota);
+ 
++int virCgroupSetCpuRTPeriod(virCgroupPtr group, long long rt_period_us);
++int virCgroupSetCpuRTRuntime(virCgroupPtr group, long long rt_runtime_us);
++
+ int virCgroupGetCpuacctUsage(virCgroupPtr group, unsigned long long *usage);
+ int virCgroupGetCpuacctPercpuUsage(virCgroupPtr group, char **usage);
+ int virCgroupGetCpuacctStat(virCgroupPtr group, unsigned long long *user,

@@ -1,0 +1,20 @@
+--- module-init-tools-3.2.2/config.sub	2002-11-26 01:38:55.000000000 +0000
++++ module-init-tools-3.2.2_patch/config.sub	2017-06-21 17:46:06.765182555 +0100
+@@ -228,7 +228,7 @@
+ 	| a29k \
+ 	| alpha | alphaev[4-8] | alphaev56 | alphaev6[78] | alphapca5[67] \
+ 	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
+-	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr \
++	| arc | arm | aarch64 | aarch64_be |arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr \
+ 	| clipper \
+ 	| d10v | d30v | dlx | dsp16xx \
+ 	| fr30 | frv \
+@@ -291,7 +291,7 @@
+ 	| alpha-* | alphaev[4-8]-* | alphaev56-* | alphaev6[78]-* \
+ 	| alpha64-* | alpha64ev[4-8]-* | alpha64ev56-* | alpha64ev6[78]-* \
+ 	| alphapca5[67]-* | alpha64pca5[67]-* | arc-* \
+-	| arm-*  | armbe-* | armle-* | armeb-* | armv*-* \
++	| arm-*  | armbe-* | armle-* | aarch64-* | aarch64_be* | armeb-* | armv*-* \
+ 	| avr-* \
+ 	| bs2000-* \
+ 	| c[123]* | c30-* | [cjt]90-* | c4x-* | c54x-* \

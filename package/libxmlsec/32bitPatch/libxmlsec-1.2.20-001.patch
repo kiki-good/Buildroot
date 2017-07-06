@@ -1,0 +1,43 @@
+diff -Naur xmlsec1-1.2.20/include/xmlsec/io.h xmlsec1-1.2.20_Mod/include/xmlsec/io.h
+--- xmlsec1-1.2.20/include/xmlsec/io.h	2014-05-27 19:29:01.000000000 +0100
++++ xmlsec1-1.2.20_Mod/include/xmlsec/io.h	2015-03-17 15:20:33.344366879 +0000
+@@ -45,6 +45,7 @@
+ XMLSEC_EXPORT xmlSecTransformId xmlSecTransformInputURIGetKlass (void);
+ XMLSEC_EXPORT int       xmlSecTransformInputURIOpen             (xmlSecTransformPtr transform,
+                                                                  const xmlChar* uri);
++XMLSEC_EXPORT void xmlSecTransformInputURIFinalize(xmlSecTransformPtr transform);
+ 
+ #ifdef __cplusplus
+ }
+diff -Naur xmlsec1-1.2.20/src/io.c xmlsec1-1.2.20_Mod/src/io.c
+--- xmlsec1-1.2.20/src/io.c	2014-05-27 19:29:01.000000000 +0100
++++ xmlsec1-1.2.20_Mod/src/io.c	2015-03-17 15:20:33.348366881 +0000
+@@ -323,7 +323,7 @@
+         (xmlSecInputURICtxPtr)NULL)
+ 
+ static int              xmlSecTransformInputURIInitialize       (xmlSecTransformPtr transform);
+-static void             xmlSecTransformInputURIFinalize         (xmlSecTransformPtr transform);
++//static void             xmlSecTransformInputURIFinalize         (xmlSecTransformPtr transform);
+ static int              xmlSecTransformInputURIPopBin           (xmlSecTransformPtr transform,
+                                                                  xmlSecByte* data,
+                                                                  xmlSecSize maxDataSize,
+@@ -446,7 +446,7 @@
+     return(0);
+ }
+ 
+-static void
++void
+ xmlSecTransformInputURIFinalize(xmlSecTransformPtr transform) {
+     xmlSecInputURICtxPtr ctx;
+ 
+diff -Naur xmlsec1-1.2.20/src/transforms.c xmlsec1-1.2.20_Mod/src/transforms.c
+--- xmlsec1-1.2.20/src/transforms.c	2014-05-27 19:29:01.000000000 +0100
++++ xmlsec1-1.2.20_Mod/src/transforms.c	2015-03-17 15:20:33.348366881 +0000
+@@ -1195,6 +1195,7 @@
+         return(-1);
+     }
+ 
++    xmlSecTransformInputURIFinalize(uriTransform);
+     ctx->status = xmlSecTransformStatusFinished;
+     return(0);
+ }

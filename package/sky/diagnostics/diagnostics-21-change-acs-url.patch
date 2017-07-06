@@ -1,0 +1,12 @@
+diff -Naurr diagnostics-1.3_orig/apps/cmd/tr069.sh diagnostics-1.3_new/apps/cmd/tr069.sh
+--- diagnostics-1.3_orig/apps/cmd/tr069.sh	2015-05-12 15:28:08.000000000 +0100
++++ diagnostics-1.3_new/apps/cmd/tr069.sh	2015-05-12 15:38:00.847359369 +0100
+@@ -25,7 +25,7 @@
+ set cmlegacy.mgmt.0.periodic_base "86400";
+ set cmlegacy.mgmt.0.periodic_interval "86400";
+ set cmlegacy.mgmt.0.periodic_interval_test "3600";
+-set cmlegacy.mgmt.0.acs_url "https://cwmp.sandbox4.2wire.com/cwmp/cwmp";
++set cmlegacy.mgmt.0.acs_url "https://stb-diagnostics.isp.sky.com";
+ set cmlegacy.mgmt.0.keycode "52AN-2374-WHE2-22AZ-B27S";
+ set cmlegacy.mgmt.0.connreq_port "3479";
+ set cmlegacy.mgmt.0.ssl_time_check_enabled "0";

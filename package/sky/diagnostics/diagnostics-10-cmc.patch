@@ -1,0 +1,7 @@
+--- tr69-data-model_Orig/apps/cmc/Makefile.am	2014-02-18 16:15:34.656408094 +0000
++++ tr69-data-model/apps/cmc/Makefile.am	2014-02-18 16:45:15.372618719 +0000
+@@ -13,3 +13,4 @@
+ cmc_LDADD += $(proj_libcm_client)
+ cmc_LDADD += $(proj_libstring)
+ cmc_LDADD += $(proj_libmap)
++cmc_LDFLAGS += -lresolv

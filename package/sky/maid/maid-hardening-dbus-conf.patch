@@ -1,0 +1,19 @@
+diff -Naur Maid/maid.conf Maid_Mod/maid.conf
+--- Maid/maid.conf	2015-09-29 14:24:03.000000000 +0100
++++ Maid_Mod/maid.conf	2015-10-13 10:09:03.439344167 +0100
+@@ -18,7 +18,14 @@
+                 <allow receive_sender="com.sky.maid"/>
+         </policy>
+ 
+-        <policy user="darwin">
++        <policy user="NDS_U1">
++                <allow send_destination="com.sky.maid"/>
++		<allow send_interface="com.sky.maid.LANSS1"/>
++		<allow send_interface="com.sky.maid.Power1"/>
++                <allow receive_sender="com.sky.maid"/>
++        </policy>
++
++        <policy user="NDS_U3">
+                 <allow send_destination="com.sky.maid"/>
+ 		<allow send_interface="com.sky.maid.LANSS1"/>
+ 		<allow send_interface="com.sky.maid.Power1"/>

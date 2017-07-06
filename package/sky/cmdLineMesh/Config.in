@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CMDLINEMESH
+        bool "cmdLineMesh"
+        help
+		To replace cmdline check for mesh on/off using cat cmd
+

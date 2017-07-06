@@ -1,0 +1,12 @@
+Index: nss-3.14.5/mozilla/security/nss/cmd/platlibs.mk
+===================================================================
+--- nss-3.14.5.orig/mozilla/security/nss/cmd/platlibs.mk	2012-11-14 01:14:08.000000000 +0000
++++ nss-3.14.5/mozilla/security/nss/cmd/platlibs.mk	2014-08-19 12:16:38.134858811 +0100
+@@ -182,6 +182,7 @@
+ 	-lplc4 \
+ 	-lplds4 \
+ 	-lnspr4 \
++	-lz \
+ 	$(NULL)
+ endif
+ 

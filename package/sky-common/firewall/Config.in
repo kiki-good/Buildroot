@@ -1,0 +1,172 @@
+config BR2_PACKAGE_SKY_FIREWALL
+	bool "Firewall"
+	default N
+	help
+	  Enables the firewall on the STB.
+
+
+config BR2_PACKAGE_SKY_FIREWALL_TURN_ON_TEXT
+	bool "Turn on Firewall script text"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  This allows turning script text off in prod variant.
+
+config BR2_PACKAGE_SKY_FIREWALL_ENABLE_LOGS
+	bool "Turn on Firewall logs"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  This option enables the logs for the firewall.
+
+config BR2_PACKAGE_SKY_FIREWALL_PROC_SYS
+	bool "Use /proc/sys/net to lock down networking"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected the firewall initialisation.
+	  script will use the available /proc/sys/net 
+	  interfaces to secure networking features
+	  
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_HTTP
+	bool "Allow HTTP requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows HTTP requests from the STB and their
+	  responses.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_DHCP
+	bool "Allow DHCP requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows DHCP requests from the STB and their
+	  responses.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_DNS
+	bool "Allow DNS requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows DNS requests from the STB and their
+	  responses.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_PING
+	bool "Allow ping requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows ping requests from the STB and their
+	  responses.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_EXTERNAL_PING
+	bool "Allow external ping requests/responses"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows external (to the STB) ping requests and
+	  responses. 
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_DIAG_ICMP
+	bool "Allow ICMP remote diagnostic requests/responses"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows diagnostic ICMP requests through the
+	  firewall and their responses.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_OQTP
+	bool "Allow OQTP (NDS Proprietary) requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows OQTP requests from the STB and their
+	  responses.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_CA_CALLBACK
+	bool "Allow CA callback requests/replies over PPP link (Experimental)"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows CA callback messages over the PPP modem link.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_PPP_HTTP
+	bool "Allow HTTP requests/replies over PPP link (Experimental)"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows HTTP requests over the PPP modem link.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_FTP
+	bool "Allow FTP requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  Enable FTP put operations from the STB, this should
+	  be enabled for the debug and pre-production builds.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_MW_DEBUG
+	bool "Allow MW debugging requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows traffic to/from the STB on port 5555. This
+	  is the MW debug port.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_GDBSERVER
+	bool "Allow GDB server requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows traffic to/from the STB on port 12345. This
+	  is the reserved port for GDB server.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_TELNET
+	bool "Allow Telnet access"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows telnet login to the box.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_HFL_DEBUG
+	bool "Allow HFL Studio debugging requests/replies"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  When selected allows traffic to/from the STB on port 20077. This 
+	  is the HFL Studio debug port.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_UPNP
+	bool "NDS UPNP enabled"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  Allow incoming UDP 1900 TCP 5900 49153.
+
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_MR_GW_COMM
+	bool "SI Multiroom Gateway communication port"
+	depends on BR2_PACKAGE_SKY_FIREWALL
+	default y
+	help
+	  Allow  TCP  49155 open.
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_SSH
+        bool "Allow SSH requests/replies"
+        depends on BR2_PACKAGE_SKY_FIREWALL
+        default y
+        help
+          When selected allows SSH tarffic on port 22.
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_FUSION_SLAVE_SOAP_PORT
+        bool "Allows requests/replies  on port 9997 to 9999"
+        depends on BR2_PACKAGE_SKY_FIREWALL
+        default y
+        help
+          When selected allows  tarffic on port 9997 to 9999.
+config BR2_PACKAGE_SKY_FIREWALL_ALLOW_CISCO_FIREWALL
+        bool "Cisco Update to Firewall"
+        depends on BR2_PACKAGE_SKY_FIREWALL
+        default y
+        help
+          When selected turns on Cisco Firewall update.
+

@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBVIRT
+	bool "libvirt"
+	help
+	  A toolkit to interact with the virtualization
+	  capabilities of recent versions of Linux.
+
+	  http://libvirt.org/

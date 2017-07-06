@@ -1,0 +1,27 @@
+diff -Naur udev-164/rules/rules.d/50-udev-default.rules udev-164_mod/rules/rules.d/50-udev-default.rules
+--- udev-164/rules/rules.d/50-udev-default.rules	2016-04-06 14:45:03.158125124 +0100
++++ udev-164_mod/rules/rules.d/50-udev-default.rules	2016-04-06 14:43:11.650122261 +0100
+@@ -6,14 +6,12 @@
+ # mem
+ KERNEL=="zero|full|random", MODE="0666"
+ KERNEL=="null|urandom", MODE="0666",  GROUP="system"
+-KERNEL=="mem|kmem|port|nvram",	GROUP="root", MODE="0640"
+ 
+ # mali device 
+ KERNEL=="mali", MODE="0660",  GROUP="NDS_MW"
+ 
+ # input
+ KERNEL=="event*",	NAME="input/udev.NO.use.event"
+-KERNEL=="mouse*|mice",	MODE="0666"
+ KERNEL=="ts[0-9]*|uinput",	MODE="0660", GROUP="NDS_MW"
+ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="RCU_DRI"
+ 
+@@ -41,8 +39,3 @@
+ # CPU
+ KERNEL=="cpu[0-9]*",		MODE="0444"
+ 
+-
+-SUBSYSTEM=="rtc", DRIVERS=="rtc_cmos", SYMLINK+="rtc"
+-KERNEL=="mmtimer",		MODE="0644"
+-KERNEL=="rflash[0-9]*",		MODE="0400"
+-KERNEL=="rrom[0-9]*",		MODE="0400"

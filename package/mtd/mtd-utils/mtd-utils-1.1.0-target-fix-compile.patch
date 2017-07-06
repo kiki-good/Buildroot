@@ -1,0 +1,22 @@
+Index: mtd_orig/Makefile
+===================================================================
+--- mtd_orig.orig/Makefile
++++ mtd_orig/Makefile
+@@ -6,7 +6,7 @@ MANDIR=/usr/man
+ INCLUDEDIR=/usr/include
+ #CROSS=arm-linux-
+ CC := $(CROSS)gcc
+-CFLAGS := -I./include -O2 -Wall
++CFLAGS := -I./include -O2 -Wall $(CFLAGS_EXTRA)
+ 
+ ifeq ($(origin CROSS),undefined)
+   BUILDDIR := .
+@@ -27,6 +27,8 @@ RAWTARGETS = ftl_format flash_erase flas
+ 	rfddump rfdformat \
+ 	sumtool #jffs2reader
+ 
++.PHONY:	$(RAWTARGETS)
++
+ TARGETS = $(foreach target,$(RAWTARGETS),$(BUILDDIR)/$(target))
+ 
+ SYMLINKS =

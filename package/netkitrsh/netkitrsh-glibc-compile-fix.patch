@@ -1,0 +1,29 @@
+Index: netkit-rsh-0.17/rshd/rshd.c
+===================================================================
+--- netkit-rsh-0.17.orig/rshd/rshd.c
++++ netkit-rsh-0.17/rshd/rshd.c
+@@ -80,9 +80,11 @@ char rcsid[] = 
+ #include <ctype.h>
+ #include <assert.h>
+ 
++#if 0 /* disabled for uclibc */
+ #if defined(__GLIBC__) && (__GLIBC__ >= 2)
+ #define _check_rhosts_file  __check_rhosts_file
+ #endif
++#endif
+ 
+ #ifdef USE_PAM
+ #include <security/pam_appl.h>
+@@ -110,7 +112,12 @@ static void error(const char *fmt, ...);
+ static void doit(struct sockaddr_in *fromp);
+ static void getstr(char *buf, int cnt, const char *err);
+ 
++/* uclibc doesn't have this */
++#if 0
+ extern int _check_rhosts_file;
++#else
++int _check_rhosts_file;
++#endif
+ 
+ /*
+  * Report error to client.

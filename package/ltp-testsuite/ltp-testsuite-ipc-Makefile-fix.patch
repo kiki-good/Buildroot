@@ -1,0 +1,25 @@
+diff -Naur ltp-full-20070228/testcases/kernel/syscalls/ipc/Makefile ltp-full-20070228-patched/testcases/kernel/syscalls/ipc/Makefile
+--- ltp-full-20070228/testcases/kernel/syscalls/ipc/Makefile	2007-03-01 04:40:35.000000000 +0000
++++ ltp-full-20070228-patched/testcases/kernel/syscalls/ipc/Makefile	2014-04-01 23:26:29.459114138 +0100
+@@ -16,10 +16,16 @@
+ #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #
+ 
+-SUBDIRS = $(patsubst %/Makefile,%,$(wildcard */Makefile))
++CFLAGS+=-I../../../../../include -g -Wall
++LOADLIBES+=-L../../../../lib -lltp
++#TESTS=hugeshmget hugeshmat hugeshmdt hugeshmctl hugemmap
++TESTS=msgctl msgget msgrcv msgsnd semctl semget semop shmat shmctl shmdt shmget
+ 
+-all %::
+-	@set -e; \
+-	for i in $(SUBDIRS); do \
+-		$(MAKE) -C $$i $@; \
++all: $& $(TESTS)
++	@set -e; for i in lib $(TESTS); do \
++	$(MAKE) -C $$i  all; \
++	done
++clean:
++	@set -e; for i in lib $(TESTS); do \
++		$(MAKE) -C $$i  clean; \
+ 	done

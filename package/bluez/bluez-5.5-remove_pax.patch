@@ -1,0 +1,23 @@
+--- a/configure	2013-05-14 02:04:35.000000000 +0100
++++ b/configure	2013-09-11 11:43:33.814555828 +0100
+@@ -2878,7 +2878,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking how to create a pax tar archive" >&5
+ $as_echo_n "checking how to create a pax tar archive... " >&6; }
+ # Loop over all known methods to create a tar archive until one works.
+-_am_tools='gnutar  pax cpio none'
++_am_tools='gnutar cpio none'
+ _am_tools=${am_cv_prog_tar_pax-$_am_tools}
+ # Do not fold the above two line into one, because Tru64 sh and
+ # Solaris sh will not grok spaces in the rhs of `-'.
+@@ -2906,11 +2906,6 @@
+     am__tar_='tar chf - "$tardir"'
+     am__untar='tar xf -'
+     ;;
+-  pax)
+-    am__tar='pax -L -x pax -w "$$tardir"'
+-    am__tar_='pax -L -x pax -w "$tardir"'
+-    am__untar='pax -r'
+-    ;;
+   cpio)
+     am__tar='find "$$tardir" -print | cpio -o -H pax -L'
+     am__tar_='find "$tardir" -print | cpio -o -H pax -L'

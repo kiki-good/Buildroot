@@ -1,0 +1,16 @@
+diff -Naur plc-utils-0.00/ether/openchannel.c plc-utils-0.00-mod/ether/openchannel.c
+--- plc-utils-0.00/ether/openchannel.c	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00-mod/ether/openchannel.c	2015-07-24 18:36:16.736451997 +0100
+@@ -124,10 +124,12 @@
+  *      'chmod 4555';
+  */
+ 
++#if 0
+ 	if (geteuid ())
+ 	{
+ 		error (1, EPERM, ERROR_NOTROOT);
+ 	}
++#endif
+ 
+ 	memset (&ifreq, 0, sizeof (ifreq));
+ 	sockaddr_ll.sll_protocol = htons (channel->type);

@@ -1,0 +1,17 @@
+diff -Naurr diagnostics-1.3_orig/apps/cmd/tr069.sh diagnostics-1.3_new/apps/cmd/tr069.sh
+--- diagnostics-1.3_orig/apps/cmd/tr069.sh	2015-06-03 16:57:30.000000000 +0100
++++ diagnostics-1.3_new/apps/cmd/tr069.sh	2015-06-03 17:05:48.627728565 +0100
+@@ -110,13 +110,11 @@
+     fi
+ 	;;
+   stop)
+-    echo "Stopping TR069 services..."
+     ${PACEBIN}/cwmd -t
+     ${PACEBIN}/mifd -p
+     ${PACEBIN}/cmd -p
+ 	;;
+   *)
+-	echo $"Usage: $0 {start|stop}"
+ 	exit 1
+ esac
+ exit $?

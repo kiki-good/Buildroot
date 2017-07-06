@@ -1,0 +1,14 @@
+diff -Naur wayland-1.7.0/Makefile.in wayland-1.7.0-mod/Makefile.in
+--- wayland-1.7.0/Makefile.in	2015-02-14 03:31:45.000000000 +0000
++++ wayland-1.7.0-mod/Makefile.in	2015-08-04 18:01:30.119119439 +0100
+@@ -820,8 +820,8 @@
+ 	protocol/wayland-client-protocol.h	\
+ 	protocol/wayland-protocol.c
+ 
+-@ENABLE_SCANNER_FALSE@wayland_scanner = wayland-scanner
+-@ENABLE_SCANNER_TRUE@wayland_scanner = $(top_builddir)/wayland-scanner
++@ENABLE_SCANNER_TRUE@wayland_scanner = wayland-scanner
++@ENABLE_SCANNER_FALSE@wayland_scanner = $(top_builddir)/src/wayland-scanner
+ @ENABLE_SCANNER_TRUE@wayland_scanner_SOURCES = src/scanner.c
+ @ENABLE_SCANNER_TRUE@wayland_scanner_CFLAGS = $(EXPAT_CFLAGS) $(AM_CFLAGS)
+ @ENABLE_SCANNER_TRUE@wayland_scanner_LDADD = $(EXPAT_LIBS) libwayland-util.la

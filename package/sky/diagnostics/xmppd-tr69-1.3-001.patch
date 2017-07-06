@@ -1,0 +1,23 @@
+diff -Naurr tr69-data-model_orig/apps/cmd/tr069.sh tr69-data-model_new/apps/cmd/tr069.sh
+--- tr69-data-model_orig/apps/cmd/tr069.sh	2015-04-15 13:56:07.631131865 +0100
++++ tr69-data-model_new/apps/cmd/tr069.sh	2015-04-15 13:57:17.768424243 +0100
+@@ -39,7 +39,7 @@
+ 		if test $? -eq 0 ; then
+ 			cmc -i <<EOF
+ start transaction
+-set cmlegacy.xmpp.0.xmpp_supported "1";
++set cmlegacy.xmpp.0.xmpp_supported "0";
+ set cmlegacy.xmpp.0.xmpp_keepalive "60";
+ commit transaction
+ EOF
+diff -Naur tr69-data-model/apps/cwmd/cwmd_work.c tr69-data-model_new/apps/cwmd/cwmd_work.c
+--- tr69-data-model/apps/cwmd/cwmd_work.c	2014-11-10 11:29:27.072096658 +0000
++++ tr69-data-model_new/apps/cwmd/cwmd_work.c	2014-11-12 10:23:32.766597428 +0000
+@@ -1742,7 +1742,6 @@
+         IGD_DEVICEINFO(X_SKY_COM_SMARTCARD_ID),
+         IGD_MGMTSVR(ParameterKey),
+         IGD_MGMTSVR(ConnectionRequestURL),
+-        IGD_MGMTSVR_XMPP(SupportedVersion),
+         NULL /* save one spot for ExternalIPAddress */
+ #undef IGD
+ #undef IGD_MGMTSVR

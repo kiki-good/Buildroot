@@ -1,0 +1,5 @@
+config BR2_PACKAGE_ST_PCI
+	bool "sti_pci"
+	 help
+          Added simple cma device with hard coded allocation 
+          32MB@0x60000000 to match pcie security feature

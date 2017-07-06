@@ -1,0 +1,234 @@
+diff -Naur dbus-1.8.20/dbus/dbus-sysdeps-unix.c dbus-1.8.20_mod/dbus/dbus-sysdeps-unix.c
+--- dbus-1.8.20/dbus/dbus-sysdeps-unix.c	2015-05-14 13:23:25.000000000 +0100
++++ dbus-1.8.20_mod/dbus/dbus-sysdeps-unix.c	2015-11-05 18:11:48.003192529 +0000
+@@ -56,6 +56,10 @@
+ #include <netdb.h>
+ #include <grp.h>
+ #include <arpa/inet.h>
++#include <limits.h>
++#include <stdio.h>
++#include <errno.h>
++#include <sys/syscall.h>
+ 
+ #ifdef HAVE_ERRNO_H
+ #include <errno.h>
+@@ -2036,13 +2040,13 @@
+       return FALSE;
+     }
+ 
+-  if (sb.st_uid != geteuid ())
++  if (sb.st_uid != _dbus_geteuid ())
+     {
+       dbus_set_error (error, DBUS_ERROR_FAILED,
+                      "%s directory is owned by user %lu, not %lu",
+                      directory,
+                      (unsigned long) sb.st_uid,
+-                     (unsigned long) geteuid ());
++                     (unsigned long) _dbus_geteuid ());
+       return FALSE;
+     }
+ 
+@@ -2401,6 +2405,73 @@
+                                    _dbus_geteuid ());
+ }
+ 
++static long _getid_from_proc_file(const char* filename)
++{
++    int id_value = -1;
++
++    FILE *stream = fopen(filename, "r");
++    if (stream)
++    {
++        char *line = NULL;
++        size_t len = 0;
++        ssize_t read;
++
++        while ((read = getline(&line, &len, stream)) != -1)
++        {
++            int index = 0;
++            char * pch;
++            pch = strtok (line," ");
++            while ( (pch != NULL) && (index <= 1))
++            {
++                if(index == 1)
++                {
++                    char *endptr;
++                    id_value = strtol(pch, &endptr, 10);
++                    if ( (errno == ERANGE && (id_value == LONG_MAX || id_value == LONG_MIN)) || (errno != 0 && id_value == 0))
++                    {
++                        _dbus_verbose("unable to read id from proc file %s", filename);
++                    }
++                }
++
++                index++;
++                pch = strtok (NULL, " ");
++            }
++
++            if (line)
++            {
++                free(line);
++                line = NULL;
++            }
++
++            break; // We only read the first line
++        }
++
++        fclose(stream);
++    }
++    else
++    {
++       _dbus_verbose("unable to open proc file %s", filename);
++    }
++
++    return id_value;
++}
++
++static uid_t getuid_from_proc_uid_map()
++{
++    char uid_map_file[64];
++    snprintf(uid_map_file, sizeof(uid_map_file), "/proc/self/task/%ld/uid_map", syscall(SYS_gettid));
++    uid_map_file[sizeof(uid_map_file) - 1] = '\0';    
++    return (uid_t)_getid_from_proc_file(uid_map_file);
++}
++
++static gid_t getgid_from_proc_gid_map()
++{
++    char gid_map_file[64];
++    snprintf(gid_map_file, sizeof(gid_map_file), "/proc/self/task/%ld/gid_map", syscall(SYS_gettid));
++    gid_map_file[sizeof(gid_map_file) - 1] = '\0';    
++    return (gid_t)_getid_from_proc_file(gid_map_file);
++}
++
+ /**
+  * Gets our process ID
+  * @returns process ID
+@@ -2411,12 +2482,66 @@
+   return getpid ();
+ }
+ 
++/** Gets our GID
++ * @returns process GID
++ */
++dbus_gid_t
++_dbus_getgid (void)
++{
++  if(getenv("DBUS_ID_MAPPING"))
++  {
++     _dbus_verbose("Reading uid from uid_map file\n");
++ 
++     dbus_gid_t gid = (dbus_gid_t)getgid_from_proc_gid_map();
++     if(gid != (dbus_gid_t)(-1))
++     { 
++       gid += getgid ();
++     } 
++     
++     return gid;
++  }
++
++  return getgid ();
++}
++
++dbus_gid_t
++_dbus_getegid (void)
++{
++  if(getenv("DBUS_ID_MAPPING"))
++  {
++     _dbus_verbose("Reading uid from uid_map file\n");
++     
++     dbus_gid_t gid = (dbus_gid_t)getgid_from_proc_gid_map();
++     if(gid != (dbus_gid_t)(-1))
++     { 
++       gid += getegid ();
++     } 
++     
++     return gid;
++  }
++
++  return getegid ();
++}
++
+ /** Gets our UID
+  * @returns process UID
+  */
+ dbus_uid_t
+ _dbus_getuid (void)
+ {
++  if(getenv("DBUS_ID_MAPPING"))
++  {
++     _dbus_verbose("Reading uid from uid_map file\n");
++
++     dbus_uid_t uid = (dbus_uid_t)getuid_from_proc_uid_map();
++     if(uid != (dbus_uid_t)(-1))
++     { 
++       uid += getuid ();
++     } 
++
++     return uid;
++  }
++
+   return getuid ();
+ }
+ 
+@@ -2426,9 +2551,23 @@
+ dbus_uid_t
+ _dbus_geteuid (void)
+ {
++  if(getenv("DBUS_ID_MAPPING"))
++  {
++     _dbus_verbose("Reading uid from uid_map file\n");
++
++     dbus_uid_t uid = (dbus_uid_t)getuid_from_proc_uid_map();
++     if(uid != (dbus_uid_t)(-1))
++     { 
++       uid += geteuid ();
++     } 
++
++     return uid;
++  }
++ 
+   return geteuid ();
+ }
+ 
++
+ /**
+  * The only reason this is separate from _dbus_getpid() is to allow it
+  * on Windows for logging but not for other purposes.
+@@ -4080,10 +4219,10 @@
+           getresgid (&rgid, &egid, &sgid) != 0)
+ #endif /* HAVE_GETRESUID */
+         {
+-          suid = ruid = getuid ();
+-          sgid = rgid = getgid ();
+-          euid = geteuid ();
+-          egid = getegid ();
++          suid = ruid = _dbus_getuid ();
++          sgid = rgid = _dbus_getgid ();
++          euid = _dbus_geteuid ();
++          egid = _dbus_getegid ();
+         }
+ 
+       check_setuid_initialised = TRUE;
+diff -Naur dbus-1.8.20/dbus/dbus-sysdeps-unix.h dbus-1.8.20_mod/dbus/dbus-sysdeps-unix.h
+--- dbus-1.8.20/dbus/dbus-sysdeps-unix.h	2015-05-14 13:23:25.000000000 +0100
++++ dbus-1.8.20_mod/dbus/dbus-sysdeps-unix.h	2015-11-05 18:11:48.003192529 +0000
+@@ -132,6 +132,8 @@
+ 
+ dbus_uid_t    _dbus_getuid (void);
+ dbus_uid_t    _dbus_geteuid (void);
++dbus_gid_t    _dbus_getgid (void);
++dbus_gid_t    _dbus_getegid (void);
+ 
+ dbus_bool_t _dbus_parse_uid (const DBusString  *uid_str,
+                              dbus_uid_t        *uid);
+diff -Naur dbus-1.8.20/dbus/dbus-sysdeps-util-unix.c dbus-1.8.20_mod/dbus/dbus-sysdeps-util-unix.c
+--- dbus-1.8.20/dbus/dbus-sysdeps-util-unix.c	2015-05-14 13:23:25.000000000 +0100
++++ dbus-1.8.20_mod/dbus/dbus-sysdeps-util-unix.c	2015-11-05 18:11:48.003192529 +0000
+@@ -424,7 +424,7 @@
+    * the session bus takes the Linux default,
+    * currently 1024 for cur and 4096 for max.
+    */
+-  if (getuid () != 0)
++  if (_dbus_getuid () != 0)
+     {
+       /* not an error, we're probably the session bus */
+       return TRUE;

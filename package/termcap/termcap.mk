@@ -1,0 +1,52 @@
+#############################################################
+#
+# termcap
+#
+##########################################################
+TERMCAP_MAJOR_VERSION:=2
+TERMCAP_MINOR_VERSION:=0.8
+TERMCAP_VERSION:=$(TERMCAP_MAJOR_VERSION).$(TERMCAP_MINOR_VERSION)
+TERMCAP_SOURCE:=termcap-$(TERMCAP_VERSION).tar.bz2
+TERMCAP_SITE:=http://localhost/
+TERMCAP_DIR:=$(BUILD_DIR)/termcap-$(TERMCAP_VERSION)
+TERMCAP_CAT:=$(BZCAT)
+TERMCAP_LIBTOOL_PATCH=NO
+TERMCAP_INSTALL_STAGING:=YES
+TERMCAP_INSTALL_TARGET:=YES
+TERMCAP_AUTORECONF:=NO
+TERMCAP_TARGET_SYM_NAME:=libtermcap.so
+TERMCAP_TARGET_BINARY_NAME:=$(TERMCAP_TARGET_SYM_NAME).$(TERMCAP_VERSION)
+TERMCAP_INSTALL_PREFIX:=lib
+TERMCAP_TARGET_BINARY:=$(TERMCAP_INSTALL_PREFIX)/$(TERMCAP_TARGET_BINARY_NAME)
+
+$(TERMCAP_DIR)/.unpacked: $(DL_DIR)/$(TERMCAP_SOURCE)
+	$(TERMCAP_CAT) $(DL_DIR)/$(TERMCAP_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
+	touch $(TERMCAP_DIR)/.unpacked
+
+termcap: $(TARGET_DIR)/$(TERMCAP_TARGET_BINARY)
+
+$(TARGET_DIR)/$(TERMCAP_TARGET_BINARY):$(TERMCAP_DIR)/.unpacked
+	$(MAKE) CC=$(TARGET_CC) -C $(TERMCAP_DIR)
+	cp $(TERMCAP_DIR)/$(TERMCAP_TARGET_BINARY_NAME) $@
+	ln -s $(TERMCAP_TARGET_BINARY_NAME) $(TARGET_DIR)/$(TERMCAP_INSTALL_PREFIX)/$(TERMCAP_TARGET_SYM_NAME)
+	ln -s $(TERMCAP_TARGET_BINARY_NAME) $(TARGET_DIR)/$(TERMCAP_INSTALL_PREFIX)/$(TERMCAP_TARGET_SYM_NAME).$(TERMCAP_MAJOR_VERSION)
+	
+termcap-source: $(DL_DIR)/$(TERMCAP_SOURCE)
+
+termcap-clean:
+	$(MAKE) -C $(TERMCAP_DIR) clean
+	rm -f $(TARGET_DIR)/$(TERMCAP_TARGET_BINARY)
+	rm -f $(TARGET_DIR)/$(TERMCAP_INSTALL_PREFIX)/$(TERMCAP_TARGET_SYM_NAME)
+
+termcap-dirclean:termcap-clean
+	rm -rf $(TERMCAP_DIR)
+
+#############################################################
+#
+## Toplevel Makefile options
+#
+##############################################################
+ifeq ($(BR2_PACKAGE_TERMCAP),y)
+TARGETS+=termcap
+endif
+

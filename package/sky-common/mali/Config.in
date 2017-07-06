@@ -1,0 +1,15 @@
+config BR2_PACKAGE_MALI_GRAPHICS_DEBUGGER
+        bool "Mali Graphics Debugger"
+        select BR2_PACKAGE_MGD
+        select BR2_PACKAGE_MGD_PRELOAD
+        default BR2_SKY_DEBUG_BUILD
+        help
+                Install and enables the mali graphics debugger daemon.
+                http://malideveloper.arm.com/resources/tools/mali-graphics-debugger/
+                
+config BR2_PACKAGE_MGD
+        bool "Install Mali Graphics Debugger"
+
+config BR2_PACKAGE_MGD_PRELOAD
+        bool "Mali Graphics Debugger preload library"
+

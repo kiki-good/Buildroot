@@ -1,0 +1,44 @@
+#!/bin/sh
+test -e /usr/sbin/libvirtd || exit 0
+RETVAL=0
+case "$1" in
+	start)
+		ulimit -r 6
+		/bin/writefile "-1" /proc/sys/kernel/sched_rt_runtime_us
+		/bin/mount -t tmpfs -o noexec,nosuid,nodev cgroup_root /sys/fs/cgroup
+		/bin/mkdir /sys/fs/cgroup/freezer
+		/bin/mount -t cgroup -o noexec,nosuid,nodev,freezer freezer /sys/fs/cgroup/freezer
+		/bin/mkdir /sys/fs/cgroup/memory
+		/bin/mount -t cgroup -o noexec,nosuid,nodev,memory memory /sys/fs/cgroup/memory
+		/bin/mkdir /sys/fs/cgroup/cpu
+		/bin/mount -t cgroup -o noexec,nosuid,nodev,cpu cpu /sys/fs/cgroup/cpu
+		/bin/mkdir /sys/fs/cgroup/cpuacct
+		/bin/mount -t cgroup -o noexec,nosuid,nodev,cpuacct cpuacct /sys/fs/cgroup/cpuacct
+		/bin/mkdir /sys/fs/cgroup/cpuset
+		/bin/mount -t cgroup -o noexec,nosuid,nodev,cpuset cpuset /sys/fs/cgroup/cpuset
+		/bin/mkdir /sys/fs/cgroup/devices
+		/bin/mount -t cgroup -o noexec,nosuid,nodev,devices devices /sys/fs/cgroup/devices
+		/bin/mkdir /sys/fs/cgroup/gpu
+		/bin/mount -t cgroup -o noexec,nosuid,nodev,gpu gpu /sys/fs/cgroup/gpu
+		/bin/mkdir /sys/fs/cgroup/net_cls
+		/bin/mount -t cgroup -o noexec,nosuid,nodev,net_cls net_cls /sys/fs/cgroup/net_cls
+		/usr/sbin/libvirtd --daemon
+		RETVAL=$?
+		;;
+	stop)
+		killall libvirtd
+		RETVAL=$?
+		/bin/umount /sys/fs/cgroup/freezer
+		/bin/umount /sys/fs/cgroup/memory
+		/bin/umount /sys/fs/cgroup/cpu
+		/bin/umount /sys/fs/cgroup/cpuacct
+		/bin/umount /sys/fs/cgroup/cpuset
+		/bin/umount /sys/fs/cgroup/devices
+		/bin/umount /sys/fs/cgroup/gpu
+		/bin/umount /sys/fs/cgroup/net_cls
+		/bin/umount /sys/fs/cgroup
+		;;
+	*)
+		;;
+esac
+exit $RETVAL

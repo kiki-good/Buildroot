@@ -1,0 +1,74 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-07-06 10:23:09.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-07-06 14:50:48.896577359 +0100
+@@ -239,6 +239,7 @@
+ 	DIR * tunerDir ;
+ 	if(NULL != (tunerDir = opendir(VENDOR_TUNER_PROC_DIRECTORY)) ) {
+ 		snprintf(buf, length, "Satellite STB");
++		closedir(tunerDir);
+ 	}else{
+ 		snprintf(buf, length, "Multi-Room STB");
+ 	}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_physicalmedium.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_physicalmedium.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_physicalmedium.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_physicalmedium.c	2015-07-06 14:57:17.595826146 +0100
+@@ -394,8 +394,11 @@
+ 
+ 		if (status == true) {
+ 			fd = open(deviceId, O_RDWR);
+-			if(!ioctl(fd, HDIO_DRIVE_CMD, buf)){
+-				status = false;
++			if (fd > 0){
++				if(!ioctl(fd, HDIO_DRIVE_CMD, buf)){
++					status = false;
++				}
++				close(fd);
+ 			}
+ 		}
+ 		
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_smart.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_smart.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_smart.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_smart.c	2015-07-06 15:25:38.154035516 +0100
+@@ -464,21 +464,24 @@
+      */
+     fdRedirect = open(BSKYB_SMART_FILE_NAME, O_RDWR | O_CREAT);
+     if (fdRedirect == BSKYB_SMART_FILE_IO_ERROR) {
+-	syslog(LOG_ERR, "Failed to open temp file\n");
+-	return NULL;
++		syslog(LOG_ERR, "Failed to open temp file\n");
++		sk_disk_free(d);
++		return NULL;
+     }
+     /*flush the stdout and take a back of file descriptor*/
+     fflush(stdout);
+     fdStdOut = dup(STDOUT_FILENO);
+     if (fdStdOut < VENDOR_STATUS_OK) {
+-	syslog(LOG_ERR, "stdout fd duplication failed\n");
+-	return NULL;
++		syslog(LOG_ERR, "stdout fd duplication failed\n");
++		sk_disk_free(d);
++		return NULL;
+     }
+ 
+     result = dup2(fdRedirect, STDOUT_FILENO);
+     if (result < VENDOR_STATUS_OK) {
+-	syslog(LOG_ERR, "stdout redirection failed\n");
+-	return NULL;
++		syslog(LOG_ERR, "stdout redirection failed\n");
++		sk_disk_free(d);
++		return NULL;
+     }
+     close(fdRedirect);
+ 
+@@ -494,8 +497,9 @@
+     fflush(stdout);
+     result = dup2(fdStdOut, STDOUT_FILENO);
+     if (result < VENDOR_STATUS_OK) {
+-	syslog(LOG_ERR, "stdout redirection failed\n");
+-	return NULL;
++		syslog(LOG_ERR, "stdout redirection failed\n");
++		sk_disk_free(d);
++		return NULL;
+     }
+     close(fdStdOut);
+ 

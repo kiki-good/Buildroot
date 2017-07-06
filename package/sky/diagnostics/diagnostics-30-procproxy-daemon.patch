@@ -1,0 +1,1238 @@
+diff -Naurr diagnostics-1.3_orig/apps/cwmd/cwmd_standby_check.c diagnostics-1.3_new/apps/cwmd/cwmd_standby_check.c
+--- diagnostics-1.3_orig/apps/cwmd/cwmd_standby_check.c	2015-07-17 09:22:51.000000000 +0100
++++ diagnostics-1.3_new/apps/cwmd/cwmd_standby_check.c	2015-07-19 15:44:01.176693423 +0100
+@@ -43,7 +43,7 @@
+ 	char pResultString[VENDOR_HOOKS_MAX_RESPONSE_SIZE];
+ 
+ 	*standbystatus = EOK;
+-	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(SYSTEM_STANDBY_WAKEUP_REASON_PROC, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, SYSTEM_STANDBY_WAKEUP_REASON_PROC, buffer, sizeof (buffer))) {
+ 		cwmd_log(LOG_ERR, "Wakeup reason proc - vendor_hook_read_proc_device failed.\n");
+ 		return EFAIL;
+ 	}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_videodecoder.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_videodecoder.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_videodecoder.c	2015-07-17 09:22:51.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_videodecoder.c	2015-07-20 11:26:59.268115641 +0100
+@@ -211,4 +211,4 @@
+ 		}
+ 	}
+ 	return sts;
+-}
+\ No newline at end of file
++}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_videooutput.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_videooutput.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_videooutput.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_videooutput.c	2015-07-20 11:27:07.852163405 +0100
+@@ -107,7 +107,7 @@
+     if (err != EOK) {
+         return err;
+     }
+-
++	
+     snprintf(deviceID, sizeof(deviceID), "%s", VIDEO_OUTPUT_PROC_ENTRY);
+ 
+     switch (id) {
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_capabilities_videodecoder_helper.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_capabilities_videodecoder_helper.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_capabilities_videodecoder_helper.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_capabilities_videodecoder_helper.c	2015-07-19 15:44:53.887908756 +0100
+@@ -49,8 +49,8 @@
+     pVideoDecoderInfo->pFullData = (char*)pVideoDecoderInfo + sizeof(videodecoder_info_t);
+ 
+     if(eVENDORHOOK_OK !=
+-        vendor_hook_read_proc_device_by_line(pDeviceID, pVideoDecoderInfo->pFullData, \
+-            VIDEODECODER_FORMATS_PROC_MAX_LINE_SIZE, VIDEODECODER_FORMATS_PROC_MAX_SIZE)){
++        vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, pVideoDecoderInfo->pFullData, \
++            VIDEODECODER_FORMATS_PROC_MAX_SIZE)){
+         return NULL ;
+     }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_audiodecoder.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_audiodecoder.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_audiodecoder.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_audiodecoder.c	2015-07-19 15:45:03.719568373 +0100
+@@ -143,7 +143,7 @@
+ #ifndef VENDOR_HOOK_AUDIODECODER_USE_STATIC_TEST_DATA
+ 	(void) instance;
+ 	snprintf(proc_device, sizeof(proc_device), AUDIODECODER_PROC_ENTRY);
+-	if (vendor_hook_read_proc_device(proc_device, buffer, sizeof (buffer)) == eVENDORHOOK_OK) {
++	if (vendor_hook_read_proc_device(PROCPROXY_GET_INFO, proc_device, buffer, sizeof (buffer)) == eVENDORHOOK_OK) {
+ 		procBuffer = buffer;
+ 	}
+ 	else {
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_audiooutput.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_audiooutput.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_audiooutput.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_audiooutput.c	2015-07-19 15:45:15.171073040 +0100
+@@ -64,7 +64,7 @@
+  */
+ int bskyb_audiooutput_get_data(audiooutputdata_t* audiooutputdata, char *proc_device)
+ {
+-	if (vendor_hook_read_proc_device(proc_device, audiooutputdata->procBuffer,
++	if (vendor_hook_read_proc_device(PROCPROXY_GET_INFO, proc_device, audiooutputdata->procBuffer,
+ 			AUDIOOUTPUT_DEVICE_BUFFER_MAX_SIZE) != eVENDORHOOK_OK) {
+ 		return VENDOR_STATUS_ERROR;
+ 	}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_spdif.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_spdif.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_spdif.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_spdif.c	2015-07-20 11:19:44.539471120 +0100
+@@ -49,21 +49,21 @@
+  */
+ int get_spdif_components_numentries(char * pSpdifProcEntry, int * pSpdifNumEntries)
+ {
+-	DIR *dir;
+-	struct dirent *ent;
+-	int count = 0;
+-
+-	if ((dir = opendir(pSpdifProcEntry)) == NULL) {
+-		VENDOR_LOG_ERROR("Failed to open directory: %s\n", __FUNCTION__);
+-		return EFAIL;
+-	}
+-	while (NULL != (ent = readdir(dir))) {
+-		if(!(ent->d_name[0] >= '0' && ent->d_name[0] <= '9')){
+-			count ++;
++	static int spdifTotal = 0;
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
++
++	if (0 == spdifTotal){
++		memset(buffer, 0, sizeof(buffer));
++		memset(message, 0, sizeof(message));
++		snprintf(message, sizeof(message), "%s/", pSpdifProcEntry);
++		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
++			return 0;
++		}else{
++			spdifTotal = atoi(buffer);	
+ 		}
+ 	}
+-	closedir(dir);
+-	*pSpdifNumEntries = count;
++	*pSpdifNumEntries = spdifTotal;
+ 	return EOK;
+ }
+ 
+@@ -90,7 +90,7 @@
+ 
+ 	snprintf(procEntry, sizeof(procEntry), "%s/%d/%s", pDeviceID, instance, "status");
+ 
+-	if(eVENDORHOOK_OK != vendor_hook_read_proc_device(procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
++	if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
+ 		VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+ 		return EFAIL;
+ 	}
+@@ -147,7 +147,7 @@
+ 
+ 	snprintf(procEntry, sizeof(procEntry), "%s/%d/%s", pDeviceID, instance, "status");
+ 
+-	if(eVENDORHOOK_OK != vendor_hook_read_proc_device(procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
++	if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
+ 		VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+ 		return EFAIL;
+ 	}
+@@ -179,7 +179,7 @@
+ 
+ 	snprintf(procEntry, sizeof(procEntry), "%s/%d/%s", pDeviceID, instance, "status");
+ 
+-	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
+ 		VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+ 		return EFAIL;
+ 	}
+@@ -211,7 +211,7 @@
+ 
+ 	snprintf(procEntry, sizeof(procEntry), "%s/%d/%s", pDeviceID, instance, "status");
+ 
+-	if(eVENDORHOOK_OK != vendor_hook_read_proc_device(procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
++	if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
+ 		VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+ 		return EFAIL;
+ 	}
+@@ -243,7 +243,7 @@
+ 
+ 	snprintf(procEntry, sizeof(procEntry), "%s/%d/%s", pDeviceID, instance, "status");
+ 
+-	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
+ 		VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+ 		return EFAIL;
+ 	}
+@@ -275,7 +275,7 @@
+ 
+ 	snprintf(procEntry, sizeof(procEntry), "%s/%d/%s", pDeviceID, instance, "status");
+ 
+-	if(eVENDORHOOK_OK != vendor_hook_read_proc_device(procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
++	if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, procEntry, procData, SPDIF_PROC_MAX_SIZE)) {
+ 		VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+ 		return EFAIL;
+ 	}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videodecoder.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videodecoder.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videodecoder.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videodecoder.c	2015-07-20 11:17:13.534049282 +0100
+@@ -54,23 +54,21 @@
+ */
+ int get_videodecoder_components_numentries(char * pVideoDecoderProcEntry, int * pVideoDecNumEntries)
+ {
+-    DIR *dir;
+-    struct dirent *ent;
+-    int count = 0;
+-
+-    if ((dir = opendir(pVideoDecoderProcEntry)) == NULL) {
+-      VENDOR_LOG_ERROR("Failed to open directory: %s\n", __FUNCTION__);
+-      return EFAIL;
+-    }
+-
+-    while (NULL != (ent = readdir(dir))) {
+-      if(!(ent->d_name[0] >= '0' && ent->d_name[0] <= '9')){
+-        count ++;
+-      }
+-    }
+-
+-    closedir(dir);
+-    *pVideoDecNumEntries = count;
++    static int videodecoderTotal = 0;
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
++
++	if(0 == videodecoderTotal){
++		memset(buffer, 0, sizeof(buffer));
++		memset(message, 0, sizeof(message));
++		snprintf(message, sizeof(message), "%s/", pVideoDecoderProcEntry);
++		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
++			return 0;
++		}else{
++			videodecoderTotal = atoi(buffer);	
++		}
++	}
++    *pVideoDecNumEntries = videodecoderTotal;
+     return EOK;
+ }
+ 
+@@ -96,7 +94,7 @@
+     }
+     snprintf(procEntry, sizeof(procEntry), "%s/%d/%s", pDeviceID, instance, "status");
+ 
+-    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(procEntry, procData, VIDEODECODER_PROC_MAX_SIZE)){
++    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, procEntry, procData, VIDEODECODER_PROC_MAX_SIZE)){
+         VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+         return EFAIL ;
+     }
+@@ -259,7 +257,7 @@
+     }
+     snprintf(procEntry, sizeof(procEntry), "%s/%d/%s", pDeviceID, instance, "status");
+ 
+-    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(procEntry, procData, VIDEODECODER_PROC_MAX_SIZE)){
++    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, procEntry, procData, VIDEODECODER_PROC_MAX_SIZE)){
+         VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+         return EFAIL ;
+     }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videodecoder.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videodecoder.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videodecoder.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videodecoder.h	2015-07-19 17:06:16.771503679 +0100
+@@ -33,6 +33,8 @@
+ #define VIDEO_DECODER_PROC_ENTRY ("./cunit_proc/videodecoder")
+ #endif
+ 
++#define BSKYB_VIDEODECODER_MAX_BUFFER_SIZE  (256)
++
+ /*---------------------------------------------------------------------------
+ ** Functions
+ */
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videooutput.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videooutput.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videooutput.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videooutput.c	2015-07-21 13:56:54.005695214 +0100
+@@ -187,34 +187,34 @@
+ 
+ int get_components_videooutput_aspectratiobehaviour(char* pDeviceID, char *buf, size_t length, int instance)
+ {
+-    int sts = EFAIL ;
+-    int videoDecoderInstance = 0;
+-
+-    if(NULL == pDeviceID){
+-        return EFAIL ;
+-    }
+-
+-    for(videoDecoderInstance = 0; ; videoDecoderInstance++){
+-        sts = get_components_videodecoder_status(pDeviceID, buf, length, videoDecoderInstance);
+-        if(EOK != sts){
+-            return EFAIL;
+-        }
+-        if(0 == strncmp(buf, "Decoding", strlen("Decoding"))){
+-            break;
+-        }
+-    }
+-    sts = get_components_videodecoder_contentaspectratio(pDeviceID, buf, length, videoDecoderInstance);
+-    if(EOK != sts){
+-        return EFAIL;
+-    }
+-    if(0 == strncmp(buf, "16:9", strlen("16:9"))){
+-        strncpy(buf, "16:9 LetterBox", length);
+-    }else if(0 == strncmp(buf, "4:3", strlen("4:3"))){
+-        strncpy(buf, "4:3 Standard", length);
+-    }else{
+-        strncpy(buf, "ERROR", length);
+-    }
+-    return EOK;
++	int sts = EFAIL ;
++	 int videoDecoderInstance = 0;
++	
++	 if(NULL == pDeviceID){
++		 return EFAIL ;
++	 }
++	
++	 for(videoDecoderInstance = 0; ; videoDecoderInstance++){
++		 sts = get_components_videodecoder_status(pDeviceID, buf, length, videoDecoderInstance);
++		 if(EOK != sts){
++			 return EFAIL;
++		 }
++		 if(0 == strncmp(buf, "Decoding", strlen("Decoding"))){
++			 break;
++		 }
++	 }
++	 sts = get_components_videodecoder_contentaspectratio(pDeviceID, buf, length, videoDecoderInstance);
++	 if(EOK != sts){
++		 return EFAIL;
++	 }
++	 if(0 == strncmp(buf, "16:9", strlen("16:9"))){
++		 strncpy(buf, "16:9 LetterBox", length);
++	 }else if(0 == strncmp(buf, "4:3", strlen("4:3"))){
++		 strncpy(buf, "4:3 Standard", length);
++	 }else{
++		 strncpy(buf, "ERROR", length);
++	 }
++	 return EOK;
+ }
+ 
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-07-17 09:22:51.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-07-20 14:58:09.360449920 +0100
+@@ -140,8 +140,8 @@
+ 	pDeviceInfo = ( device_info_t *) calloc(1, DEVICEINFO_PROC_MAX_SIZE+ sizeof(device_info_t));
+ 	pDeviceInfo->pFullData = (char*)pDeviceInfo + sizeof(device_info_t);
+ 
+-	status = vendor_hook_read_proc_device_by_line((char*)deviceId, pDeviceInfo->pFullData ,
+-			DEVICEINFO_PROC_MAX_LINE_SIZE, DEVICEINFO_PROC_MAX_SIZE);
++	status = vendor_hook_read_proc_device(PROCPROXY_GET_INFO, (char*)deviceId, pDeviceInfo->pFullData ,
++			DEVICEINFO_PROC_MAX_SIZE);
+ 
+ 	if(status != eVENDORHOOK_OK){
+ 		return NULL;
+@@ -236,10 +236,8 @@
+ 
+ int get_deviceinfo_productclass(const char* pDeviceID, char *buf, size_t length)
+ {
+-	DIR * tunerDir ;
+-	if(NULL != (tunerDir = opendir(VENDOR_TUNER_PROC_DIRECTORY)) ) {
++	if( VendorTunerCalculateNumberOfTuners() > 0 ) {
+ 		snprintf(buf, length, "Satellite STB");
+-		closedir(tunerDir);
+ 	}else{
+ 		snprintf(buf, length, "Multi-Room STB");
+ 	}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.c	2015-07-20 11:07:23.913898357 +0100
+@@ -62,14 +62,18 @@
+ int get_deviceinfo_temperaturestatus_temperaturesensornumberofentries()
+ {
+ 	static int numTempSensors = 0;
+-	char proc_device[VENDOR_TSENSOR_PROC_DEVICE_NAME_BUFFER];
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
+ 
+ 	if ( 0 == numTempSensors ){
+-		for ( ; numTempSensors < VENDOR_TSENSOR_MAX_SENSORS; numTempSensors++ ){
+-			snprintf(proc_device, sizeof(proc_device), VENDOR_TSENSOR_PROC_FILENAME, numTempSensors);
+-			if ( 0 != access(proc_device, F_OK)){
+-				break;
+-			}
++		memset(buffer, 0, sizeof(buffer));
++		memset(message, 0, sizeof(message));
++		snprintf(message, sizeof(message), "%s/", VENDOR_TSENSOR_PROC_DIRECTORY);
++		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR,
++					message, buffer, sizeof (buffer))) {
++			return 0;
++		}else{
++			numTempSensors = atoi(buffer);	
+ 		}
+ 	}
+ 	return numTempSensors;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.h	2015-07-19 16:26:02.721312741 +0100
+@@ -37,6 +37,7 @@
+ #else
+ #define VENDOR_TSENSOR_PROC_FILENAME            "./cunit_proc/tsensor/%d/status"
+ #endif
++#define VENDOR_TSENSOR_PROC_DIRECTORY            "/proc/Sky/tr69/tsensor"
+ 
+ 
+ /*---------------------------------------------------------------------------
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_clock.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_clock.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_clock.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_clock.c	2015-07-19 15:46:43.836761924 +0100
+@@ -72,7 +72,7 @@
+ 		return EFAIL;
+ 	}
+ 
+-	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_fan.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_fan.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_fan.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_fan.c	2015-07-19 15:47:09.030800718 +0100
+@@ -72,7 +72,7 @@
+ 		VENDOR_LOG_ERROR("%s: Invalid argument\n", __FUNCTION__);
+ 		return EFAIL;
+ 	}
+-	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+@@ -98,7 +98,7 @@
+ 	char buffer[VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER];
+ 
+ 	strncpy(deviceId, VENDOR_SUPPORTMCU_FAN_PROC_FILENAME, sizeof(deviceId));
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		vendor_hooks_extractint32FromData(buffer, VENDOR_SUPPORTMCU_FAN_SPEED_RECORDS, &count);
+ 	}
+ 
+@@ -121,7 +121,7 @@
+ 	char buffer[VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER];
+ 
+ 	strncpy(deviceId, VENDOR_SUPPORTMCU_FAN_PROC_FILENAME, sizeof(deviceId));
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		if (vendor_hooks_extractint32FromData(buffer, VENDOR_SUPPORTMCU_FAN_STALL_ALERTS, count)) {
+ 			ret = EOK;
+ 		}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c	2015-07-19 15:47:16.041483238 +0100
+@@ -87,7 +87,7 @@
+ 	pSupportMcuInfo = (supportmcu_info_t*) calloc(1, sizeof(supportmcu_info_t));
+ 	pSupportMcuInfo->pFullData = (char*) calloc(1, VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER);
+ 	
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		strncpy(pSupportMcuInfo->pFullData, (char*) buffer, VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER);
+ 		pSupportMcuInfo->fullDataSize = strlen(pSupportMcuInfo->pFullData);
+ 	}else {
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_power.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_power.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_power.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_power.c	2015-07-19 15:47:29.706224101 +0100
+@@ -253,7 +253,7 @@
+ 	char buffer[VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER];
+ 
+ 	strncpy(deviceId, VENDOR_SUPPORTMCU_POWER_PROC_FILENAME, sizeof(deviceId));
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		vendor_hooks_extractint32FromData(buffer, VENDOR_SUPPORTMCU_POWER_POWERFAILURE_RECORDS, &count);
+ 	}
+ 	
+@@ -274,7 +274,7 @@
+ 	char buffer[VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER];
+ 
+ 	strncpy(deviceId, VENDOR_SUPPORTMCU_POWER_PROC_FILENAME, sizeof(deviceId));
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		vendor_hooks_extractint32FromData(buffer, VENDOR_SUPPORTMCU_POWER_LVD_RECORDS, &count);
+ 	}
+ 	
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.c	2015-07-19 15:47:37.278738061 +0100
+@@ -237,7 +237,7 @@
+ 	char buffer[VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER];
+ 
+ 	strncpy(deviceId, VENDOR_SUPPORTMCU_RESET_PROC_FILENAME, sizeof(deviceId));
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		vendor_hooks_extractint32FromData(buffer, VENDOR_SUPPORTMCU_RESET_REBOOT_RECORDS, &count);
+ 	}
+ 	
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_wakeup.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_wakeup.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_wakeup.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_wakeup.c	2015-07-19 15:47:44.194194299 +0100
+@@ -70,7 +70,7 @@
+ 		return EFAIL;
+ 	}
+ 	
+-	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c	2015-07-21 10:52:07.805594049 +0100
+@@ -126,9 +126,8 @@
+ 	pHDMIInfo->pFullData = (char*)pHDMIInfo + sizeof(hdmi_info_t);
+ 
+ 	if(eVENDORHOOK_OK !=
+-		vendor_hook_read_proc_device_by_line(pDeviceID, pHDMIInfo->pFullData, \
+-						BSKYB_HDMI_PROC_MAX_LINE_SIZE, BSKYB_HDMI_PROC_MAX_BUFFER_SIZE)){
+-		VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
++		vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, pHDMIInfo->pFullData, \
++						BSKYB_HDMI_PROC_MAX_BUFFER_SIZE)){
+ 		return NULL ;
+ 	}
+ 	pHDMIInfo->lUpTime = 0;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.h	2015-07-21 10:09:34.714323924 +0100
+@@ -35,8 +35,8 @@
+ #define BSKYB_HDMI_PROC_EDID_LINE_LEN (BSKYB_EDID_LENGTH/BSKYB_HDMI_PROC_EDID_ROWS)
+ #define BSKYB_HDMI_MAX_EDID_BUF_SIZE (BSKYB_EDID_LENGTH << 1)
+ 
+-#define BSKYB_HDMI_PROC_MAX_LINE_SIZE (200)
+-#define BSKYB_HDMI_PROC_MAX_LINES (200)
++#define BSKYB_HDMI_PROC_MAX_LINE_SIZE (128)
++#define BSKYB_HDMI_PROC_MAX_LINES (32)
+ #define BSKYB_HDMI_PROC_MAX_BUFFER_SIZE (BSKYB_HDMI_PROC_MAX_LINE_SIZE * BSKYB_HDMI_PROC_MAX_LINES)
+ 
+ #define BSKYB_HDMI_PROC_ENTRY_LEN (50)
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c	2015-07-17 09:22:51.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c	2015-07-20 12:56:23.937571568 +0100
+@@ -22,13 +22,17 @@
+ #include <stdio.h>
+ #include <errno.h>
+ #include <ctype.h>
++#include <string.h>    
++#include <sys/socket.h>    
++#include <sys/select.h>    
++#include <arpa/inet.h> 
++#include <fcntl.h>
++
+ #include "vendor_hooks.h"
+ 
+ /*---------------------------------------------------------------------------
+ ** Defines and Macros
+ */
+-#define VENDOR_MAGIC_INVALID (0xdeadbeef)
+-#define VENDOR_MAGIC_VALID (0xb00daeae)
+ 
+ 
+ /*---------------------------------------------------------------------------
+@@ -86,6 +90,198 @@
+ 
+ /*!
+ ** ---------------------------------------------------------------------------
++** @brief Read Text File
++**
++** @param pFilename   -  text filename.
++** @param pBuffer          -   The buffer that the text file output is loaded.
++**                              It is upto the caller to ensure enough space is available
++**                              in the buffer (pBuffer).
++** @param length        -   Length of the pBuffer.
++**
++** @returns vendor_hook_proc_device_status_t
++**
++** @retval  eVENDORHOOK_OK								/proc device read and buffer loaded OK.
++** @retval  eVENDORHOOK_PROCDEVICE_FAIL					/proc device doesn't exist.
++** @retval  eVENDORHOOK_PROCDEVICE_READ_FAIL			/proc device read fail.
++** @retval  eVENDORHOOK_PROCDEVICE_BUFFER_TOO_SMALL	/proc device buffer too small.
++*/
++
++vendor_hook_proc_device_status_t
++	vendor_hook_read_text_file(char *pFilename, char *pBuffer, size_t length)
++{
++	FILE* fp = NULL;
++	size_t bytes_read;
++
++	VENDOR_ASSERT(( pFilename != NULL ));
++	VENDOR_ASSERT(( pBuffer != NULL ));
++
++	/* Clear Proc device Buffer */
++	memset(pBuffer, 0, length);
++	/* Read proc device into buffer */
++	fp = fopen ( pFilename, "r" );
++	/* Does file exist */
++	if ( fp == NULL ){
++		VENDOR_LOG_ERROR("\n%s: File: %s doesn't exist\n",__FUNCTION__, pFilename);
++		return eVENDORHOOK_PROCDEVICE_FAIL;
++	}
++	bytes_read = fread ( pBuffer, 1, length, fp );
++	fclose ( fp );
++
++	/* Return if read failed. */
++	if ( bytes_read == 0 ){
++		VENDOR_LOG_ERROR("\n%s: File: %s read failed.\n",__FUNCTION__, pFilename);
++		return eVENDORHOOK_PROCDEVICE_READ_FAIL;
++	}
++
++	/* Return if buffer isn't big enough. */
++	if ( bytes_read == length){
++		VENDOR_LOG_ERROR("\n%s: File: %s Buffer too small.\n",__FUNCTION__, pFilename);
++		return eVENDORHOOK_PROCDEVICE_BUFFER_TOO_SMALL;
++	}
++
++	/* NULL terminate the text. */
++	pBuffer[bytes_read] = '\0';
++
++	/* No Failures */
++	return eVENDORHOOK_OK;
++
++}
++
++
++#ifdef SKY_USE_DAEMON_PROCPROXY
++/*!
++** ---------------------------------------------------------------------------
++** @brief Read /proc device
++**
++** @param req	-	type of procproxy call
++** @param pProcDevice	-	/proc device name.
++** @param pBuffer		   -   The buffer that the /proc device output is loaded.
++**								It is upto the caller to ensure enough space is available
++**								in the buffer (pBuffer).
++** @param length		-	Length of the pBuffer.
++**
++** @returns vendor_hook_proc_device_status_t
++**
++** @retval	eVENDORHOOK_OK								/proc device read and buffer loaded OK.
++** @retval	eVENDORHOOK_PROCDEVICE_FAIL					/proc device doesn't exist.
++** @retval	eVENDORHOOK_PROCDEVICE_BUFFER_TOO_SMALL	/proc device buffer too small.
++*/
++vendor_hook_proc_device_status_t
++vendor_hook_read_proc_device(procproxyReq_t req, char *pProcDevice, char *pBuffer, size_t length)
++{
++	int sockfd, port;
++	int ioflags = -1;
++	int count = 0;
++	int bytesRead = 0;
++	char message[PROCPROXY_MSG_SIZE+1];
++	char reply[PROCPROXY_BUFF_SIZE];
++    struct sockaddr_in proxyServ;
++	struct timeval tv;
++	int result;
++	fd_set readset;
++	
++	VENDOR_ASSERT(( pProcDevice != NULL ));
++	VENDOR_ASSERT(( pBuffer != NULL ));
++
++	/* Make sure we don't exceed ProcProxy outgoing Buffer size */
++	if (length > PROCPROXY_RECV_BUFFER_SIZE-1){
++		VENDOR_LOG_ERROR("\n%s: File: %s Buffer Size too big!\n",__FUNCTION__, pProcDevice);
++		return eVENDORHOOK_PROCDEVICE_FAIL;
++	}
++
++	/* Clear Proc device Buffer */
++	memset(pBuffer, 0, length);
++	
++    sockfd = socket(AF_INET, SOCK_STREAM, 0);
++    if (sockfd < 0){
++		VENDOR_LOG_ERROR("\n%s: File: %s Error in opening socket\n",__FUNCTION__, pProcDevice);
++		return eVENDORHOOK_PROCDEVICE_FAIL;
++	}
++
++    proxyServ.sin_addr.s_addr = inet_addr(PROCPROXY_LOCAL_ADDRESS);
++    proxyServ.sin_family      = AF_INET;
++    proxyServ.sin_port        = htons(PROCPROXY_LOCAL_PORT);
++	
++    if (connect(sockfd, (struct sockaddr *)&proxyServ, sizeof(proxyServ)) < 0) {
++		VENDOR_LOG_ERROR("%\n%s: File: %s Connect failed. Error\n",__FUNCTION__, pProcDevice);
++		return eVENDORHOOK_PROCDEVICE_FAIL;
++    }
++
++	/* Only 2 types of request required for TR069. */
++	switch(req){
++		case PROCPROXY_GET_INFO:
++			snprintf(message,PROCPROXY_MSG_SIZE,"GET,%s", pProcDevice);
++			break;
++		case PROCPROXY_GET_DIR:
++			snprintf(message,PROCPROXY_MSG_SIZE,"DIR,%s", pProcDevice);
++			break;
++		default:
++			VENDOR_LOG_ERROR("Incorrect request: %d\n", req);
++			return eVENDORHOOK_PROCDEVICE_FAIL;
++	}
++
++   /* get current flags setting */
++   ioflags = fcntl(sockfd, F_GETFL, 0);
++
++   if (ioflags < 0){
++	   VENDOR_LOG_ERROR("\n%s: File: %s Error reading Socket flags\n",__FUNCTION__, pProcDevice);
++	   return eVENDORHOOK_PROCDEVICE_FAIL;
++   }
++
++   /* set to non-blocking */
++   fcntl(sockfd, F_SETFL, ioflags | O_NONBLOCK);
++
++   /* Initialise Timeout structure */
++   tv.tv_sec = 0;
++   tv.tv_usec = SELECT_TIMEOUT;
++
++   /* Initialise the Set */
++   FD_ZERO(&readset);
++   FD_SET(sockfd, &readset);
++
++	if( send(sockfd, message , strlen(message) , 0) <= 0){
++		VENDOR_LOG_ERROR("\n%s: File: %s Socket send failed\n",__FUNCTION__, pProcDevice);
++		return eVENDORHOOK_PROCDEVICE_FAIL;
++	}
++
++	while(1){
++
++		result = select(sockfd+1, &readset, NULL, NULL, &tv);
++
++		/* Test for Error, closed socket, Timeout */
++		if (result <= 0){
++			break;
++		}else if (result > 0 && FD_ISSET(sockfd, &readset)){
++		
++			count = recv(sockfd, reply, PROCPROXY_BUFF_SIZE, 0);
++
++			if(count <=0){
++ 				break;
++			}
++			bytesRead += count; 
++			if(bytesRead > length){
++				VENDOR_LOG_ERROR("\n%s: File: %s socket receive read more data than Buffer allocated\n",
++					__FUNCTION__, pProcDevice);
++				return eVENDORHOOK_PROCDEVICE_BUFFER_TOO_SMALL;
++			}else{
++ 				memcpy(pBuffer, reply, count);
++				pBuffer += count;
++			}
++		}
++
++	}
++	/* Reset flags */
++	if (ioflags != -1){
++		fcntl(sockfd, F_SETFL, ioflags);
++	
++	}
++	close(sockfd);
++	return eVENDORHOOK_OK;
++}
++
++#else
++/*!
++** ---------------------------------------------------------------------------
+ ** @brief Read /proc device line by line, copy all lines to a buffer
+ **
+ ** @param pProcDevice	- /proc device name.
+@@ -201,6 +397,7 @@
+ 	return eVENDORHOOK_OK;
+ 
+ }
++#endif
+ 
+ /*!
+ ** ---------------------------------------------------------------------------
+@@ -1013,11 +1210,12 @@
+ 	FILE * fp = NULL ;
+ 	int32_t result = VENDOR_STATUS_ERROR ;
+ 	fp = fopen(pFile, "rb");
+-	VENDOR_ASSERT((NULL!=fp));
+-	if(0 < fscanf(fp, "%u", pVal)){
+-		result = VENDOR_STATUS_OK;
++	if (NULL != fp){
++		if(0 < fscanf(fp, "%u", pVal)){
++			result = VENDOR_STATUS_OK;
++		}
++		fclose(fp);
+ 	}
+-	fclose(fp);
+ 	return result ;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_services_stbservice_x_sky_com_remotecontrol.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_services_stbservice_x_sky_com_remotecontrol.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_services_stbservice_x_sky_com_remotecontrol.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_services_stbservice_x_sky_com_remotecontrol.c	2015-07-19 15:48:15.396535748 +0100
+@@ -90,8 +90,8 @@
+         return EINVAL;
+     }
+ 
+-    if(eVENDORHOOK_OK != vendor_hook_read_proc_device_by_line(pDeviceID, fullData, \
+-            REMOTECONTROL_PROC_MAX_LINE_SIZE, REMOTECONTROL_PROC_MAX_SIZE)){
++    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, fullData, \
++            REMOTECONTROL_PROC_MAX_SIZE)){
+         return EFAIL ;
+     }
+ 
+@@ -138,8 +138,8 @@
+     if(NULL == buf){
+         return EFAIL;
+     }
+-    if(eVENDORHOOK_OK != vendor_hook_read_proc_device_by_line(pDeviceID, fullData, \
+-            REMOTECONTROL_PROC_MAX_LINE_SIZE, REMOTECONTROL_PROC_MAX_SIZE)){
++    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, fullData, \
++            REMOTECONTROL_PROC_MAX_SIZE)){
+         return EFAIL ;
+     }
+ 	if(FALSE == vendor_hooks_extractFormattedStringFromData(fullData, "Status: ", " %[^\n]", buf)){
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.h	2015-07-17 09:22:51.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.h	2015-07-19 15:43:23.739220558 +0100
+@@ -117,6 +117,20 @@
+ #define EFAIL 1
+ #endif
+ 
++#define VENDOR_MAGIC_INVALID (0xdeadbeef)
++#define VENDOR_MAGIC_VALID (0xb00daeae)
++
++#define PROCPROXY_LOCAL_PORT    (9034)
++#define PROCPROXY_LOCAL_ADDRESS "127.0.0.1"
++#define PROCPROXY_BUFF_SIZE     (128)
++#define PROCPROXY_MSG_SIZE      (256)
++#define PROCPROXY_RECV_BUFFER_SIZE ((PROCPROXY_BUFF_SIZE * 8 * 8)+1) /* 8KB Buffer */
++#define SELECT_TIMEOUT           (1000 * 1000) /* 1 second Timeout */
++
++/* The TR069 Client will run as a non-root user, so to access /proc and /sys */
++/* a daemon called ProcProxy is used as this runs as root. */
++#define SKY_USE_DAEMON_PROCPROXY
++
+ /* Segmentation fault caused by bad use of vendor_hook_deleteCache() */
+ /* As the Mesh Parameters are not in use by TR069 at this time, removed code */
+ /* For later correction , see internal Redmine Issue 3085 */
+@@ -136,6 +150,13 @@
+ 	eVENDERHOOK_PROCDEVICE_LISTEND
+ }vendor_hook_proc_device_status_t;
+ 
++typedef enum{
++		PROCPROXY_GET_INFO,
++		PROCPROXY_GET_PID,
++		PROCPROXY_PUT_VAL,
++		PROCPROXY_GET_DIR
++}procproxyReq_t;
++
+ 
+ /*---------------------------------------------------------------------------
+ ** Data
+@@ -186,7 +207,28 @@
+ ** @retval  eVENDORHOOK_PROCDEVICE_BUFFER_TOO_SMALL	/proc device buffer too small.
+ */
+ vendor_hook_proc_device_status_t
+-	vendor_hook_read_proc_device(char *pProcDevice, char *pBuffer, size_t length);
++	vendor_hook_read_proc_device(procproxyReq_t req, char *pProcDevice, char *pBuffer, size_t length);
++
++/*!
++** ---------------------------------------------------------------------------
++** @brief Read Text File
++**
++** @param pFilename   -  text filename.
++** @param pBuffer          -   The buffer that the text file output is loaded.
++**                              It is upto the caller to ensure enough space is available
++**                              in the buffer (pBuffer).
++** @param length        -   Length of the pBuffer.
++**
++** @returns vendor_hook_proc_device_status_t
++**
++** @retval  eVENDORHOOK_OK								/proc device read and buffer loaded OK.
++** @retval  eVENDORHOOK_PROCDEVICE_FAIL					/proc device doesn't exist.
++** @retval  eVENDORHOOK_PROCDEVICE_READ_FAIL			/proc device read fail.
++** @retval  eVENDORHOOK_PROCDEVICE_BUFFER_TOO_SMALL	/proc device buffer too small.
++*/
++vendor_hook_proc_device_status_t
++	vendor_hook_read_text_file(char *pFilename, char *pBuffer, size_t length);
++
+ 
+ /*!
+ ** ---------------------------------------------------------------------------
+@@ -432,6 +474,7 @@
+ */
+ int32_t vendor_hooks_trimWhiteSpace(char *pStr, int*pBytesCopied);
+ 
++#ifndef SKY_USE_DAEMON_PROCPROXY
+ /*!
+ ** ---------------------------------------------------------------------------
+ ** @brief Read /proc device line by line, copy all lines to a buffer
+@@ -450,7 +493,7 @@
+ */
+ vendor_hook_proc_device_status_t
+ vendor_hook_read_proc_device_by_line(char *pProcDevice, char *pBuffer, size_t maxLineLength, size_t maxBufSize);
+-
++#endif
+ 
+ /*!
+ ** ---------------------------------------------------------------------------
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_smart.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_smart.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_smart.c	2015-07-17 09:22:51.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_smart.c	2015-07-23 16:38:21.885336741 +0100
+@@ -441,6 +441,9 @@
+ 
+   /* Do a syscall to smartctl and get the device information */
+   pSmartInfo = ( smart_info_t *) calloc( 1, BSKYB_DEFAULT_SMARTCTL_BUFFER_SIZE + sizeof( smart_info_t ) );
++  if (NULL == pSmartInfo){
++	  return NULL;
++  }
+   pSmartInfo->pFullData = (char*)pSmartInfo + sizeof( smart_info_t );
+ 
+ #ifndef VENDOR_HOOK_SMART_USE_STATIC_TEST_DATA
+@@ -453,10 +456,18 @@
+     SkDisk *d;
+     if ((ret = sk_disk_open(deviceId, &d)) < 0) {
+       syslog(LOG_ERR, "Failed to open Disk \n");
++	  if(NULL != pSmartInfo){
++			free(pSmartInfo);
++			pSmartInfo = NULL;
++	  }
+       return NULL;
+     }
+     if(NULL == d){
+-      return NULL;
++		if(NULL != pSmartInfo){
++			  free(pSmartInfo);
++			  pSmartInfo = NULL;
++		}
++	    return NULL;
+     }
+ 
+     /**
+@@ -466,6 +477,10 @@
+     if (fdRedirect == BSKYB_SMART_FILE_IO_ERROR) {
+ 		syslog(LOG_ERR, "Failed to open temp file\n");
+ 		sk_disk_free(d);
++		if(NULL != pSmartInfo){
++			  free(pSmartInfo);
++			  pSmartInfo = NULL;
++		}
+ 		return NULL;
+     }
+     /*flush the stdout and take a back of file descriptor*/
+@@ -474,6 +489,10 @@
+     if (fdStdOut < VENDOR_STATUS_OK) {
+ 		syslog(LOG_ERR, "stdout fd duplication failed\n");
+ 		sk_disk_free(d);
++		if(NULL != pSmartInfo){
++			  free(pSmartInfo);
++			  pSmartInfo = NULL;
++		}
+ 		return NULL;
+     }
+ 
+@@ -481,6 +500,10 @@
+     if (result < VENDOR_STATUS_OK) {
+ 		syslog(LOG_ERR, "stdout redirection failed\n");
+ 		sk_disk_free(d);
++		if(NULL != pSmartInfo){
++			  free(pSmartInfo);
++			  pSmartInfo = NULL;
++		}
+ 		return NULL;
+     }
+     close(fdRedirect);
+@@ -488,6 +511,10 @@
+     if ((ret = sk_disk_dump(d)) < 0) {
+       syslog(LOG_ERR, "Failed to dump disk data \n");
+       sk_disk_free(d);
++	  if(NULL != pSmartInfo){
++			free(pSmartInfo);
++			pSmartInfo = NULL;
++	  }
+       return NULL;
+     }
+ 
+@@ -499,6 +526,10 @@
+     if (result < VENDOR_STATUS_OK) {
+ 		syslog(LOG_ERR, "stdout redirection failed\n");
+ 		sk_disk_free(d);
++		if(NULL != pSmartInfo){
++			  free(pSmartInfo);
++			  pSmartInfo = NULL;
++		}
+ 		return NULL;
+     }
+     close(fdStdOut);
+@@ -506,12 +537,16 @@
+     if(NULL == (fp = fopen(BSKYB_SMART_FILE_NAME, "rb")) ){
+       syslog(LOG_ERR, "Unable to open Smart File \n");
+       sk_disk_free(d);
++	  if(NULL != pSmartInfo){
++			free(pSmartInfo);
++			pSmartInfo = NULL;
++	  }
+       return NULL;
+     }
+     fclose(fp);
+ 
+-    vendor_hook_read_proc_device_by_line(BSKYB_SMART_FILE_NAME, pSmartInfo->pFullData ,
+-            BSKYB_COMMAND_STRING_MAX_SIZE, BSKYB_DEFAULT_SMARTCTL_BUFFER_SIZE);
++    vendor_hook_read_text_file(BSKYB_SMART_FILE_NAME, pSmartInfo->pFullData ,
++            BSKYB_DEFAULT_SMARTCTL_BUFFER_SIZE);
+ 
+     pSmartInfo->uFullDataSize = strlen( pSmartInfo->pFullData );
+     remove(BSKYB_SMART_FILE_NAME);
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_stbservice_capabilities_videooutput.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_stbservice_capabilities_videooutput.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_stbservice_capabilities_videooutput.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_stbservice_capabilities_videooutput.c	2015-07-19 15:48:33.236987700 +0100
+@@ -100,7 +100,7 @@
+ {
+     char procData[VIDEO_OUTPUT_PROC_MAX_SIZE];
+ 
+-    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(pDeviceID, procData, VIDEO_OUTPUT_PROC_MAX_SIZE)){
++    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, procData, VIDEO_OUTPUT_PROC_MAX_SIZE)){
+         VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+         return EFAIL ;
+     }
+@@ -124,7 +124,7 @@
+ int get_stbservice_capabilities_videooutput_hdcp(char* pDeviceID, char *buf, size_t length)
+ {
+     char procData[BSKYB_HDMI_PROC_MAX_BUFFER_SIZE];
+-    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(pDeviceID, procData, BSKYB_HDMI_PROC_MAX_BUFFER_SIZE)){
++    if(eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, procData, BSKYB_HDMI_PROC_MAX_BUFFER_SIZE)){
+         VENDOR_LOG_ERROR("%s: Failed to Read proc Device\n", __FUNCTION__ );
+         return EFAIL ;
+     }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-07-19 15:49:14.820633200 +0100
+@@ -785,7 +785,7 @@
+ 	pSensorInfo->pFullData = (char*)pSensorInfo + sizeof( tsensor_info_t );
+ 
+ 
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		strncpy( pSensorInfo->pFullData, (char*) buffer, VENDOR_TSENSOR_PROC_DEVICE_BUFFER);
+ 		pSensorInfo->dataSize = strlen(pSensorInfo->pFullData);
+ 	}else {
+@@ -856,7 +856,7 @@
+ 	vendor_hook_dbm_data_t record;
+ 
+ 	sprintf(deviceId, VENDOR_TSENSOR_PROC_FILENAME, instance);
+-	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usb.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usb.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usb.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usb.c	2015-07-20 11:47:01.774296598 +0100
+@@ -112,25 +112,19 @@
+ int bskyb_usb_get_numberofinterfaces(void)
+ {
+ #ifndef VENDOR_HOOK_USB_USE_STATIC_TEST_DATA
+-    DIR	    *dp;
+     int	    numinterfaces = 0;
+-    struct  dirent *ep;
+-    char    sys_interface_device[USB_SYS_ENTRY_MAX_LENGTH];
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
+ 
+-    snprintf(sys_interface_device, sizeof(sys_interface_device), USB_SYS_DEVICES);
+-    dp = opendir (sys_interface_device);
+-    if (dp != NULL) {
+-	while ((ep = readdir (dp))) {
+-	    if(!strncmp(ep->d_name, USB_SYS_INTERFACE_STR, strlen(USB_SYS_INTERFACE_STR))) {
+-		numinterfaces++;
+-	    }
++	memset(buffer, 0, sizeof(buffer));
++	memset(message, 0, sizeof(message));
++	snprintf(message, sizeof(message), "%s/%s", USB_SYS_DEVICES, USB_SYS_INTERFACE_STR);
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR,
++				message, buffer, sizeof (buffer))) {
++		return 0;
++	}else{
++		numinterfaces = atoi(buffer);	
+ 	}
+-	closedir (dp);
+-    }
+-    else {
+-	VENDOR_LOG_ERROR("Can not read sys, to count the usb interfaces.: %s doesn't exist\n",
+-		sys_interface_device);
+-    }
+     return numinterfaces;
+ #else
+     return BSKSB_USB_STATIC_DATA_NUMINTERFACES;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c	2015-07-20 11:12:18.839536918 +0100
+@@ -50,24 +50,21 @@
+ */
+ int get_lnb_numentries(char * pLnbProc, int * pLnbNumEntries)
+ {
+-	DIR *dir;
+-	struct dirent *ent;
+-	int count = 0;
+-
+-	if ((dir = opendir(pLnbProc)) == NULL) {
+-		VENDOR_LOG_ERROR("Failed to open directory: %s\n", __FUNCTION__);
+-		*pLnbNumEntries = count;
+-		return EFAIL;
+-	}
+-
+-	while (NULL != (ent = readdir(dir))) {
+-		if(!(ent->d_name[0] >= '0' && ent->d_name[0] <= '9')){
+-			count ++;
++	static int lnbTotal = 0;
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
++
++	if (0 == lnbTotal){
++		memset(buffer, 0, sizeof(buffer));
++		memset(message, 0, sizeof(message));
++		snprintf(message, sizeof(message), "%s/", pLnbProc);
++		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
++			return 0;
++		}else{
++			lnbTotal = atoi(buffer);	
+ 		}
+ 	}
+-
+-	closedir(dir);
+-	*pLnbNumEntries = count;
++	*pLnbNumEntries = lnbTotal;
+ 	return EOK;
+ }
+ 
+@@ -99,8 +96,8 @@
+ 	pLnbInfo = ( lnb_info_t *) calloc( 1, BSKYB_LNB_PROC_MAX_BUFFER_SIZE + sizeof( lnb_info_t ) );
+ 	pLnbInfo->pFullData = (char*)pLnbInfo + sizeof( lnb_info_t );
+ 
+-	vendor_hook_read_proc_device_by_line(pDeviceID, pLnbInfo->pFullData ,
+-			BSKYB_LNB_PROC_MAX_LINE_SIZE, BSKYB_LNB_PROC_MAX_BUFFER_SIZE);
++	vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, pLnbInfo->pFullData ,
++			BSKYB_LNB_PROC_MAX_BUFFER_SIZE);
+ 
+ 	pLnbInfo->uFullDataSize = strlen( pLnbInfo->pFullData );
+ 	if(FALSE == vendor_hooks_extractFormattedStringFromData(pLnbInfo->pFullData, pInputString, " %[^\n]", pResultString)){
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c	2015-07-20 11:10:55.020665420 +0100
+@@ -293,17 +293,19 @@
+ int VendorTunerCalculateNumberOfTuners(void)
+ {
+ 	static int numberOfTuners = 0;
+-#ifndef VENDOR_HOOK_TUNER_USE_STATIC_TEST_DATA
+-	char proc_device[VENDOR_TUNER_PROC_DEVICE_NAME_BUFFER + 1];
+ 
++#ifndef VENDOR_HOOK_TUNER_USE_STATIC_TEST_DATA
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
+ 	/* Is this first entry to this function ? */
+ 	if ( 0 == numberOfTuners ){
+-		for ( ; numberOfTuners < VENDOR_TUNER_MAX_NUMBER_OF_TUNERS; numberOfTuners++ ){
+-			snprintf(proc_device, sizeof(proc_device), VENDOR_TUNER_PROC_FILENAME, numberOfTuners);
+-			/* Check if the tuner /proc doesn't exist */
+-			if ( 0 != access(proc_device, F_OK)){
+-				break;
+-			}
++		memset(buffer, 0, sizeof(buffer));
++		memset(message, 0, sizeof(message));
++		snprintf(message, sizeof(message), "%s/", VENDOR_TUNER_PROC_DIRECTORY);
++		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
++			return 0;
++		}else{
++			numberOfTuners = atoi(buffer);	
+ 		}
+ 	}
+ #else
+@@ -639,7 +641,7 @@
+ 	pTunerInfo->pFullData = (char*)pTunerInfo + sizeof( tuner_info_t );
+ 
+ #ifndef VENDOR_HOOK_TUNER_USE_STATIC_TEST_DATA
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer)) ) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer)) ) {
+ 		strncpy( pTunerInfo->pFullData, ( char* ) buffer, VENDOR_TUNER_PROC_DEVICE_BUFFER );
+ 		pTunerInfo->uFullDataSize = strlen( pTunerInfo->pFullData );
+ 	}else {
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_buttons.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_buttons.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_buttons.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_buttons.c	2015-07-20 11:21:46.910527307 +0100
+@@ -72,14 +72,17 @@
+ int get_x_sky_com_frontpanel_buttons_count(void)
+ {
+ 	static int numberOfButtons = 0;
+-	char proc_device[VENDOR_FP_BUTTON_PROC_DEVICE_NAME_SIZE + 1];
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
+ 
+ 	if (!numberOfButtons){
+-		for ( ; numberOfButtons < VENDOR_FP_BUTTON_MAX_NUMBER_OF_BUTTONS; numberOfButtons++ ){
+-			snprintf(proc_device, sizeof(proc_device), VENDOR_FP_BUTTON_PROC_FILENAME, numberOfButtons);
+-			if ( 0 != access(proc_device, F_OK)){
+-				break;
+-			}
++		memset(buffer, 0, sizeof(buffer));
++		memset(message, 0, sizeof(message));
++		snprintf(message, sizeof(message), "%s/", VENDOR_FP_BUTTON_PROC_DIRECTORY);
++		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
++			return 0;
++		}else{
++			numberOfButtons = atoi(buffer);	
+ 		}
+ 	}
+ 	return numberOfButtons;
+@@ -205,7 +208,7 @@
+ */
+ static vendor_hook_proc_device_status_t getButtonInfo(char *pDeviceID, char *buffer, int size)
+ {
+-	return vendor_hook_read_proc_device(pDeviceID, buffer, size);
++	return vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, buffer, size);
+ }
+ 
+ /*!
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_buttons.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_buttons.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_buttons.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_buttons.h	2015-07-19 17:17:25.910300816 +0100
+@@ -36,6 +36,7 @@
+ #define VENDOR_FP_BUTTON_PROC_PATTERN_NAME          ("name : ")
+ #define VENDOR_FP_BUTTON_PROC_PATTERN_STATUS        ("state : ")
+ #define VENDOR_FP_BUTTON_PROC_PATTERN_TYPE          ("type : ")
++#define VENDOR_FP_BUTTON_PROC_DIRECTORY             ("/proc/Sky/tr69/frontpanel/button")
+ 
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_leds.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_leds.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_leds.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_leds.c	2015-07-20 11:22:54.350798433 +0100
+@@ -72,14 +72,17 @@
+ int get_x_sky_com_frontpanel_leds_count(void)
+ {
+ 	static int numberOfLEDs = 0;
+-	char proc_device[VENDOR_FP_LED_PROC_DEVICE_NAME_SIZE + 1];
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
+ 
+ 	if (!numberOfLEDs){
+-		for ( ; numberOfLEDs < VENDOR_FP_LED_MAX_NUMBER_OF_LEDS; numberOfLEDs++ ){
+-			snprintf(proc_device, sizeof(proc_device), VENDOR_FP_LED_PROC_FILENAME, numberOfLEDs);
+-			if ( 0 != access(proc_device, F_OK)){
+-				break;
+-			}
++		memset(buffer, 0, sizeof(buffer));
++		memset(message, 0, sizeof(message));
++		snprintf(message, sizeof(message), "%s/", VENDOR_FP_LED_PROC_DIRECTORY);
++		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
++			return 0;
++		}else{
++			numberOfLEDs = atoi(buffer);	
+ 		}
+ 	}
+ 	return numberOfLEDs;
+@@ -176,7 +179,7 @@
+ */
+ static vendor_hook_proc_device_status_t getLedInfo(char *pDeviceID, char *buffer, int size)
+ {
+-	return vendor_hook_read_proc_device(pDeviceID, buffer, size);
++	return vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, buffer, size);
+ }
+ 
+ /*!
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_leds.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_leds.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_leds.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_frontpanel_leds.h	2015-07-19 17:21:10.436785130 +0100
+@@ -34,6 +34,7 @@
+ #endif
+ #define VENDOR_FP_LED_PROC_PATTERN_NAME         ("name : ")
+ #define VENDOR_FP_LED_PROC_PATTERN_STATUS       ("state : ")
++#define VENDOR_FP_LED_PROC_DIRECTORY            ("/proc/Sky/tr69/frontpanel/led")
+ 
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_standby.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_standby.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_standby.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_standby.c	2015-07-19 15:49:44.985989669 +0100
+@@ -157,7 +157,7 @@
+ 	char buffer[VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER];
+ 
+ 	strncpy(deviceId, VENDOR_SUPPORTMCU_STANDBY_PROC_FILENAME, sizeof(deviceId));
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(deviceId, buffer, sizeof (buffer))) {
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		vendor_hooks_extractint32FromData(buffer, VENDOR_SUPPORTMCU_STANDBY_RECORDS_COUNT, &count);
+ 	}
+ 	

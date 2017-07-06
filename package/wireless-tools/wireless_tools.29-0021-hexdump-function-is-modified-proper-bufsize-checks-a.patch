@@ -1,0 +1,43 @@
+From ed4e5db8be0564934fcc25100d1fe16334fb3f03 Mon Sep 17 00:00:00 2001
+From: "devin.mungan" <devin.mungan@airties.com>
+Date: Mon, 17 Feb 2014 17:03:43 +0200
+Subject: [PATCH 21/26] hexdump function is modified (proper bufsize checks and
+ calculations are added) THANKS TO KARACA
+
+Issue:AIR4920-103
+---
+ iwevent.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/iwevent.c b/iwevent.c
+index 3201f06..bdb80b2 100644
+--- a/iwevent.c
++++ b/iwevent.c
+@@ -308,8 +308,12 @@ iw_hexdump(char *		buf,
+   size_t	i;
+   char *	pos = buf;
+ 
++  if ((datalen * 2 + 1) > buflen)
++    datalen = (buflen - 1) / 2;
++
+   for(i = 0; i < datalen; i++)
+-    pos += snprintf(pos, buf + buflen - pos, "%02X", data[i]);
++    pos += sprintf(pos, "%02X", data[i]);
++
+   return buf;
+ }
+ 
+@@ -322,8 +326,8 @@ print_event_token(struct iw_event *	event,		/* Extracted token */
+ 		  struct iw_range *	iw_range,	/* Range info */
+ 		  int			has_range)
+ {
+-  char		buffer[128];	/* Temporary buffer */
+-  char		buffer2[30];	/* Temporary buffer */
++  char		buffer[1024];	/* Temporary buffer */
++  char		buffer2[32];	/* Temporary buffer */
+   char *	prefix = (IW_IS_GET(event->cmd) ? "New" : "Set");
+   const struct ether_addr ether_zero = {{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }};
+   /* Now, let's decode the event */
+-- 
+1.9.1
+

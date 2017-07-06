@@ -1,0 +1,12 @@
+diff -Naur nss-mdns-0.10/config.sub nss-mdns-0.10_mod/config.sub
+--- nss-mdns-0.10/config.sub	2006-08-10 16:17:12.000000000 +0100
++++ nss-mdns-0.10_mod/config.sub	2016-05-18 11:01:32.281992184 +0100
+@@ -241,7 +241,7 @@
+ 	| alpha | alphaev[4-8] | alphaev56 | alphaev6[78] | alphapca5[67] \
+ 	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
+ 	| am33_2.0 \
+-	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | avr32 \
++	| arc | arm | armv7 | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | avr32 \
+ 	| bfin \
+ 	| c4x | clipper \
+ 	| d10v | d30v | dlx | dsp16xx \

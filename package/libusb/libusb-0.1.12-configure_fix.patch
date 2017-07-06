@@ -1,0 +1,14 @@
+diff -Naur SOURCE2/libusb-configure.in.patch SOURCE/libusb-configure.in.patch
+--- SOURCE2/libusb-configure.in.patch	2014-04-29 13:55:39.053517738 +0100
++++ SOURCE/libusb-configure.in.patch	2014-04-29 13:28:44.657571739 +0100
+@@ -0,0 +1,10 @@
++--- libusb-0.1.12/configure.in.orig    2006-03-04 03:53:04.000000000 +0100
+++++ libusb-0.1.12/configure.in 2008-05-23 16:08:59.000000000 +0200
++@@ -149,6 +149,7 @@
++ fi
++ 
++ # Checks for programs.
+++AC_PROG_CXX
++ AC_LANG_CPLUSPLUS
++ AC_PROG_CC
++ AM_PROG_CC_C_O

@@ -1,0 +1,17 @@
+config BR2_PACKAGE_SKY_NDS_DRIVERS
+	bool "NDS drivers"
+	default N
+	help
+	  Include the NDS drivers (i.e. xtvfs, nvram) in the
+	  rootfs. If this package is enabled, NDS drivers will be
+	  loaded at boot time.
+
+config BR2_PACKAGE_SKY_NDS_MW
+	bool "NDS middleware"
+	depends on BR2_PACKAGE_SKY_NDS_DRIVERS
+	select BR2_PACKAGE_SKY_CDI_DRIVERS
+	default N
+	help
+	  Include the NDS middleware in the rootfs. If this package is
+	  included, NDS middleware will be automatically started at
+	  boot time.

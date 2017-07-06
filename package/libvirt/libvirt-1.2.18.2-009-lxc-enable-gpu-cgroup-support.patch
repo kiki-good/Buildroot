@@ -1,0 +1,270 @@
+--- a/include/libvirt/libvirt-domain.h	2015-12-23 22:54:18.000000000 +0000
++++ b/include/libvirt/libvirt-domain.h	2016-03-29 20:32:46.483845564 +0100
+@@ -275,6 +275,8 @@
+     unsigned long memory;       /* the memory in KBytes used by the domain */
+     unsigned short nrVirtCpu;   /* the number of virtual CPUs for the domain */
+     unsigned long long cpuTime; /* the CPU time used in nanoseconds */
++    unsigned long long maxGpuMem;    /* the maximum GPU memory in KBytes allowed */
++    unsigned long long gpuMemory;    /* the GPU memory in KBytes used by the domain */
+ };
+ 
+ /**
+--- a/src/conf/domain_conf.c	2015-12-23 23:27:56.000000000 +0000
++++ b/src/conf/domain_conf.c	2016-03-29 20:34:58.410187200 +0100
+@@ -14687,6 +14687,13 @@
+     if (virXPathBoolean("boolean(./memoryBacking/locked)", ctxt))
+         def->mem.locked = true;
+ 
++    /* Extract domain gpu memory (default unlimited) */
++    if (virDomainParseMemory("./gpu/memory[1]", NULL, ctxt,
++                             &def->gpu.mem_limit, false, false) < 0)
++        goto error;
++    if (def->gpu.mem_limit == 0)
++        def->gpu.mem_limit = VIR_DOMAIN_MEMORY_PARAM_UNLIMITED;
++
+     /* Extract blkio cgroup tunables */
+     if (virXPathUInt("string(./blkiotune/weight)", ctxt,
+                      &def->blkio.weight) < 0)
+@@ -17541,6 +17548,13 @@
+         goto error;
+     }
+ 
++    if (src->gpu.mem_limit != dst->gpu.mem_limit) {
++        virReportError(VIR_ERR_CONFIG_UNSUPPORTED,
++                       _("Target domain GPU memory limit %lld does not match source %lld"),
++                       dst->gpu.mem_limit, src->gpu.mem_limit);
++        goto error;
++    }
++
+     if (src->vcpus != dst->vcpus) {
+         virReportError(VIR_ERR_CONFIG_UNSUPPORTED,
+                        _("Target domain vCPU count %d does not match source %d"),
+@@ -21360,6 +21374,14 @@
+     virBufferAsprintf(buf, "<currentMemory unit='KiB'>%llu</currentMemory>\n",
+                       def->mem.cur_balloon);
+ 
++    /* add the gpu limit */
++    virBufferAddLit(buf, "<gpu>\n");
++    virBufferAdjustIndent(buf, 2);
++    virBufferAsprintf(buf, "<memory unit='KiB'>%llu</memory>\n",
++                      def->gpu.mem_limit);
++    virBufferAdjustIndent(buf, -2);
++    virBufferAddLit(buf, "</gpu>\n");
++
+     /* start format blkiotune */
+     indent = virBufferGetIndent(buf, false);
+     virBufferAdjustIndent(&childrenBuf, indent + 2);
+--- a/src/conf/domain_conf.h	2015-12-23 22:54:18.000000000 +0000
++++ b/src/conf/domain_conf.h	2016-03-29 20:32:46.495845733 +0100
+@@ -2176,6 +2176,11 @@
+     virDomainResourceDefPtr resource;
+     virDomainIdMapDef idmap;
+ 
++    /* [Sky] added for gpu memory limiting per container */
++    struct {
++        unsigned long long mem_limit; /* in kibibytes */
++    } gpu;
++
+     /* These 3 are based on virDomainLifeCycleAction enum flags */
+     int onReboot;
+     int onPoweroff;
+--- a/src/libvirt_private.syms	2015-12-23 22:54:18.000000000 +0000
++++ b/src/libvirt_private.syms	2016-03-29 20:32:46.499845668 +0100
+@@ -1192,6 +1192,7 @@
+ virCgroupGetDevicePermsString;
+ virCgroupGetDomainTotalCpuStats;
+ virCgroupGetFreezerState;
++virCgroupGetGpuMemoryUsage;
+ virCgroupGetMemoryHardLimit;
+ virCgroupGetMemorySoftLimit;
+ virCgroupGetMemoryUsage;
+@@ -1229,6 +1230,7 @@
+ virCgroupSetCpusetMems;
+ virCgroupSetCpuShares;
+ virCgroupSetFreezerState;
++virCgroupSetGpuMemoryLimit;
+ virCgroupSetMemory;
+ virCgroupSetMemoryHardLimit;
+ virCgroupSetMemorySoftLimit;
+diff -Naur ../libvirt-1.2.18.2-tic/src/lxc/lxc_cgroup.c ./src/lxc/lxc_cgroup.c
+--- a/src/lxc/lxc_cgroup.c	2015-12-23 22:54:18.000000000 +0000
++++ b/src/lxc/lxc_cgroup.c	2016-03-29 20:32:46.503845594 +0100
+@@ -300,6 +300,19 @@
+ }
+ 
+ 
++static int virLXCCgroupSetupGpuTune(virDomainDefPtr def,
++                                    virCgroupPtr cgroup)
++{
++    int ret = -1;
++
++    if (virCgroupSetGpuMemoryLimit(cgroup, def->gpu.mem_limit) < 0)
++        goto cleanup;
++
++    ret = 0;
++ cleanup:
++    return ret;
++}
++
+ 
+ typedef struct _virLXCCgroupDevicePolicy virLXCCgroupDevicePolicy;
+ typedef virLXCCgroupDevicePolicy *virLXCCgroupDevicePolicyPtr;
+@@ -532,6 +545,9 @@
+     if (virLXCCgroupSetupDeviceACL(def, cgroup) < 0)
+         goto cleanup;
+ 
++    if (virLXCCgroupSetupGpuTune(def, cgroup) < 0)
++        goto cleanup;
++
+     ret = 0;
+ 
+  cleanup:
+--- a/src/lxc/lxc_driver.c	2015-12-23 23:14:43.000000000 +0000
++++ b/src/lxc/lxc_driver.c	2016-03-29 20:36:13.981239410 +0100
+@@ -598,6 +598,7 @@
+     if (!virDomainObjIsActive(vm)) {
+         info->cpuTime = 0;
+         info->memory = vm->def->mem.cur_balloon;
++        info->gpuMemory = 0;
+     } else {
+         if (virCgroupGetCpuacctUsage(priv->cgroup, &(info->cpuTime)) < 0) {
+             virReportError(VIR_ERR_OPERATION_FAILED,
+@@ -614,10 +615,16 @@
+                 goto cleanup;
+             }
+         }
++        if (virCgroupGetGpuMemoryUsage(priv->cgroup, &(info->gpuMemory)) < 0) {
++            virReportError(VIR_ERR_OPERATION_FAILED,
++                           "%s", _("Cannot read GPU memory usage for domain"));
++            goto cleanup;
++        }
+     }
+ 
+     info->maxMem = virDomainDefGetMemoryActual(vm->def);
+     info->nrVirtCpu = vm->def->vcpus;
++    info->maxGpuMem = vm->def->gpu.mem_limit;
+     ret = 0;
+ 
+  cleanup:
+--- a/src/remote/remote_protocol.x	2015-12-23 22:54:18.000000000 +0000
++++ b/src/remote/remote_protocol.x	2016-03-29 20:32:46.503845594 +0100
+@@ -901,6 +901,8 @@
+     unsigned hyper memory;
+     unsigned short nrVirtCpu;
+     unsigned hyper cpuTime;
++    unsigned hyper maxGpuMem;
++    unsigned hyper gpuMemory;
+ };
+ 
+ struct remote_domain_save_args {
+--- a/src/util/vircgroup.c	2015-12-23 22:54:18.000000000 +0000
++++ b/src/util/vircgroup.c	2016-03-29 20:32:46.507845566 +0100
+@@ -72,7 +72,7 @@
+ VIR_ENUM_IMPL(virCgroupController, VIR_CGROUP_CONTROLLER_LAST,
+               "cpu", "cpuacct", "cpuset", "memory", "devices",
+               "freezer", "blkio", "net_cls", "perf_event",
+-              "name=systemd");
++              "name=systemd", "gpu");
+ 
+ typedef enum {
+     VIR_CGROUP_NONE = 0, /* create subdir under each cgroup if possible. */
+@@ -2572,6 +2572,60 @@
+     if (ret == 0)
+         *kb = usage_in_bytes >> 10;
+     return ret;
++}
++
++/**
++ * virCgroupSetGpuMemoryLimit:
++ *
++ * @group: The cgroup to change gpu memory limit for
++ * @kb: The gpu memoryamount in kilobytes
++ *
++ * Returns: 0 on success
++ */
++int
++virCgroupSetGpuMemoryLimit(virCgroupPtr group, unsigned long long kb)
++{
++    unsigned long long maxkb = VIR_DOMAIN_MEMORY_PARAM_UNLIMITED;
++    
++    if (kb > maxkb) {
++        virReportError(VIR_ERR_INVALID_ARG,
++                       _("GPU memory '%llu' must be less than %llu"),
++                       kb, maxkb);
++        return -1;
++    }
++    
++    if (kb == maxkb)
++        return virCgroupSetValueI64(group,
++                                    VIR_CGROUP_CONTROLLER_GPU,
++                                    "gpu.limit_in_bytes",
++                                    -1);
++    else
++        return virCgroupSetValueU64(group,
++                                    VIR_CGROUP_CONTROLLER_GPU,
++                                    "gpu.limit_in_bytes",
++                                    kb << 10);
++}
++
++
++/**
++ * virCgroupGetGpuMemoryUsage:
++ *
++ * @group: The cgroup to get gpu memory usage for
++ * @kb: The gpu memory amount in kilobytes
++ *
++ * Returns: 0 on success
++ */
++int
++virCgroupGetGpuMemoryUsage(virCgroupPtr group, unsigned long long *kb)
++{
++    long long unsigned int usage_in_bytes;
++    int ret;
++    ret = virCgroupGetValueU64(group,
++                               VIR_CGROUP_CONTROLLER_GPU,
++                               "gpu.usage_in_bytes", &usage_in_bytes);
++    if (ret == 0)
++        *kb = usage_in_bytes >> 10;
++    return ret;
+ }
+ 
+ 
+--- a/src/util/vircgroup.h	2015-12-23 22:54:18.000000000 +0000
++++ b/src/util/vircgroup.h	2016-03-29 20:32:46.507845566 +0100
+@@ -41,6 +41,7 @@
+     VIR_CGROUP_CONTROLLER_NET_CLS,
+     VIR_CGROUP_CONTROLLER_PERF_EVENT,
+     VIR_CGROUP_CONTROLLER_SYSTEMD,
++    VIR_CGROUP_CONTROLLER_GPU,
+ 
+     VIR_CGROUP_CONTROLLER_LAST
+ };
+@@ -180,6 +181,9 @@
+ int virCgroupGetMemSwapHardLimit(virCgroupPtr group, unsigned long long *kb);
+ int virCgroupGetMemSwapUsage(virCgroupPtr group, unsigned long long *kb);
+ 
++int virCgroupSetGpuMemoryLimit(virCgroupPtr group, unsigned long long kb);
++int virCgroupGetGpuMemoryUsage(virCgroupPtr group, unsigned long long *kb);
++
+ enum {
+     VIR_CGROUP_DEVICE_READ  = 1,
+     VIR_CGROUP_DEVICE_WRITE = 2,
+--- a/tools/virsh-domain-monitor.c	2015-12-23 23:31:03.000000000 +0000
++++ b/tools/virsh-domain-monitor.c	2016-03-29 20:32:46.511845432 +0100
+@@ -1253,6 +1253,16 @@
+         vshPrint(ctl, "%-15s %lu KiB\n", _("Used memory:"),
+                  info.memory);
+ 
++        if (info.maxGpuMem < VIR_DOMAIN_MEMORY_PARAM_UNLIMITED)
++            vshPrint(ctl, "%-15s %llu KiB\n", _("Max GPU mem:"),
++                 info.maxGpuMem);
++        else
++            vshPrint(ctl, "%-15s %s\n", _("Max GPU mem:"),
++                 _("no limit"));
++
++        vshPrint(ctl, "%-15s %llu KiB\n", _("Used GPU mem:"),
++                 info.gpuMemory);
++
+     } else {
+         ret = false;
+     }

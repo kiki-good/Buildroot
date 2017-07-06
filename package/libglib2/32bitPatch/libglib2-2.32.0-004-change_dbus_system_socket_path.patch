@@ -1,0 +1,11 @@
+--- a/gio/gdbusaddress.c	2014-09-30 16:21:48.488414556 +0100
++++ b/gio/gdbusaddress.c	2014-09-30 16:22:01.452414888 +0100
+@@ -1221,7 +1221,7 @@
+       ret = g_strdup (g_getenv ("DBUS_SYSTEM_BUS_ADDRESS"));
+       if (ret == NULL)
+         {
+-          ret = g_strdup ("unix:path=/var/run/dbus/system_bus_socket");
++          ret = g_strdup ("unix:path=/DBUS/var/run/dbus/system_bus_socket");
+         }
+       break;
+ 

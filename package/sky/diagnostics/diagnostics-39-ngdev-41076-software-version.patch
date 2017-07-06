@@ -1,0 +1,27 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-08-11 11:19:35.564201459 +0100
+@@ -55,7 +55,8 @@
+ ** Defines and Macros
+ */
+ #define BSKYB_DEVICEINFO_HOSTNAME_SIZE	(20)
+-#define BSKYB_DEVICEINFO_HOSTNAME_FILENAME		"/etc/hostname"
++#define BSKYB_DEVICEINFO_HOSTNAME_FILENAME				"/etc/hostname"
++#define BSKYB_DEVICEINFO_SOFTWARE_VERSION_FILENAME		"/tmp/VERSION.TXT"
+ 
+ /* Macro for turning OFF unwanted device info parameters */
+ #define SKY_TURN_OFF_DEVICEINFO_PARAMETERS
+@@ -361,7 +362,12 @@
+ 
+ int get_deviceinfo_additionalsoftwareversion(cm_tran_id_t tid, char *buf, size_t length)
+ {
+-	snprintf(buf, length, "6.1-20141212");
++	
++    if (eVENDORHOOK_OK != vendor_hook_read_text_file(BSKYB_DEVICEINFO_SOFTWARE_VERSION_FILENAME,
++							  buf,
++            				  length)){
++		snprintf(buf, length, "Info not Available");
++    }
+ 	return EOK;
+ }
+ 

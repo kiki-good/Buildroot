@@ -1,0 +1,21 @@
+diff -Naur libcom_err-5.0-orig/Makefile.am libcom_err-5.0/Makefile.am
+--- libcom_err-5.0-orig/Makefile.am	2014-03-26 13:51:45.365296229 +0000
++++ libcom_err-5.0/Makefile.am	2014-03-26 13:52:03.975635158 +0000
+@@ -1,4 +1,4 @@
+-AM_CFLAGS = -Wall -Werror
++AM_CFLAGS = -Wall
+ 
+ lib_LTLIBRARIES = libcom_err.la
+ libcom_err_la_SOURCES = error.c com_err.c
+diff -Naur libcom_err-5.0-orig/Makefile.in libcom_err-5.0/Makefile.in
+--- libcom_err-5.0-orig/Makefile.in	2014-03-26 13:51:45.366296247 +0000
++++ libcom_err-5.0/Makefile.in	2014-03-26 13:52:16.446862321 +0000
+@@ -214,7 +214,7 @@
+ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-AM_CFLAGS = -Wall -Werror
++AM_CFLAGS = -Wall
+ lib_LTLIBRARIES = libcom_err.la
+ libcom_err_la_SOURCES = error.c com_err.c
+ libcom_la_CPPFLAGS = -I$(top_srcdir)

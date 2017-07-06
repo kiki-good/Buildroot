@@ -1,0 +1,13 @@
+Index: gst1-plugins-good-1.2.3/po/Makefile.in.in
+===================================================================
+--- gst1-plugins-good-1.2.3.orig/po/Makefile.in.in	2014-05-07 14:02:02.881050187 +0100
++++ gst1-plugins-good-1.2.3/po/Makefile.in.in	2014-05-07 14:05:54.594199178 +0100
+@@ -9,7 +9,7 @@
+ # General Public License and is *not* in the public domain.
+ #
+ # Origin: gettext-0.17
+-GETTEXT_MACRO_VERSION = 0.17
++GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
+ 
+ PACKAGE = @PACKAGE@
+ VERSION = @VERSION@

@@ -1,0 +1,36 @@
+--- a/bus/Makefile.am	2015-08-04 14:50:56.018234994 +0100
++++ b/bus/Makefile.am	2015-08-04 14:51:48.186236333 +0100
+@@ -213,12 +213,12 @@
+ # Deliberately not using $(LN_S) here: ln -fs is not universally portable,
+ # but neither is systemd, so it's OK to assume here that ln complies with SUS.
+ 	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants
+-	ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants/dbus.socket
++	-ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants/dbus.socket
+ # Unconditionally enable D-Bus on systemd installations
+ 	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants
+-	ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
++	-ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
+ 	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants
+-	ln -fs ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
++	-ln -fs ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
+ endif
+ 
+ if DBUS_UNIX
+--- a/bus/Makefile.in	2015-08-04 14:51:05.442235236 +0100
++++ b/bus/Makefile.in	2015-08-04 14:53:00.770238197 +0100
+@@ -1530,12 +1530,12 @@
+ # Deliberately not using $(LN_S) here: ln -fs is not universally portable,
+ # but neither is systemd, so it's OK to assume here that ln complies with SUS.
+ @HAVE_SYSTEMD_TRUE@	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants
+-@HAVE_SYSTEMD_TRUE@	ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants/dbus.socket
++@HAVE_SYSTEMD_TRUE@	-ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants/dbus.socket
+ # Unconditionally enable D-Bus on systemd installations
+ @HAVE_SYSTEMD_TRUE@	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants
+-@HAVE_SYSTEMD_TRUE@	ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
++@HAVE_SYSTEMD_TRUE@	-ln -fs ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
+ @HAVE_SYSTEMD_TRUE@	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants
+-@HAVE_SYSTEMD_TRUE@	ln -fs ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
++@HAVE_SYSTEMD_TRUE@	-ln -fs ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
+ 
+ @DBUS_UNIX_TRUE@install-exec-hook:
+ @DBUS_UNIX_TRUE@	if test `id -u` -eq 0; then \

@@ -1,0 +1,12 @@
+--- strace-4.5.18/configure_org	2012-11-27 10:06:33.000000000 +0000
++++ strace-4.5.18/configure	2012-11-27 10:19:23.000000000 +0000
+@@ -7580,7 +7580,8 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ #include <stddef.h>
+-#include <linux/socket.h>
++/* #include <linux/socket.h> */
++#include <sys/socket.h>
+ 
+ #include <$ac_header>
+ _ACEOF

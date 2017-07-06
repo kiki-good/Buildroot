@@ -1,0 +1,6 @@
+config BR2_PACKAGE_NSS_MDNS
+        bool "nss-mdns"
+        help
+		nss-mdns is a plugin for the GNU Name Service Switch (NSS) 
+		functionality of the GNU C Library (glibc) providing 
+		host name resolution

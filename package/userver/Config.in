@@ -1,0 +1,6 @@
+config BR2_PACKAGE_USERVER
+	bool "UEI Daemon"
+	select BR2_PACKAGE_BLUEZ
+	default n
+	help
+		UEI Bluetooth Daemon

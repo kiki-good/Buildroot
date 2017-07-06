@@ -1,0 +1,10 @@
+config BR2_PACKAGE_COLLECTD
+	bool "collectd"
+	help
+	Collectd is a daemon which collects system 
+	performance statistics periodically and provides 
+	mechanisms to store the values in a variety of ways.
+	collectd gathers statistics about the system it is running on 
+	and stores this information. Those statistics can then be used to 
+	find current performance analysis and predict 
+	future system load (i.e. capacity planning).

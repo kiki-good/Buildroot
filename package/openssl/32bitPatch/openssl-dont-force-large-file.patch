@@ -1,0 +1,13 @@
+diff -Naur openssl-1.0.1p/crypto/bio/bss_file.c openssl-1.0.1p_mod/crypto/bio/bss_file.c
+--- openssl-1.0.1p/crypto/bio/bss_file.c	2015-07-09 12:53:21.000000000 +0100
++++ openssl-1.0.1p_mod/crypto/bio/bss_file.c	2015-08-06 14:57:10.062680460 +0100
+@@ -78,9 +78,6 @@
+  * of 32-bit platforms which allow for sequential access of large files
+  * without extra "magic" comprise *BSD, Darwin, IRIX...
+  */
+-#  ifndef _FILE_OFFSET_BITS
+-#   define _FILE_OFFSET_BITS 64
+-#  endif
+ # endif
+ 
+ # include <stdio.h>

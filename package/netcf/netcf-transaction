@@ -1,0 +1,156 @@
+#!/bin/sh
+EINVALID_IN_THIS_STATE=199
+sysconfdir="/etc"
+localstatedir="/var"
+netconfdir="$sysconfdir"/sysconfig/network-scripts
+snapshotdir="$localstatedir"/lib/netcf/network-snapshot
+rollbackdirbase="$localstatedir"/lib/netcf/network-rollback
+test ! -r "$sysconfdir"/rc.d/init.d/functions ||
+    . "$sysconfdir"/rc.d/init.d/functions
+change_begin ()
+{
+    if test -e "$snapshotdir"
+    then
+        return $EINVALID_IN_THIS_STATE
+    fi
+    if ! mkdir -p "$snapshotdir"
+    then
+        return 1
+    fi
+    for f in "$netconfdir"/ifcfg-* "$netconfdir"/route-* \
+             "$netconfdir"/rule-*
+    do
+        test ! -f "$f" && continue
+        if ! cp -p "$f" "$snapshotdir"
+        then
+            return 1
+        fi
+    done
+    date >"$snapshotdir"/date
+}
+change_commit ()
+{
+    if test ! -d "$snapshotdir"
+    then
+        return $EINVALID_IN_THIS_STATE
+    fi
+    if ! rm -rf "$snapshotdir"
+    then
+        echo "Failed to remove obsolete snapshot directory $snapshotdir"
+    fi
+}
+change_rollback ()
+{
+    if test ! -d "$snapshotdir"
+    then
+        return $EINVALID_IN_THIS_STATE
+    fi
+    rollback_ret=0
+    LC_ALL=C ls -d "$rollbackdirbase"-* 2>/dev/null | head -n -20 |\
+    while read r
+    do
+        if ! rm -rf "$r"
+        then
+            rollback_ret=1
+        fi
+    done
+    rollbackdir=$rollbackdirbase-$(date +%Y.%m.%d-%H:%M:%S)
+    if ! mkdir -p "$rollbackdir"
+    then
+        return 1
+    fi
+    for f in "$netconfdir"/ifcfg-* "$netconfdir"/route-* \
+             "$netconfdir"/rule-*
+    do
+        test ! -f "$f" && continue
+        if ! cp -p "$f" "$rollbackdir"
+        then
+            return 1
+        fi
+    done
+    for f in "$netconfdir"/ifcfg-* "$netconfdir"/route-* \
+             "$netconfdir"/rule-*
+    do
+        test ! -f "$f" && continue
+        snapshotf=$snapshotdir/${f##*/}
+        if test -f "$snapshotf"
+        then
+            if ! cmp -s "$snapshotf" "$f"
+            then
+                if ! cp -pf "$snapshotf" "$f"
+                then
+                    return 1
+                fi
+            fi
+            if ! rm -f "$snapshotf"
+            then
+                rollback_ret=1
+            fi
+        else
+            if ! rm -f "$f"
+            then
+                rollback_ret=1
+            fi
+        fi
+    done
+    for f in "$snapshotdir"/ifcfg-* "$snapshotdir"/route-* \
+             "$snapshotdir"/rule-*
+    do
+        test ! -f "$f" && continue
+        if ! cp -pf "$f" "$netconfdir"
+        then
+            return 1
+        fi
+    done
+    test -f "$snapshotdir"/date \
+     && echo Rolled back to network config state of $(cat "$snapshotdir"/date)
+    if ! rm -rf "$snapshotdir"
+    then
+        rollback_ret=1
+    fi
+    return $rollback_ret
+}
+usage() {
+    echo $"Usage: $0 {change-begin|change-commit|change-rollback|snapshot-dir|start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
+    exit ${1-2}
+}
+if test $# != 1; then
+    usage
+fi
+retval=0
+case "$1" in
+    start|restart|reload|force-reload|condrestart|try-restart)
+        change_rollback
+        test "$retval" != "$EINVALID_IN_THIS_STATE" && retval=$?
+        ;;
+    stop|status)
+        if test -d "$snapshotdir"
+        then
+            echo $"There is an open transaction"
+        else
+            echo $"No open transaction"
+        fi
+        ;;
+    --help)
+        usage 0
+        ;;
+    change-begin)
+        change_begin
+        retval=$?
+        ;;
+    change-commit)
+        change_commit
+        retval=$?
+        ;;
+    change-rollback)
+        change_rollback
+        retval=$?
+        ;;
+    snapshot-dir)
+        echo $snapshotdir
+        ;;
+    *)
+        usage
+        ;;
+esac
+exit $retval

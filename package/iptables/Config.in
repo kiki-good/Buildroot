@@ -1,0 +1,24 @@
+config BR2_PACKAGE_IPTABLES
+	bool "iptables"
+	help
+	  Linux kernel (2.4+) firewall, NAT, and packet mangling tools.
+
+	  http://www.iptables.org/
+
+
+config BR2_PACKAGE_IPTABLES_IPV6
+	bool "IPv6 support"
+	default n
+	depends on BR2_PACKAGE_IPTABLES
+	help
+	  Includes support for IPv6 in iptables.
+
+
+config BR2_PACKAGE_IPTABLES_XML
+	bool "iptables-xml"
+	default n
+	depends on BR2_PACKAGE_IPTABLES
+	help
+	  The iptables-xml utility.
+
+

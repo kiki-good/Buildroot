@@ -1,0 +1,11 @@
+--- netkit-base-0.17-orig/configure	2010-01-07 12:56:41.000000000 +0000
++++ netkit-base-0.17/configure	2010-02-19 13:08:14.000000000 +0000
+@@ -161,7 +161,7 @@
+ 
+ fi
+ 
+-LDFLAGS=
++LDFLAGS=$LDFLAGS
+ LIBS=
+ 
+ rm -f __conftest*

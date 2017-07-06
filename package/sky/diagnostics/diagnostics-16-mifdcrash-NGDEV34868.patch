@@ -1,0 +1,98 @@
+diff -rupaN tr69-data-model/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_energy.c tr69-data-model_Patched/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_energy.c
+--- tr69-data-model/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_energy.c	2014-12-04 12:41:40.000000000 +0000
++++ tr69-data-model_Patched/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_energy.c	2015-05-08 10:11:09.706962945 +0100
+@@ -134,7 +134,15 @@ int get_deviceinfo_x_sky_com_supportmcu_
+ 	int result = 0;
+ 	
+ 	result = extractIntFromSupportMcuProc(deviceId, VENDOR_SUPPORTMCU_ENERGY_POWER_CONSUMPTION, value);
+-	deleteSupportMCUInfoFromCache(deviceId);
++
++	/*Fix for NGDEV-34868 mifd crash. If Cache expiry time is non zero, We should not delete cache entry explicitly as they
++	  will be deleted automatically when the timer expires . If at all, we try to delete cache entry explicitly, it may 
++	  result in concurrency problems if both timer operation and the synchronous deleteSupportMCUInfoFromCache call 
++	  try to delete the cache entry at the same time.
++	*/
++	if(0 == VENDOR_SUPPORTMCU_CACHE_EXPIRE_TIME){
++		deleteSupportMCUInfoFromCache(deviceId);
++	}	
+ 
+ 	return result;
+ }
+diff -rupaN tr69-data-model/apps/mifd/mgmtif/vendor_hooks.c tr69-data-model_Patched/apps/mifd/mgmtif/vendor_hooks.c
+--- tr69-data-model/apps/mifd/mgmtif/vendor_hooks.c	2014-12-04 12:41:40.000000000 +0000
++++ tr69-data-model_Patched/apps/mifd/mgmtif/vendor_hooks.c	2015-05-07 06:01:42.598566388 +0100
+@@ -41,7 +41,7 @@ typedef struct
+ 	char			keyString[VENDOR_HOOK_CACHE_ENTRY_KEY_MAX];
+ 	void			*pData;
+ 	void			*pNext;
+-	void			*pPrevous;
++	void			*pPrevious;
+ }vendor_cache_entry_t;
+ 
+ /*---------------------------------------------------------------------------
+@@ -324,7 +324,7 @@ bool vendor_hook_addCacheEntry( vendor_h
+ 	  pEntry = pEntry->pNext;
+ 	}
+ 	pEntry->pNext = pNewEntry;
+-	pNewEntry->pPrevous = pEntry;
++	pNewEntry->pPrevious = pEntry;
+   }else{
+ 	/* No current entries */
+ 	pCache->pFirstEntry = pNewEntry;
+@@ -413,9 +413,13 @@ bool vendor_hook_deleteCacheEntry( vendo
+ 
+   pEntry = pCache->pFirstEntry;
+   for (i=0;i<pCache->entries;i++){
++  	if( (NULL == pEntry) || (NULL == pEntry->keyString) ){
++  		return FALSE;
++  	}
+ 	if ( 0 == strncmp( pEntry->keyString, keyString, VENDOR_HOOK_CACHE_ENTRY_KEY_MAX ) ){
+ 	  vendor_hook_removeEntry( pCache, pEntry );
+ 	}
++	pEntry = pEntry->pNext; /*Otherwise, we would be trying to delete the same Entry*/
+   }
+ 
+   return  result;
+@@ -440,14 +444,14 @@ static bool vendor_hook_removeEntry( ven
+ 
+   /* Remove the entry form the linked list */
+   pNext = pEntry->pNext;
+-  pPrevious = pEntry->pPrevous;
++  pPrevious = pEntry->pPrevious;
+ 
+   if ( NULL != pPrevious ){
+ 	pPrevious->pNext = pNext;
+   }
+ 
+   if ( NULL != pNext ){
+-	pNext->pPrevous = pPrevious;
++	pNext->pPrevious = pPrevious;
+   }
+ 
+   if ( pCache->pFirstEntry == pEntry ){
+@@ -457,8 +461,10 @@ static bool vendor_hook_removeEntry( ven
+ 
+   if ( VENDOR_MAGIC_VALID == pEntry->magic ){
+ 	pEntry->magic = VENDOR_MAGIC_INVALID;
+-	free( pEntry->pData );
+-	pEntry->pData = NULL;
++	if(NULL != pEntry->pData){
++		free( pEntry->pData );
++		pEntry->pData = NULL;
++	}
+ 	free( pEntry );
+ 	pCache->entries--;
+ 	return TRUE;
+diff -rupaN tr69-data-model/apps/mifd/mifd.c tr69-data-model_Patched/apps/mifd/mifd.c
+--- tr69-data-model/apps/mifd/mifd.c	2014-12-04 12:42:15.000000000 +0000
++++ tr69-data-model_Patched/apps/mifd/mifd.c	2015-05-08 19:03:17.909059958 +0100
+@@ -2997,8 +2997,7 @@ mifd_namespace_verify(mifd_ctx_t *ctx,
+     /* Support MCU Power Failure records Reload */
+     sts |= mifd_device_deviceinfo_x_xky_com_supportmcu_power_powerfailure_reload(ctx, NULL, tid, nsname, &nodes, &map);
+     MIFD_PROFILE_RECORD("mifd_device_deviceinfo_x_xky_com_supportmcu_power_powerfailure_reload");
+-#endif
+-
++#endif    
+     /* Support MCU LVD records Reload */
+     sts |= mifd_device_deviceinfo_x_xky_com_supportmcu_power_lvd_reload(ctx, NULL, tid, nsname, &nodes, &map);
+     MIFD_PROFILE_RECORD("mifd_device_deviceinfo_x_xky_com_supportmcu_power_lvd_reload");

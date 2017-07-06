@@ -1,0 +1,109 @@
+diff -Naur bumper-0.0/src/bumper.c bumper-0.0_mod/src/bumper.c
+--- bumper-0.0/src/bumper.c	2010-03-10 17:25:28.000000000 +0000
++++ bumper-0.0_mod/src/bumper.c	2015-04-08 18:29:54.533360596 +0100
+@@ -63,7 +63,7 @@
+ 	{
+ 		printf ( "Error: Usage is %s [config file]\n",argv[0] );
+ 		return EXIT_FAILURE;
+-	} 
++	}
+ 	processList = init_application();
+ 	if ( readInputFile ( argv[1] ) < 0 )
+ 	{
+@@ -87,15 +87,15 @@
+     if (head == NULL)
+       return;
+ 
+-   next = head; 
++   next = head;
+ 
+    while (next != NULL)
+      {
+-        void *nptr = next->next; 
+-	free(next->process);
++        void *nptr = next->next;
++        free(next->process);
+         free(next);
+         next = nptr;
+-     } 
++     }
+ }
+ 
+ int readInputFile ( char *inFile )
+@@ -171,7 +171,7 @@
+ }
+ 
+ 
+-int checkProcessName ( struct params *head, char *process, int *prio, int *policy )
++int checkProcessName ( struct params *head, char *process, int *prio, int *policy)
+ {
+ 	int rc = -1;
+ 	struct params *itr = head;
+@@ -244,6 +244,8 @@
+ {
+ 	DIR *dir_p;
+ 	struct dirent *dir_entry_p;
++	DIR *dir_t;
++	struct dirent *dir_entry_t;
+ 	char dir_name[512]; // Horrible.. but will do
+ 	char target_name[512];  // Horrible.. but will do
+ 	int target_result;
+@@ -262,26 +264,42 @@
+ 		{
+ 			strcpy ( dir_name, "/proc/" );
+ 			strcat ( dir_name, dir_entry_p->d_name );
+-			strcat ( dir_name, "/" );
+-			exe_link[0] = 0;
+-			strcat ( exe_link, dir_name );
+-			strcat ( exe_link, "stat" );
+-			target_result = readStat ( exe_link, target_name );
+-			if ( target_result > 0 )
++			strcat ( dir_name, "/task/" );
++			dir_t = opendir ( dir_name );
++			/* a process may contain several threads, who details are held in the /proc/<pid>/task directory */
++			while ( NULL != ( dir_entry_t = readdir ( dir_t ) ) )
+ 			{
+-				//printf ( "Checking for %s\n",target_name );
+-
+-				if ( checkProcessName ( head,target_name,&prio,&policy ) > 0 )
++				if ( strspn ( dir_entry_t->d_name, "0123456789" ) == strlen ( dir_entry_t->d_name ) )
+ 				{
+-					result = atoi ( dir_entry_p->d_name );
+-					struct sched_param sp;
+-					sp.sched_priority = prio;
+-					if ( sched_setscheduler ( result, policy, &sp ) < 0 )
++					strcpy ( dir_name, "/proc/" );
++					strcat ( dir_name, dir_entry_p->d_name );
++					strcat ( dir_name, "/task/" );
++					strcat ( dir_name, dir_entry_t->d_name );
++					strcat ( dir_name, "/" );
++					exe_link[0] = 0;
++					strcat ( exe_link, dir_name );
++					strcat ( exe_link, "stat" );
++					target_result = readStat ( exe_link, target_name );
++					if ( target_result > 0 )
+ 					{
+-						printf ( "Failed to set %s (%i) [Policy %i] [Priority %i]\n", target_name, result,policy,prio );
++						//printf ( "Checking for %s\n",target_name );
++
++						if ( checkProcessName ( head,target_name,&prio,&policy) > 0 )
++						{
++							struct sched_param sp;
++							// calc pid of process
++							result = atoi ( dir_entry_t->d_name );
++							/* thread not been set before, so set priority and policy as per config file */
++							sp.sched_priority = prio;
++
++							if ( sched_setscheduler ( result, policy, &sp ) < 0 )
++							{
++								printf ( "Failed to set %s (%i) [Policy %i] [Priority %i]\n", target_name, result,policy,prio );
++							}
++							else
++								printf ( "Priority set %s (%i)\n", target_name, result );
++						}
+ 					}
+-					else
+-						printf ( "Priority set %s (%i)\n", target_name, result );
+ 				}
+ 			}
+ 		}

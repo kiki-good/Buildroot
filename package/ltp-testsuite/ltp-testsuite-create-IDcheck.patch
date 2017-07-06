@@ -1,0 +1,27 @@
+diff -Naur ltp-full-20070228/IDcheck.sh ltp-full-20070228_New/IDcheck.sh
+--- ltp-full-20070228/IDcheck.sh	2007-03-01 04:40:17.000000000 +0000
++++ ltp-full-20070228_New/IDcheck.sh	2013-07-02 11:19:02.724665454 +0100
+@@ -95,15 +95,15 @@
+   if [ $NOBODY_ID != "0" ] || [ $BIN_ID != "0" ] || [ $DAEMON_ID != "0" ] || [ $NOBODY_GRP != "0" ] || [ $BIN_GRP != "0" ] || [ $DAEMON_GRP != "0" ] || [ $USERS_GRP != "0" ] || [ $SYS_GRP != "0" ] && [ $I_AM_ROOT != "0" ];
+   then
+      echo -n "If any required user ids and/or groups are missing, would you like these created? Y/N "
+-     read ans
+-     case $ans in
+-         Y*|y*)
+-             CREATE=1
+-             ;;
+-         *)
++     #read ans
++     #case $ans in
++         #Y*|y*)
++             #CREATE=1
++             #;;
++         #*)
+              CREATE=0 
+-             ;;
+-     esac
++             #;;
++     #esac
+   fi
+ fi
+ 

@@ -1,0 +1,28 @@
+diff -Naur upstart-1.13.2/conf/rc-sysinit.conf upstart-1.13.2_mod/conf/rc-sysinit.conf
+--- upstart-1.13.2/conf/rc-sysinit.conf	2015-07-10 11:39:22.316027567 +0100
++++ upstart-1.13.2_mod/conf/rc-sysinit.conf	2015-07-10 11:40:04.037255606 +0100
+@@ -9,23 +9,5 @@
+ task
+ console none
+ script
+-    if [ -r /etc/inittab ]
+-    then
+-	eval "$(sed -nre 's/^[^#][^:]*:([0-6sS]):initdefault:.*/DEFAULT_RUNLEVEL="\1";/p' /etc/inittab || true)"
+-    fi
+-    for ARG in $(cat /proc/cmdline)
+-    do
+-	case "${ARG}" in
+-	-b|emergency)
+-	    [ -n "${FROM_SINGLE_USER_MODE}" ] || sulogin
+-	    ;;
+-	[0123456sS])
+-	    DEFAULT_RUNLEVEL="${ARG}"
+-	    ;;
+-	-s|single)
+-	    [ -n "${FROM_SINGLE_USER_MODE}" ] || DEFAULT_RUNLEVEL=S
+-	    ;;
+-	esac
+-    done
+-    [ -n "${FROM_SINGLE_USER_MODE}" ] || /etc/init.d/rcS
++    /etc/init.d/rcS
+ end script

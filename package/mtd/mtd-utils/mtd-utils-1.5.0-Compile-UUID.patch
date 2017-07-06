@@ -1,0 +1,21 @@
+diff -Naur mtd-utils-1.5.0/Makefile mtd-utils-1.5.0_New/Makefile
+--- mtd-utils-1.5.0/Makefile	2012-05-07 08:19:39.000000000 +0100
++++ mtd-utils-1.5.0_New/Makefile	2013-07-16 10:23:51.379631484 +0100
+@@ -3,7 +3,7 @@
+ 
+ VERSION = 1.5.0
+ 
+-CPPFLAGS += -I./include -I$(BUILDDIR)/include -I./ubi-utils/include $(ZLIBCPPFLAGS) $(LZOCPPFLAGS)
++CPPFLAGS += -I./include -I$(BUILDDIR)/include -I./ubi-utils/include $(ZLIBCPPFLAGS) $(LZOCPPFLAGS) $(UUIDCPPFLAGS)
+ 
+ ifeq ($(WITHOUT_XATTR), 1)
+   CPPFLAGS += -DWITHOUT_XATTR
+@@ -19,7 +19,7 @@
+ MTD_BINS = \
+ 	ftl_format flash_erase nanddump doc_loadbios \
+ 	ftl_check mkfs.jffs2 flash_lock flash_unlock \
+-	flash_otp_info flash_otp_dump mtd_debug flashcp nandwrite nandtest \
++	flash_otp_info flash_otp_lock flash_otp_write flash_otp_dump mtd_debug flashcp nandwrite nandtest \
+ 	jffs2dump \
+ 	nftldump nftl_format docfdisk \
+ 	rfddump rfdformat \

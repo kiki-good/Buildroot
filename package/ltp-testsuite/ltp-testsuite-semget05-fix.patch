@@ -1,0 +1,68 @@
+We hit the invalid getmaxid followed by a failing sem_id_arr allocation, so this patch
+backports the fix from a later version (which is to parse /proc/sys/kernel/sem correctly)
+--- ltp-full-20070228.old/testcases/kernel/syscalls/ipc/semget/semget05.c	2007-03-01 04:40:35.000000000 +0000
++++ ltp-full-20070228/testcases/kernel/syscalls/ipc/semget/semget05.c	2009-03-23 13:35:53.000000000 +0000
+@@ -67,12 +70,12 @@
+ int MAXIDS=2048;
+ 
+ int exp_enos[] = {ENOSPC, 0};	/* 0 terminated list of expected errnos */
+-int *sem_id_arr;
++int *sem_id_arr = NULL;
+ int num_sems = 0;		/* count the semaphores created */
+ 
+ int main(int ac, char **av)
+ {
+-	int lc,getmaxid;				/* loop counter */
++	int lc;				/* loop counter */
+ 	char *msg;			/* message returned from parse_opts */
+ 	FILE *fp;
+ 
+@@ -82,22 +85,19 @@
+ 	}
+ 
+ 	/* Set the MAXIDS for the specific machine by reading the system limit
+-           for SEMMNI - The maximum number of sempahore sets                  */
+-	if((fp = fopen("/proc/sys/kernel/sem", "r")) != NULL) 
+-	  {
+-	    for(lc= 0; lc < 4; lc++)
+-	      {
+-		if(lc == 3)
+-		  {
+-		    if(getmaxid > MAXIDS)
+-		      MAXIDS=getmaxid;
+-		  }
+-	      }
+-
+-	  }
++	 * for SEMMNI - The maximum number of sempahore sets
++	 */
++	fp = fopen("/proc/sys/kernel/sem", "r");
++	if (fp != NULL) {
++		int getmaxid;
++		if (fscanf(fp, "%*d %*d %*d %d", &getmaxid) == 1)
++			MAXIDS = getmaxid + 1;
+ 	fclose(fp);
++	}
+ 
+-	sem_id_arr = (int*)malloc(sizeof(int)*MAXIDS);
++	sem_id_arr = (int*)malloc(sizeof(int) * MAXIDS);
++	if (sem_id_arr == NULL)
++		tst_brkm(TBROK, cleanup, "malloc failed");
+ 
+ 	setup();			/* global setup */	
+ 
+@@ -202,6 +194,9 @@
+ 		rm_sema(sem_id_arr[i]);
+ 	}
+ 
++	/* free malloced memory */
++	free(sem_id_arr);
++
+ 	/* Remove the temporary directory */
+ 	tst_rmdir();
+ 
+@@ -214,4 +209,3 @@
+ 	/* exit with return code appropriate for results */
+ 	tst_exit();
+ }
+-

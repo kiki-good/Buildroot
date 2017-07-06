@@ -1,0 +1,13 @@
+diff -Naur ltp-full-20070228/testcases/kernel/syscalls/madvise/madvise02.c ltp-full-20070228_mod/testcases/kernel/syscalls/madvise/madvise02.c
+--- ltp-full-20070228/testcases/kernel/syscalls/madvise/madvise02.c	2007-03-01 04:40:36.000000000 +0000
++++ ltp-full-20070228_mod/testcases/kernel/syscalls/madvise/madvise02.c	2014-02-20 14:42:29.049045544 +0000
+@@ -272,7 +272,8 @@
+ 		tmp_memory_allocated = (char *)(((unsigned long) tmp_memory_allocated + pagesize-1) & ~(pagesize-1));
+ 
+ 		TEST(madvise(tmp_memory_allocated, 5 * pagesize, MADV_WILLNEED));
+-		check_and_print(EBADF);
++		if (tst_kvercmp(3, 9, 0) < 0)
++			check_and_print(EBADF);
+ 		free((void *)ptr_memory_allocated);
+ 		
+ 		close(fd);

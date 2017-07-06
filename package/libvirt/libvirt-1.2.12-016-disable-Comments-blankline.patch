@@ -1,0 +1,184 @@
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/allow-dhcp-server.xml libvirt-1.2.12_mod/examples/xml/nwfilter/allow-dhcp-server.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/allow-dhcp-server.xml	2011-05-11 11:25:39.000000000 +0100
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/allow-dhcp-server.xml	2015-12-31 10:00:20.222639701 +0000
+@@ -1,8 +1,4 @@
+ <filter name='allow-dhcp-server' chain='ipv4'>
+-
+-    <!-- accept outgoing DHCP requests -->
+-    <!-- note, this rule must be evaluated before general MAC broadcast
+-         traffic is discarded since DHCP requests use MAC broadcast -->
+     <rule action='accept' direction='out' priority='100'>
+         <ip srcipaddr='0.0.0.0'
+             dstipaddr='255.255.255.255'
+@@ -10,15 +6,10 @@
+             srcportstart='68'
+             dstportstart='67' />
+     </rule>
+-
+-    <!-- accept incoming DHCP responses from a specific DHCP server
+-         parameter DHPCSERVER needs to be passed from where this filter is
+-         referenced -->
+     <rule action='accept' direction='in' priority='100' >
+         <ip srcipaddr='$DHCPSERVER'
+             protocol='udp'
+             srcportstart='67'
+             dstportstart='68'/>
+     </rule>
+-
+ </filter>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/allow-dhcp.xml libvirt-1.2.12_mod/examples/xml/nwfilter/allow-dhcp.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/allow-dhcp.xml	2011-05-11 11:25:39.000000000 +0100
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/allow-dhcp.xml	2015-12-31 10:00:42.610640276 +0000
+@@ -1,8 +1,4 @@
+ <filter name='allow-dhcp' chain='ipv4'>
+-
+-    <!-- accept outgoing DHCP requests -->
+-    <!-- not, this rule must be evaluated before general MAC broadcast
+-         traffic is discarded since DHCP requests use MAC broadcast -->
+     <rule action='accept' direction='out' priority='100'>
+         <ip srcipaddr='0.0.0.0'
+             dstipaddr='255.255.255.255'
+@@ -10,12 +6,9 @@
+             srcportstart='68'
+             dstportstart='67' />
+     </rule>
+-
+-    <!-- accept incoming DHCP responses from any DHCP server -->
+     <rule action='accept' direction='in' priority='100' >
+         <ip protocol='udp'
+             srcportstart='67'
+             dstportstart='68'/>
+     </rule>
+-
+ </filter>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/clean-traffic.xml libvirt-1.2.12_mod/examples/xml/nwfilter/clean-traffic.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/clean-traffic.xml	2011-12-02 13:23:36.000000000 +0000
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/clean-traffic.xml	2015-12-31 10:01:09.766640972 +0000
+@@ -1,30 +1,14 @@
+ <filter name='clean-traffic' chain='root'>
+-   <!-- An example of a traffic filter enforcing clean traffic
+-        from a VM by
+-      - preventing MAC spoofing -->
+    <filterref filter='no-mac-spoofing'/>
+-
+-   <!-- preventing IP spoofing on outgoing, allow all IPv4 in incoming -->
+    <filterref filter='no-ip-spoofing'/>
+-
+    <rule direction='out' action='accept' priority='-650'>
+       <mac protocolid='ipv4'/>
+    </rule>
+-
+    <filterref filter='allow-incoming-ipv4'/>
+-
+-   <!-- preventing ARP spoofing/poisoning -->
+    <filterref filter='no-arp-spoofing'/>
+-
+-   <!-- accept all other incoming and outgoing ARP traffic -->
+    <rule action='accept' direction='inout' priority='-500'>
+       <mac protocolid='arp'/>
+    </rule>
+-
+-   <!-- preventing any other traffic than IPv4 and ARP -->
+    <filterref filter='no-other-l2-traffic'/>
+-
+-   <!-- allow qemu to send a self-announce upon migration end -->
+    <filterref filter='qemu-announce-self'/>
+-
+ </filter>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/no-arp-ip-spoofing.xml libvirt-1.2.12_mod/examples/xml/nwfilter/no-arp-ip-spoofing.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/no-arp-ip-spoofing.xml	2011-12-02 13:23:36.000000000 +0000
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/no-arp-ip-spoofing.xml	2015-12-31 10:01:22.262641295 +0000
+@@ -1,9 +1,6 @@
+ <filter name='no-arp-ip-spoofing' chain='arp-ip' priority='-510'>
+-  <!-- no arp spoofing -->
+-  <!-- drop if ipaddr does not belong to guest -->
+   <rule action='return' direction='out' priority='400' >
+     <arp match='yes' arpsrcipaddr='$IP' />
+   </rule>
+-  <!-- drop everything else -->
+   <rule action='drop' direction='out' priority='1000' />
+ </filter>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/no-ip-multicast.xml libvirt-1.2.12_mod/examples/xml/nwfilter/no-ip-multicast.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/no-ip-multicast.xml	2011-05-11 11:25:39.000000000 +0100
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/no-ip-multicast.xml	2015-12-31 10:01:35.190641625 +0000
+@@ -1,9 +1,5 @@
+ <filter name='no-ip-multicast' chain='ipv4'>
+-
+-    <!-- drop if destination IP address is in the 224.0.0.0/4 subnet -->
+     <rule action='drop' direction='out'>
+         <ip dstipaddr='224.0.0.0' dstipmask='4' />
+     </rule>
+-
+-    <!-- not doing anything with receiving side ... -->
+ </filter>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/no-ip-spoofing.xml libvirt-1.2.12_mod/examples/xml/nwfilter/no-ip-spoofing.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/no-ip-spoofing.xml	2012-01-19 00:28:59.000000000 +0000
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/no-ip-spoofing.xml	2015-12-31 10:01:48.290641959 +0000
+@@ -1,14 +1,9 @@
+ <filter name='no-ip-spoofing' chain='ipv4-ip' priority='-710'>
+-  <!-- allow UDP sent from 0.0.0.0 (DHCP); filter more exact later -->
+   <rule action='return' direction='out' priority='100'>
+     <ip srcipaddr='0.0.0.0' protocol='udp'/>
+   </rule>
+-
+-  <!-- allow all known IP addresses -->
+   <rule direction='out' action='return' priority='500'>
+     <ip srcipaddr='$IP'/>
+   </rule>
+-
+-  <!-- drop everything else -->
+   <rule direction='out' action='drop' priority='1000'/>
+ </filter>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/no-mac-broadcast.xml libvirt-1.2.12_mod/examples/xml/nwfilter/no-mac-broadcast.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/no-mac-broadcast.xml	2011-05-11 11:25:39.000000000 +0100
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/no-mac-broadcast.xml	2015-12-31 10:01:57.966642211 +0000
+@@ -1,8 +1,5 @@
+ <filter name='no-mac-broadcast' chain='ipv4'>
+-    <!-- drop if destination mac is bcast mac addr. -->
+     <rule action='drop' direction='out'>
+         <mac dstmacaddr='ff:ff:ff:ff:ff:ff' />
+     </rule>
+-
+-    <!-- not doing anything with receiving side ... -->
+ </filter>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/no-mac-spoofing.xml libvirt-1.2.12_mod/examples/xml/nwfilter/no-mac-spoofing.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/no-mac-spoofing.xml	2011-12-02 13:23:36.000000000 +0000
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/no-mac-spoofing.xml	2015-12-31 10:02:07.698642461 +0000
+@@ -1,9 +1,7 @@
+ <filter name='no-mac-spoofing' chain='mac' priority='-800'>
+-  <!-- return packets with VM's MAC address as source address -->
+   <rule direction='out' action='return'>
+     <mac srcmacaddr='$MAC'/>
+   </rule>
+-  <!-- drop everything else -->
+   <rule direction='out' action='drop'>
+     <mac/>
+   </rule>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/no-other-l2-traffic.xml libvirt-1.2.12_mod/examples/xml/nwfilter/no-other-l2-traffic.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/no-other-l2-traffic.xml	2011-05-11 11:25:39.000000000 +0100
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/no-other-l2-traffic.xml	2015-12-31 10:02:21.406642813 +0000
+@@ -1,7 +1,3 @@
+ <filter name='no-other-l2-traffic'>
+-
+-    <!-- drop all other l2 traffic than for which rules have been
+-         written for; i.e., drop all other than arp and ipv4 traffic -->
+     <rule action='drop' direction='inout' priority='1000'/>
+-
+ </filter>
+diff -Naur libvirt-1.2.12/examples/xml/nwfilter/qemu-announce-self.xml libvirt-1.2.12_mod/examples/xml/nwfilter/qemu-announce-self.xml
+--- libvirt-1.2.12/examples/xml/nwfilter/qemu-announce-self.xml	2011-05-11 11:25:39.000000000 +0100
++++ libvirt-1.2.12_mod/examples/xml/nwfilter/qemu-announce-self.xml	2015-12-31 10:02:40.050643288 +0000
+@@ -1,13 +1,7 @@
+ <filter name='qemu-announce-self' chain='root'>
+-    <!-- as of 4/26/2010 qemu sends out a bogus packet with
+-         wrong rarp protocol ID -->
+-    <!-- accept what is being sent now -->
+     <rule action='accept' direction='out'>
+         <mac protocolid='0x835'/>
+     </rule>
+-
+-    <!-- accept if it was changed to rarp -->
+     <filterref filter='qemu-announce-self-rarp'/>
+     <filterref filter='no-other-rarp-traffic'/>
+-
+ </filter>

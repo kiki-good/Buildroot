@@ -1,0 +1,47 @@
+diff -Naurr diagnostics-1.3_orig/apps/cwmd/cwmd_standby_check.c diagnostics-1.3_new/apps/cwmd/cwmd_standby_check.c
+--- diagnostics-1.3_orig/apps/cwmd/cwmd_standby_check.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/cwmd/cwmd_standby_check.c	2015-05-26 17:06:39.399268934 +0100
+@@ -24,7 +24,10 @@
+ */
+ #define SYSTEM_STANDBY_WAKEUP_REASON_PROC "/proc/Sky/tr69/standby/status"
+ #define STANDBY_REASON_WAKEUP_REASON_STRING "Wakeup cause : "
++#define STANDBY_REASON_BLUE_TOOTH_STRING "Blue tooth"
+ #define STANDBY_REASON_WAKEUP_TIMER_STRING "Wakeup timer timeout"
++#define STANDBY_REASON_REMOTE_KEY_PRESS_STRING "Remote key press"
++#define STANDBY_REASON_FRONT_PANEL_KEY_PRESS_STRING "Front panel key press"
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+ */
+@@ -41,18 +44,27 @@
+ 
+ 	*standbystatus = EOK;
+ 	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(SYSTEM_STANDBY_WAKEUP_REASON_PROC, buffer, sizeof (buffer))) {
+-		VENDOR_LOG_ERROR("vendor_hook_read_proc_device failed.\n");
++		cwmd_log(LOG_ERR, "Wakeup reason proc - vendor_hook_read_proc_device failed.\n");
+ 		return EFAIL;
+ 	}
+ 	if (TRUE != vendor_hooks_extractStringWithSpaceFromData(buffer, STANDBY_REASON_WAKEUP_REASON_STRING, pResultString)) {
+-		VENDOR_LOG_ERROR("vendor_hooks_extractStringWithSpaceFromData failed.\n");
++		cwmd_log(LOG_ERR, "Wakeup reason proc - vendor_hooks_extractStringWithSpaceFromData failed.\n");
+ 		return EFAIL;
+ 	}
+-	if (strncmp(pResultString, STANDBY_REASON_WAKEUP_TIMER_STRING, VENDOR_HOOKS_MAX_RESPONSE_SIZE) == 0) {
+-		cwmd_log(LOG_ERR, "Boot inform is blocked due to wakeup reason.\n");
++	if (strncmp(pResultString, STANDBY_REASON_BLUE_TOOTH_STRING, VENDOR_HOOKS_MAX_RESPONSE_SIZE) == 0) {
++		cwmd_log(LOG_ERR, "Boot inform is blocked due to Blue tooth.\n");
++		*standbystatus = EFAIL;
++	} else if (strncmp(pResultString, STANDBY_REASON_WAKEUP_TIMER_STRING, VENDOR_HOOKS_MAX_RESPONSE_SIZE) == 0) {
++		cwmd_log(LOG_ERR, "Boot inform is blocked due to Wakeup timer timeout.\n");
++		*standbystatus = EFAIL;
++	} else if (strncmp(pResultString, STANDBY_REASON_REMOTE_KEY_PRESS_STRING, VENDOR_HOOKS_MAX_RESPONSE_SIZE) == 0) {
++		cwmd_log(LOG_ERR, "Boot inform is blocked due to Remote key press.\n");
++		*standbystatus = EFAIL;
++	} else if (strncmp(pResultString, STANDBY_REASON_FRONT_PANEL_KEY_PRESS_STRING, VENDOR_HOOKS_MAX_RESPONSE_SIZE) == 0) {
++		cwmd_log(LOG_ERR, "Boot inform is blocked due to Front panel key press.\n");
+ 		*standbystatus = EFAIL;
+ 	} else {
+-		cwmd_log(LOG_ERR, "Boot inform is not blocked to wakeup reason.\n");
++		cwmd_log(LOG_ERR, "Boot inform is not blocked.\n");
+ 	}
+ 	return EOK;
+ }

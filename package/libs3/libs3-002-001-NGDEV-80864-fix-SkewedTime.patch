@@ -1,0 +1,347 @@
+diff -Naur libs3-002-orig/inc/libs3.h libs3-002/inc/libs3.h
+--- libs3-002-orig/inc/libs3.h	2017-02-23 11:41:39.000000000 +0000
++++ libs3-002/inc/libs3.h	2017-04-06 17:08:22.000000000 +0100
+@@ -1555,6 +1555,7 @@
+  * @return nonzero if the status indicates a retryable error, 0 otherwise
+  **/
+ int S3_status_is_retryable(S3Status status);
++int S3_status_is_retryable_singlepart(S3Status status);
+ 
+ 
+ /** **************************************************************************
+diff -Naur libs3-002-orig/src/general.c libs3-002/src/general.c
+--- libs3-002-orig/src/general.c	2017-02-23 11:34:58.000000000 +0000
++++ libs3-002/src/general.c	2017-04-06 17:08:22.000000000 +0100
+@@ -31,6 +31,7 @@
+ #include "util.h"
+ 
+ static int initializeCountG = 0;
++extern int statusG;
+ 
+ S3Status S3_initialize(const char *userAgentInfo, int flags,
+                        const char *defaultS3HostName)
+@@ -471,9 +472,30 @@
+     return status;
+ }
+ 
++int S3_status_is_retryable_singlepart(S3Status status)
++{
++    fprintf(stderr, "INFO: upload status is %d\n", status);
++    if (status != 0) fprintf(stderr, "\nERROR: %s\n", S3_get_status_name(statusG));
++    
++    switch (status) {
++    case S3StatusNameLookupError:
++    case S3StatusFailedToConnect:
++    case S3StatusConnectionFailed:
++    case S3StatusErrorInternalError:
++    case S3StatusErrorOperationAborted:
++    case S3StatusErrorRequestTimeout:
++        return 1;
++    default:
++        return 0;
++    }
++}
++
+ 
+ int S3_status_is_retryable(S3Status status)
+ {
++    fprintf(stderr, "INFO: upload status is %d\n", status);
++    if (status != 0) fprintf(stderr, "\nERROR: %s\n", S3_get_status_name(statusG));
++    
+     switch (status) {
+     case S3StatusNameLookupError:
+     case S3StatusFailedToConnect:
+diff -Naur libs3-002-orig/src/request.c libs3-002/src/request.c
+--- libs3-002-orig/src/request.c	2017-02-23 11:57:16.000000000 +0000
++++ libs3-002/src/request.c	2017-04-06 17:08:22.000000000 +0100
+@@ -180,6 +180,18 @@
+         request->httpResponseCode = httpResponseCode;
+     }
+ 
++    double val;
++    int res;
++    /* check for total time taken */ 
++    res = curl_easy_getinfo(request->curl, CURLINFO_TOTAL_TIME, &val);
++    if((CURLE_OK == res) && (val>0))
++      printf("Total upload time: %0.3f sec.\n", val); 
++
++    /* check for average upload speed */ 
++    res = curl_easy_getinfo(request->curl, CURLINFO_SPEED_UPLOAD, &val);
++    if((CURLE_OK == res) && (val>0))
++      printf("Average upload speed: %0.3f kbyte/sec.\n", val / 1024);
++
+     response_headers_handler_done(&(request->responseHeadersHandler),
+                                   request->curl);
+ 
+@@ -1502,28 +1514,29 @@
+ int convert_time(char* input, void* output){
+     struct tm tm;
+     //strptime("Fri, 10 Feb 2017 14:35:21 GMT", "%a, %d %b %Y %H:%M:%S %Z", &tm);
++
+     if (strptime(input, "%a, %d %b %Y %H:%M:%S %Z", &tm) == NULL){
+       fprintf(stderr, "strptime returns error\n");
+       return -1;
+     }
++    
+     memcpy(output, &tm, sizeof(struct tm));
++
+     //printf("year: %d; month: %d; day: %d;\n", tm.tm_year, tm.tm_mon, tm.tm_mday);
+     //printf("hour: %d; minute: %d; second: %d\n",  tm.tm_hour, tm.tm_min, tm.tm_sec);
+     //printf("week day: %d; year day: %d\n", tm.tm_wday, tm.tm_yday);
++
+     return 0;
+ 
+ }
+ 
+ static size_t header_handler(void *ptr, size_t size, size_t nmemb, void *userdata) {
+     if (strncmp("Date", ptr, 4) == 0){
+-        printf("g1\n");
+         if(strlen(ptr) > 6){
+-            printf("g2\n");
+             if(convert_time (ptr + 6, userdata) != 0){
+                 fprintf(stderr, "header_handler could not convert the time!!\n");
+             }
+         }
+-        printf("g3\n");
+     }
+ 
+     return size * nmemb;
+@@ -1554,6 +1567,7 @@
+ {
+     S3Status status;
+     
++    fprintf(stdout, "INFO: setup_request\n");
+ 
+     // Validate the bucket name
+     if (params->bucketContext.bucketName
+@@ -1565,7 +1579,7 @@
+ 
+     /* First execution: 
+      * local year > 2000 => use local time
+-     * local year < 2000 => use sky server time
++     * local year < 2000 => use local time (could have used sky server time)
+      *
+      * If it fails due to SkewedTime:
+      *
+@@ -1574,8 +1588,10 @@
+      *
+      */
+     
+-    if (statusG == S3StatusErrorRequestTimeTooSkewed) {
+-        bUseServerTime = 1;
++    if (statusG == S3StatusErrorRequestTimeTooSkewed ||
++        statusG == S3StatusErrorRequestTimeout) {
++        bUseServerTime++;
++        if (bUseServerTime > 1) bUseSky = 1;
+     }
+ 
+     struct tm gmt;
+@@ -1586,19 +1602,23 @@
+     gmt.tm_year = 70;
+ #endif
+ 
+-    if ((gmt.tm_year < 100) || (bUseServerTime)){
+-       fprintf(stderr, "Local time is invalid!\n");
+-       if ((lastServerDate[0] != 0) && (!bUseSky)){
+-            fprintf(stderr, "lastServerDate = %s\n", lastServerDate);
++    if ((gmt.tm_year < 100) || (bUseServerTime)) {
++       fprintf(stdout, "INFO: Local time is invalid!\n");
++       if (lastServerDate[0] != 0) {
++            fprintf(stderr, "Converting Last Server Time = %s\n", lastServerDate);
+             if(convert_time (lastServerDate, &gmt) != 0) {
+-                printf("can't use amazon time\n");
++                printf("ERROR: Converting Server Time\n");
+                 bUseSky = 1;
+             }
+-       }
++        }
++       /*} else {
++            fprintf(stdout, "INFO: No server time found, using Sky Time!\n");
++            bUseSky = 1;
++       }*/
+        if (bUseSky) {
+-            fprintf(stderr, "try sky time\n");
++           fprintf(stdout, "INFO: Request time to connectivity.sky.com/test\n");
+            if(parse_date_header(&gmt, "connectivity.sky.com/test") != 0){
+-              fprintf(stderr, "can't use sky time\n");
++              fprintf(stderr, "ERROR: Getting Sky Time\n");
+               bUseSky = 0;
+             }
+         }
+@@ -1607,7 +1627,9 @@
+ #ifdef FORCE_FAIL_FIRST_TIME
+     if (!bHit) { bHit = 1; gmt.tm_year = 70; }
+ #endif
+-
++     
++    fprintf(stdout, "INFO: Using: %d/%d/%d;\n", gmt.tm_year, gmt.tm_mon, gmt.tm_mday);
++    
+     strftime(computed->requestDateISO8601, sizeof(computed->requestDateISO8601),
+              "%Y%m%dT%H%M%SZ", &gmt);
+ 
+diff -Naur libs3-002-orig/src/s3.c libs3-002/src/s3.c
+--- libs3-002-orig/src/s3.c	2017-02-23 11:56:54.000000000 +0000
++++ libs3-002/src/s3.c	2017-04-06 17:08:22.000000000 +0100
+@@ -82,6 +82,7 @@
+ 
+ // Other globals -------------------------------------------------------------
+ 
++static int iLastProgress = 0;
+ static char putenvBufG[256];
+ 
+ // Option prefixes -----------------------------------------------------------
+@@ -2043,15 +2044,19 @@
+     data->contentLength -= ret;
+     data->totalContentLength -= ret;
+ 
++
+     if (data->contentLength && !data->noStatus) {
+         // Avoid a weird bug in MingW, which won't print the second integer
+         // value properly when it's in the same call, so print separately
+-        printf("%llu bytes remaining ",
++
++        int iProgress = ((data->totalOriginalContentLength - data->totalContentLength) * 100) / data->totalOriginalContentLength;
++
++        if (iLastProgress != iProgress){
++          iLastProgress = iProgress;
++          printf("%llu bytes remaining ",
+                (unsigned long long) data->totalContentLength);
+-        printf("(%d%% complete) ...\n",
+-               (int) (((data->totalOriginalContentLength -
+-                        data->totalContentLength) * 100) /
+-                      data->totalOriginalContentLength));
++          printf("(%d%% complete) ...\n", iProgress);
++        }
+     }
+ 
+     return ret;
+@@ -2158,9 +2163,11 @@
+ }
+ 
+ 
+-static void put_object(int argc, char **argv, int optindex,
++static int put_object(int argc, char **argv, int optindex,
+                        const char *srcBucketName, const char *srcKey, unsigned long long srcSize)
+ {
++    int iRet = 0;
++
+     if (optindex == argc) {
+         fprintf(stderr, "\nERROR: Missing parameter: bucket/key\n");
+         usageExit(stderr);
+@@ -2304,7 +2311,11 @@
+         }
+     }
+ 
++    S3_init();
++    int iTry = 0;
+     put_object_callback_data data;
++    
++    singlepart_retry:
+     data.infile = 0;
+     data.gb = 0;
+     data.noStatus = noStatus;
+@@ -2367,8 +2378,6 @@
+     data.originalContentLength =
+             contentLength;
+ 
+-    S3_init();
+-
+     S3BucketContext bucketContext =
+     {
+         0,
+@@ -2395,6 +2404,7 @@
+         useServerSideEncryption
+     };
+ 
++    
+     if (contentLength <= MULTIPART_CHUNK_SIZE) {
+         S3PutObjectHandler putObjectHandler =
+         {
+@@ -2405,7 +2415,7 @@
+         do {
+             S3_put_object(&bucketContext, key, contentLength, &putProperties, 0,
+                           0, &putObjectHandler, &data);
+-        } while (S3_status_is_retryable(statusG) && should_retry());
++        } while (S3_status_is_retryable_singlepart(statusG) && should_retry());
+ 
+         if (data.infile) {
+             fclose(data.infile);
+@@ -2414,7 +2424,13 @@
+             growbuffer_destroy(data.gb);
+         }
+ 
++        if (statusG == S3StatusErrorRequestTimeTooSkewed) {
++          iTry++;
++          if (iTry < 3) goto singlepart_retry;
++        }
++
+         if (statusG != S3StatusOK) {
++            iRet = -2;
+             printError();
+         }
+         else if (data.contentLength) {
+@@ -2469,6 +2485,7 @@
+                 contentLength = manager.remaining;
+                 goto upload;
+             } else {
++                iRet = -3;
+                 goto clean;
+             }
+         }
+@@ -2479,6 +2496,7 @@
+ 
+         if (manager.upload_id == 0 || statusG != S3StatusOK) {
+             printError();
++            iRet = -4;
+             goto clean;
+         }
+ 
+@@ -2537,6 +2555,7 @@
+             } while (S3_status_is_retryable(statusG) && should_retry());
+             if (statusG != S3StatusOK) {
+                 printError();
++                iRet = -5;
+                 goto clean;
+             }
+             contentLength -= MULTIPART_CHUNK_SIZE;
+@@ -2565,6 +2584,7 @@
+         } while (S3_status_is_retryable(statusG) && should_retry());
+         if (statusG != S3StatusOK) {
+             printError();
++            iRet = -6;
+             goto clean;
+         }
+ 
+@@ -2580,6 +2600,8 @@
+     }
+ 
+     S3_deinitialize();
++
++    return iRet;
+ }
+ 
+ 
+@@ -3876,6 +3898,7 @@
+ 
+ int main(int argc, char **argv)
+ {
++    int iRet = 0;
+     // Parse args
+     while (1) {
+         int idx = 0;
+@@ -3989,7 +4012,7 @@
+         }
+     }
+     else if (!strcmp(command, "put")) {
+-        put_object(argc, argv, optind, NULL, NULL, 0);
++        iRet = put_object(argc, argv, optind, NULL, NULL, 0);
+     }
+     else if (!strcmp(command, "copy")) {
+         copy_object(argc, argv, optind);
+@@ -4035,5 +4058,5 @@
+         return -1;
+     }
+ 
+-    return 0;
++    return iRet;
+ }

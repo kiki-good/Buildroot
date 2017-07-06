@@ -1,0 +1,14 @@
+diff -ur bluez-5.8-orig/profiles/audio/avrcp.c bluez-5.8/profiles/audio/avrcp.c
+--- bluez-5.8-orig/profiles/audio/avrcp.c	2015-06-09 11:34:46.184389225 +0100
++++ bluez-5.8/profiles/audio/avrcp.c	2015-06-09 11:35:35.275772063 +0100
+@@ -3852,8 +3852,8 @@
+ 	.connect	= avrcp_connect,
+ 	.disconnect	= avrcp_disconnect,
+ 
+-	.adapter_probe	= avrcp_target_server_probe,
+-	.adapter_remove = avrcp_target_server_remove,
++//	.adapter_probe	= avrcp_target_server_probe,
++//	.adapter_remove = avrcp_target_server_remove,
+ };
+ 
+ static int avrcp_controller_probe(struct btd_service *service)

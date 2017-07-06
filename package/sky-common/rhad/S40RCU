@@ -1,0 +1,20 @@
+#!/bin/sh
+test -e /usr/bin/rapid || exit 0
+test -e /usr/bin/rhad || exit 0
+RETVAL=0
+case "$1" in
+	start)
+		/usr/bin/rapid --debug=EWF
+		RETVAL=$?
+		/usr/bin/rhad
+		RETVAL=$?
+	;;
+	stop)
+		rhad -k
+        ;;
+	status)
+        	status $processname
+	        RETVAL=$?
+        ;;
+esac
+exit $RETVAL

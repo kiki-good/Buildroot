@@ -1,0 +1,20 @@
+config BR2_PACKAGE_ICU
+	bool "icu"
+	help
+	  International Components for Unicode.
+
+	  http://site.icu-project.org/
+
+if BR2_PACKAGE_ICU
+
+config BR2_PACKAGE_ICU_CUSTOM_DATA_PATH
+	string "Path to custom data library file"
+	help
+	  This option allows to define the path to a custom data
+	  library generated with http://apps.icu-project.org/datacustom/
+	  Make sure you select the appropiate version to match the one
+	  provided by buildroot.
+	  Leave empty to not use this functionality.
+
+endif
+

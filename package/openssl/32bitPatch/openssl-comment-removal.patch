@@ -1,0 +1,388 @@
+diff -Naur openssl-1.0.0g/apps/CA.pl openssl-1.0.0g-mod/apps/CA.pl
+--- openssl-1.0.0g/apps/CA.pl	2015-01-29 11:10:22.205537984 +0000
++++ openssl-1.0.0g-mod/apps/CA.pl	2015-01-29 11:14:47.361540140 +0000
+@@ -1,40 +1,4 @@
+ #!/usr/bin/perl
+-#
+-# CA - wrapper around ca to make it easier to use ... basically ca requires
+-#      some setup stuff to be done before you can use it and this makes
+-#      things easier between now and when Eric is convinced to fix it :-)
+-#
+-# CA -newca ... will setup the right stuff
+-# CA -newreq[-nodes] ... will generate a certificate request 
+-# CA -sign ... will sign the generated request and output 
+-#
+-# At the end of that grab newreq.pem and newcert.pem (one has the key 
+-# and the other the certificate) and cat them together and that is what
+-# you want/need ... I'll make even this a little cleaner later.
+-#
+-#
+-# 12-Jan-96 tjh    Added more things ... including CA -signcert which
+-#                  converts a certificate to a request and then signs it.
+-# 10-Jan-96 eay    Fixed a few more bugs and added the SSLEAY_CONFIG
+-#		   environment variable so this can be driven from
+-#		   a script.
+-# 25-Jul-96 eay    Cleaned up filenames some more.
+-# 11-Jun-96 eay    Fixed a few filename missmatches.
+-# 03-May-96 eay    Modified to use 'ssleay cmd' instead of 'cmd'.
+-# 18-Apr-96 tjh    Original hacking
+-#
+-# Tim Hudson
+-# tjh@cryptsoft.com
+-#
+-
+-# 27-Apr-98 snh    Translation into perl, fix existing CA bug.
+-#
+-#
+-# Steve Henson
+-# shenson@bigfoot.com
+-
+-# default openssl.cnf file has setup as per the following
+-# demoCA ... where everything is stored
+ 
+ my $openssl;
+ if(defined $ENV{OPENSSL}) {
+@@ -45,8 +9,8 @@
+ }
+ 
+ $SSLEAY_CONFIG=$ENV{"SSLEAY_CONFIG"};
+-$DAYS="-days 365";	# 1 year
+-$CADAYS="-days 1095";	# 3 years
++$DAYS="-days 365";	
++$CADAYS="-days 1095";	
+ $REQ="$openssl req $SSLEAY_CONFIG";
+ $CA="$openssl ca $SSLEAY_CONFIG";
+ $VERIFY="$openssl verify";
+@@ -67,26 +31,20 @@
+ 	    print STDERR "usage: CA -newcert|-newreq|-newreq-nodes|-newca|-sign|-verify\n";
+ 	    exit 0;
+ 	} elsif (/^-newcert$/) {
+-	    # create a certificate
+ 	    system ("$REQ -new -x509 -keyout newkey.pem -out newcert.pem $DAYS");
+ 	    $RET=$?;
+ 	    print "Certificate is in newcert.pem, private key is in newkey.pem\n"
+ 	} elsif (/^-newreq$/) {
+-	    # create a certificate request
+ 	    system ("$REQ -new -keyout newkey.pem -out newreq.pem $DAYS");
+ 	    $RET=$?;
+ 	    print "Request is in newreq.pem, private key is in newkey.pem\n";
+ 	} elsif (/^-newreq-nodes$/) {
+-	    # create a certificate request
+ 	    system ("$REQ -new -nodes -keyout newkey.pem -out newreq.pem $DAYS");
+ 	    $RET=$?;
+ 	    print "Request is in newreq.pem, private key is in newkey.pem\n";
+ 	} elsif (/^-newca$/) {
+-		# if explicitly asked for or it doesn't exist then setup the
+-		# directory structure that Eric likes to manage things 
+ 	    $NEW="1";
+ 	    if ( "$NEW" || ! -f "${CATOP}/serial" ) {
+-		# create the directory hierarchy
+ 		mkdir $CATOP, $DIRMODE;
+ 		mkdir "${CATOP}/certs", $DIRMODE;
+ 		mkdir "${CATOP}/crl", $DIRMODE ;
+@@ -104,7 +62,6 @@
+ 
+ 		chop $FILE;
+ 
+-		# ask user for existing CA certificate
+ 		if ($FILE) {
+ 		    cp_pem($FILE,"${CATOP}/private/$CAKEY", "PRIVATE");
+ 		    cp_pem($FILE,"${CATOP}/$CACERT", "CERTIFICATE");
+diff -Naur openssl-1.0.0g/apps/CA.sh openssl-1.0.0g-mod/apps/CA.sh
+--- openssl-1.0.0g/apps/CA.sh	2015-01-29 11:10:22.205537984 +0000
++++ openssl-1.0.0g-mod/apps/CA.sh	2015-01-29 11:13:46.673539646 +0000
+@@ -1,34 +1,4 @@
+ #!/bin/sh
+-#
+-# CA - wrapper around ca to make it easier to use ... basically ca requires
+-#      some setup stuff to be done before you can use it and this makes
+-#      things easier between now and when Eric is convinced to fix it :-)
+-#
+-# CA -newca ... will setup the right stuff
+-# CA -newreq ... will generate a certificate request
+-# CA -sign ... will sign the generated request and output
+-#
+-# At the end of that grab newreq.pem and newcert.pem (one has the key
+-# and the other the certificate) and cat them together and that is what
+-# you want/need ... I'll make even this a little cleaner later.
+-#
+-#
+-# 12-Jan-96 tjh    Added more things ... including CA -signcert which
+-#                  converts a certificate to a request and then signs it.
+-# 10-Jan-96 eay    Fixed a few more bugs and added the SSLEAY_CONFIG
+-#                  environment variable so this can be driven from
+-#                  a script.
+-# 25-Jul-96 eay    Cleaned up filenames some more.
+-# 11-Jun-96 eay    Fixed a few filename missmatches.
+-# 03-May-96 eay    Modified to use 'ssleay cmd' instead of 'cmd'.
+-# 18-Apr-96 tjh    Original hacking
+-#
+-# Tim Hudson
+-# tjh@cryptsoft.com
+-#
+-
+-# default openssl.cnf file has setup as per the following
+-# demoCA ... where everything is stored
+ cp_pem() {
+     infile=$1
+     outfile=$2
+@@ -60,8 +30,8 @@
+ 
+ if [ -z "$OPENSSL" ]; then OPENSSL=openssl; fi
+ 
+-if [ -z "$DAYS" ] ; then DAYS="-days 365" ; fi	# 1 year
+-CADAYS="-days 1095"	# 3 years
++if [ -z "$DAYS" ] ; then DAYS="-days 365" ; fi	
++CADAYS="-days 1095"	
+ REQ="$OPENSSL req $SSLEAY_CONFIG"
+ CA="$OPENSSL ca $SSLEAY_CONFIG"
+ VERIFY="$OPENSSL verify"
+@@ -82,29 +52,23 @@
+     exit 0
+     ;;
+ -newcert)
+-    # create a certificate
+     $REQ -new -x509 -keyout newkey.pem -out newcert.pem $DAYS
+     RET=$?
+     echo "Certificate is in newcert.pem, private key is in newkey.pem"
+     ;;
+ -newreq)
+-    # create a certificate request
+     $REQ -new -keyout newkey.pem -out newreq.pem $DAYS
+     RET=$?
+     echo "Request is in newreq.pem, private key is in newkey.pem"
+     ;;
+ -newreq-nodes) 
+-    # create a certificate request
+     $REQ -new -nodes -keyout newreq.pem -out newreq.pem $DAYS
+     RET=$?
+     echo "Request (and private key) is in newreq.pem"
+     ;;
+ -newca)
+-    # if explicitly asked for or it doesn't exist then setup the directory
+-    # structure that Eric likes to manage things
+     NEW="1"
+     if [ "$NEW" -o ! -f ${CATOP}/serial ]; then
+-	# create the directory hierarchy
+ 	mkdir -p ${CATOP}
+ 	mkdir -p ${CATOP}/certs
+ 	mkdir -p ${CATOP}/crl
+@@ -116,7 +80,6 @@
+ 	echo "CA certificate filename (or enter to create)"
+ 	read FILE
+ 
+-	# ask user for existing CA certificate
+ 	if [ "$FILE" ]; then
+ 	    cp_pem $FILE ${CATOP}/private/$CAKEY PRIVATE
+ 	    cp_pem $FILE ${CATOP}/$CACERT CERTIFICATE
+diff -Naur openssl-1.0.0g/apps/tsget openssl-1.0.0g-mod/apps/tsget
+--- openssl-1.0.0g/apps/tsget	2015-01-29 11:10:22.205537984 +0000
++++ openssl-1.0.0g-mod/apps/tsget	2015-01-29 11:18:45.849542077 +0000
+@@ -1,6 +1,4 @@
+ #!/usr/bin/perl -w
+-# Written by Zoltan Glozik <zglozik@stones.com>.
+-# Copyright (c) 2002 The OpenTSA Project.  All rights reserved.
+ $::version = '$Id: tsget,v 1.1.2.2 2009/09/07 17:57:02 steve Exp $';
+ 
+ use strict;
+@@ -11,7 +9,6 @@
+ 
+ use vars qw(%options);
+ 
+-# Callback for reading the body.
+ sub read_body {
+     my ($maxlength, $state) = @_;
+     my $return_data = "";
+@@ -25,26 +22,21 @@
+     return $return_data;
+ }
+ 
+-# Callback for writing the body into a variable.
+ sub write_body {
+     my ($data, $pointer) = @_;
+     ${$pointer} .= $data;
+     return length($data);
+ }
+ 
+-# Initialise a new Curl object.
+ sub create_curl {
+     my $url = shift;
+ 
+-    # Create Curl object.
+     my $curl = WWW::Curl::Easy::new();
+ 
+-    # Error-handling related options.
+     $curl->setopt(CURLOPT_VERBOSE, 1) if $options{d};
+     $curl->setopt(CURLOPT_FAILONERROR, 1);
+     $curl->setopt(CURLOPT_USERAGENT, "OpenTSA tsget.pl/" . (split / /, $::version)[2]);
+ 
+-    # Options for POST method.
+     $curl->setopt(CURLOPT_UPLOAD, 1);
+     $curl->setopt(CURLOPT_CUSTOMREQUEST, "POST");
+     $curl->setopt(CURLOPT_HTTPHEADER,
+@@ -53,13 +45,11 @@
+     $curl->setopt(CURLOPT_READFUNCTION, \&read_body);
+     $curl->setopt(CURLOPT_HEADERFUNCTION, sub { return length($_[0]); });
+ 
+-    # Options for getting the result.
+     $curl->setopt(CURLOPT_WRITEFUNCTION, \&write_body);
+ 
+-    # SSL related options.
+     $curl->setopt(CURLOPT_SSLKEYTYPE, "PEM");
+-    $curl->setopt(CURLOPT_SSL_VERIFYPEER, 1);	# Verify server's certificate.
+-    $curl->setopt(CURLOPT_SSL_VERIFYHOST, 2);	# Check server's CN.
++    $curl->setopt(CURLOPT_SSL_VERIFYPEER, 1);	
++    $curl->setopt(CURLOPT_SSL_VERIFYHOST, 2);	
+     $curl->setopt(CURLOPT_SSLKEY, $options{k}) if defined($options{k});
+     $curl->setopt(CURLOPT_SSLKEYPASSWD, $options{p}) if defined($options{p});
+     $curl->setopt(CURLOPT_SSLCERT, $options{c}) if defined($options{c});
+@@ -68,30 +58,24 @@
+     $curl->setopt(CURLOPT_RANDOM_FILE, $options{r}) if defined($options{r});
+     $curl->setopt(CURLOPT_EGDSOCKET, $options{g}) if defined($options{g});
+ 
+-    # Setting destination.
+     $curl->setopt(CURLOPT_URL, $url);
+ 
+     return $curl;
+ }
+ 
+-# Send a request and returns the body back.
+ sub get_timestamp {
+     my $curl = shift;
+     my $body = shift;
+     my $ts_body;
+     local $::error_buf;
+ 
+-    # Error-handling related options.
+     $curl->setopt(CURLOPT_ERRORBUFFER, "::error_buf");
+ 
+-    # Options for POST method.
+     $curl->setopt(CURLOPT_INFILE, {data => $body, bytes => 0});
+     $curl->setopt(CURLOPT_INFILESIZE, length(${$body}));
+ 
+-    # Options for getting the result.
+     $curl->setopt(CURLOPT_FILE, \$ts_body);
+ 
+-    # Send the request...
+     my $error_code = $curl->perform();
+     my $error_string;
+     if ($error_code != 0) {
+@@ -111,7 +95,6 @@
+ 
+ }
+ 
+-# Print usage information and exists.
+ sub usage {
+ 
+     print STDERR "usage: $0 -h <server_url> [-e <extension>] [-o <output>] ";
+@@ -121,11 +104,6 @@
+     exit 1;
+ }
+ 
+-# ----------------------------------------------------------------------
+-#   Main program
+-# ----------------------------------------------------------------------
+-
+-# Getting command-line options (default comes from TSGET environment variable).
+ my $getopt_arg =  "h:e:o:vdk:p:c:C:P:r:g:";
+ if (exists $ENV{TSGET}) {
+     my @old_argv = @ARGV;
+@@ -135,19 +113,16 @@
+ }
+ getopts($getopt_arg, \%options) or usage;
+ 
+-# Checking argument consistency.
+ if (!exists($options{h}) || (@ARGV == 0 && !exists($options{o}))
+     || (@ARGV > 1 && exists($options{o}))) {
+     print STDERR "Inconsistent command line options.\n";
+     usage;
+ }
+-# Setting defaults.
+ @ARGV = ("-") unless @ARGV != 0;
+ $options{e} = ".tsr" unless defined($options{e});
+ 
+-# Processing requests.
+ my $curl = create_curl $options{h};
+-undef $/;   # For reading whole files.
++undef $/;   
+ REQUEST: foreach (@ARGV) {
+     my $input = $_;
+     my ($base, $path) = fileparse($input, '\.[^.]*');
+@@ -155,13 +130,10 @@
+     my $output = defined($options{o}) ? $options{o} : $path . $output_base;
+ 
+     STDERR->printflush("$input: ") if $options{v};
+-    # Read request.
+     my $body;
+     if ($input eq "-") {
+-	# Read the request from STDIN;
+ 	$body = <STDIN>;
+     } else {
+-	# Read the request from file.
+         open INPUT, "<" . $input
+ 	    or warn("$input: could not open input file: $!\n"), next REQUEST;
+         $body = <INPUT>;
+@@ -169,7 +141,6 @@
+ 	    or warn("$input: could not close input file: $!\n"), next REQUEST;
+     }
+ 
+-    # Send request.
+     STDERR->printflush("sending request") if $options{v};
+ 
+     my ($ts_body, $error) = get_timestamp $curl, \$body;
+@@ -178,12 +149,9 @@
+     }
+     STDERR->printflush(", reply received") if $options{v};
+ 
+-    # Write response.
+     if ($output eq "-") {
+-	# Write to STDOUT.
+         print $ts_body;
+     } else {
+-	# Write to file.
+         open OUTPUT, ">", $output
+ 	    or warn("$output: could not open output file: $!\n"), next REQUEST;
+         print OUTPUT $ts_body;
+diff -Naur openssl-1.0.0g/tools/c_hash openssl-1.0.0g-mod/tools/c_hash
+--- openssl-1.0.0g/tools/c_hash	2015-01-29 11:10:22.193537986 +0000
++++ openssl-1.0.0g-mod/tools/c_hash	2015-01-29 11:15:19.449540397 +0000
+@@ -1,6 +1,4 @@
+ #!/bin/sh
+-# print out the hash values 
+-#
+ 
+ for i in $*
+ do
+diff -Naur openssl-1.0.0g/tools/c_info openssl-1.0.0g-mod/tools/c_info
+--- openssl-1.0.0g/tools/c_info	2015-01-29 11:10:22.193537986 +0000
++++ openssl-1.0.0g-mod/tools/c_info	2015-01-29 11:15:44.825540604 +0000
+@@ -1,7 +1,4 @@
+ #!/bin/sh
+-#
+-# print the subject
+-#
+ 
+ for i in $*
+ do
+diff -Naur openssl-1.0.0g/tools/c_issuer openssl-1.0.0g-mod/tools/c_issuer
+--- openssl-1.0.0g/tools/c_issuer	2015-01-29 11:10:22.193537986 +0000
++++ openssl-1.0.0g-mod/tools/c_issuer	2015-01-29 11:16:11.813540825 +0000
+@@ -1,7 +1,4 @@
+ #!/bin/sh
+-#
+-# print out the issuer
+-#
+ 
+ for i in $*
+ do
+diff -Naur openssl-1.0.0g/tools/c_name openssl-1.0.0g-mod/tools/c_name
+--- openssl-1.0.0g/tools/c_name	2015-01-29 11:10:22.193537986 +0000
++++ openssl-1.0.0g-mod/tools/c_name	2015-01-29 11:16:32.321540992 +0000
+@@ -1,7 +1,4 @@
+ #!/bin/sh
+-#
+-# print the subject
+-#
+ 
+ for i in $*
+ do

@@ -1,0 +1,6 @@
+config BR2_PACKAGE_BT_ADDR_PGM
+	bool "Bluetooth Address Programmer"
+	default n
+	help
+		This tool reads the bluetooth address available in flash and 
+		programs it to the Bluetooth chip

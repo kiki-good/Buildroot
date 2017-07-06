@@ -1,0 +1,16 @@
+diff -Naur udev-164_org/udev/udevd.c udev-164/udev/udevd.c
+--- udev-164_org/udev/udevd.c	2016-09-21 15:40:10.590120416 +0100
++++ udev-164/udev/udevd.c	2016-09-21 15:34:44.214112036 +0100
+@@ -1232,12 +1232,6 @@
+ 
+ 	setsid();
+ 
+-	f = fopen("/dev/kmsg", "w");
+-	if (f != NULL) {
+-		fprintf(f, "<6>udev[%u]: starting version " VERSION "\n", getpid());
+-		fclose(f);
+-	}
+-
+ 	fd = open("/proc/self/oom_score_adj", O_RDWR);
+ 	if (fd < 0) {
+ 		/* Fallback to old interface */

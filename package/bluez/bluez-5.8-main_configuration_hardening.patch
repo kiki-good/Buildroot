@@ -1,0 +1,43 @@
+--- a/src/main.conf	2014-10-01 09:40:39.198014616 +0100
++++ b/src/main.conf	2014-10-01 11:52:09.510217167 +0100
+@@ -4,21 +4,21 @@
+ # %h - substituted for hostname
+ # %d - substituted for adapter id
+ # Defaults to 'BlueZ'
+-#Name = %h-%d
++Name = Sky
+ 
+ # Default device class. Only the major and minor device class bits are
+ # considered. Defaults to '0x000000'.
+-#Class = 0x000100
++Class = 0x040414
+ 
+ # How long to stay in discoverable mode before going back to non-discoverable
+ # The value is in seconds. Default is 180, i.e. 3 minutes.
+ # 0 = disable timer, i.e. stay discoverable forever
+-#DiscoverableTimeout = 0
++DiscoverableTimeout = 180
+ 
+ # How long to stay in pairable mode before going back to non-discoverable
+ # The value is in seconds. Default is 0.
+ # 0 = disable timer, i.e. stay pairable forever
+-#PairableTimeout = 0
++PairableTimeout = 180
+ 
+ # Automatic connection for bonded devices driven by platform/user events.
+ # If a platform plugin uses this mechanism, automatic connections will be
+@@ -36,7 +36,7 @@
+ # us. This option is really only needed for qualification since the BITE tester
+ # doesn't like us doing reverse SDP for some test cases (though there could in
+ # theory be other useful purposes for this too). Defaults to 'true'.
+-#ReverseServiceDiscovery = true
++ReverseServiceDiscovery = true
+ 
+ # Enable name resolving after inquiry. Set it to 'false' if you don't need
+ # remote devices name and want shorter discovery cycle. Defaults to 'true'.
+@@ -45,4 +45,4 @@
+ # Enable runtime persistency of debug link keys. Default is false which
+ # makes debug link keys valid only for the duration of the connection
+ # that they were created for.
+-#DebugKeys = false
++DebugKeys = false

@@ -1,0 +1,32 @@
+Mounting parts of /proc and /sys read only provides no security
+without user namespaces, since root has privilege to remount
+them writable again. When user namepaces are enable, if offers
+no security benefit, since the UID remapping already prevents
+write access to the correct areas.
+
+--- a/src/lxc/lxc_container.c	2015-12-23 22:54:18.000000000 +0000
++++ b/src/lxc/lxc_container.c	2016-03-29 20:18:54.646302916 +0100
+@@ -849,11 +849,19 @@
+ } virLXCBasicMountInfo;
+ 
+ static const virLXCBasicMountInfo lxcBasicMounts[] = {
++    /*
++     * Leave these read-write. In non-user-namespace scenario, making them
++     * read-only provides no security since root can just remount them
++     * writeable again. In a user-namespace scenario, the UID/GID mappings
++     * will already prevent root from doing anything bad to files, so
++     * there's no gain to making them read-only
++     */
+     { "proc", "/proc", "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, false, false, false },
+-    { "/proc/sys", "/proc/sys", NULL, MS_BIND|MS_NOSUID|MS_NOEXEC|MS_NODEV|MS_RDONLY, false, false, false },
+-    { "/.oldroot/proc/sys/net/ipv4", "/proc/sys/net/ipv4", NULL, MS_BIND, false, false, true },
+-    { "/.oldroot/proc/sys/net/ipv6", "/proc/sys/net/ipv6", NULL, MS_BIND, false, false, true },
+-    { "sysfs", "/sys", "sysfs", MS_NOSUID|MS_NOEXEC|MS_NODEV|MS_RDONLY, false, false, false },
++    { "sysfs", "/sys", "sysfs", MS_NOSUID|MS_NOEXEC|MS_NODEV, false, false, false },
++    /* These two are marked RDONLY not as security protection mechanism,
++     * but to indicate to userspace that LSMs are not available inside
++     * the container
++     */
+     { "securityfs", "/sys/kernel/security", "securityfs", MS_NOSUID|MS_NOEXEC|MS_NODEV|MS_RDONLY, true, true, false },
+ #if WITH_SELINUX
+     { SELINUX_MOUNT, SELINUX_MOUNT, "selinuxfs", MS_NOSUID|MS_NOEXEC|MS_NODEV|MS_RDONLY, true, true, false },

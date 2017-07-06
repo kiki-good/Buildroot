@@ -1,0 +1,67 @@
+discovering_callback() should not call trigger_passive_scanning() when
+outgoing BLE connection is pending.
+diff --git a/src/adapter.c b/src/adapter.c
+index 4a66da1..4a6953e 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -1505,7 +1505,8 @@ static void discovering_callback(uint16_t index, uint16_t length,
+ 	 * passive scanning attempt.
+ 	 */
+ 	if (!adapter->discovery_list) {
+-		trigger_passive_scanning(adapter);
++		if (!adapter->connect_le)
++			trigger_passive_scanning(adapter);
+ 		return;
+ 	}
+
+Consider MGMT_STATUS_REJECTED as success for stop_passive_scanning().
+MGMT_STATUS_REJECTED may be returned from kernel because the passive
+scan timer had expired in kernel and passive scan was disabled just
+around the time we called stop_passive_scanning().
+diff --git a/src/adapter.c b/src/adapter.c
+index f5f8c8c..4a66da1 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -1228,7 +1228,12 @@ static void stop_passive_scanning_complete(uint8_t status, uint16_t length,
+ 	dev = adapter->connect_le;
+ 	adapter->connect_le = NULL;
+ 
+-	if (status != MGMT_STATUS_SUCCESS) {
++	/*
++	 * MGMT_STATUS_REJECTED may be returned from kernel because the passive
++	 * scan timer had expired in kernel and passive scan was disabled just
++	 * around the time we called stop_passive_scanning().
++	 */
++	if (status != MGMT_STATUS_SUCCESS && status != MGMT_STATUS_REJECTED) {
+ 		error("Stopping passive scanning failed: %s",
+ 							mgmt_errstr(status));
+ 		return;
+
+adapter_connect_list_add() needs to ensure that trigger_passive_scanning() is
+called even for existing devices on the connect list.
+
+This issue can be seen with BLE HoG remotes trying to reconnect to BlueZ. If
+the connection fails, att_error_cb() adds the failed device back to connect
+list, but since the device is already on the list, no code ends up calling
+trigger_passive_scanning(). After this point, passive scanning is disabled
+and remains disabled for good, and BLE reconnects to BlueZ no longer work.
+diff --git a/src/adapter.c b/src/adapter.c
+index 4a6953e..ca0f193 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -3025,7 +3025,7 @@ int adapter_connect_list_add(struct btd_adapter *adapter,
+ 	if (g_slist_find(adapter->connect_list, device)) {
+ 		DBG("ignoring already added device %s",
+ 						device_get_path(device));
+-		return 0;
++		goto done;
+ 	}
+ 
+ 	if (!(adapter->supported_settings & MGMT_SETTING_LE)) {
+@@ -3038,6 +3038,7 @@ int adapter_connect_list_add(struct btd_adapter *adapter,
+ 	DBG("%s added to %s's connect_list", device_get_path(device),
+ 							adapter->system_name);
+ 
++done:
+ 	if (!(adapter->current_settings & MGMT_SETTING_POWERED))
+ 		return 0;

@@ -1,0 +1,4 @@
+config BR2_PACKAGE_LIBS3
+        bool "libs3"
+        help
+		 A complete C library API for Amazon S3

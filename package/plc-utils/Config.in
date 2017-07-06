@@ -1,0 +1,4 @@
+config BR2_PACKAGE_PLC_UTILS
+        bool "plc-utils"
+        help
+	  	plc-utils for plc support.

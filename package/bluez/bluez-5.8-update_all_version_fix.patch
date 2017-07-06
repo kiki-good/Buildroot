@@ -1,0 +1,24 @@
+diff -ur bluez-5.8-orig/profiles/audio/a2dp.c bluez-5.8/profiles/audio/a2dp.c
+--- bluez-5.8-orig/profiles/audio/a2dp.c	2015-05-15 13:38:40.730352807 +0100
++++ bluez-5.8/profiles/audio/a2dp.c	2015-05-15 13:43:52.790346439 +0100
+@@ -1113,7 +1113,7 @@
+ 	sdp_record_t *record;
+ 	sdp_data_t *psm, *version, *features;
+ 	uint16_t lp = AVDTP_UUID;
+-	uint16_t a2dp_ver = 0x0103, avdtp_ver = 0x0103, feat = 0x000f;
++	uint16_t a2dp_ver = 0x0102, avdtp_ver = 0x0102, feat = 0x000f;
+ 
+ 	record = sdp_record_alloc();
+ 	if (!record)
+diff -ur bluez-5.8-orig/profiles/audio/avrcp.c bluez-5.8/profiles/audio/avrcp.c
+--- bluez-5.8-orig/profiles/audio/avrcp.c	2015-05-15 13:38:40.730352807 +0100
++++ bluez-5.8/profiles/audio/avrcp.c	2015-05-15 13:42:35.290348020 +0100
+@@ -269,7 +269,7 @@
+ 	sdp_record_t *record;
+ 	sdp_data_t *psm[2], *version, *features;
+ 	uint16_t lp = AVCTP_CONTROL_PSM, ap = AVCTP_BROWSING_PSM;
+-	uint16_t avrcp_ver = 0x0105, avctp_ver = 0x0103;
++	uint16_t avrcp_ver = 0x0105, avctp_ver = 0x0104;
+ 	uint16_t feat = ( AVRCP_FEATURE_CATEGORY_1 |
+ 						AVRCP_FEATURE_CATEGORY_2 |
+ 						AVRCP_FEATURE_CATEGORY_3 |

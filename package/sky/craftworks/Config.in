@@ -1,0 +1,28 @@
+config BR2_PACKAGE_SKY_CRAFTWORKS
+	bool "Craftworks LAE"
+	default N
+	help
+	  Include the Craftworks LAE in the rootfs.
+
+if BR2_PACKAGE_SKY_CRAFTWORKS
+
+# When adding new versions, make sure that a corresponding entry is
+# added to the default values of BR2_PACKAGE_CRAFTWORKS_VERSION below.
+
+choice
+	prompt "Craftworks VM version"
+	depends on BR2_PACKAGE_SKY_CRAFTWORKS
+	default BR2_PACKAGE_SKY_CRAFTWORKS_0_1
+
+config BR2_PACKAGE_SKY_CRAFTWORKS_0_1
+	bool "Use Craftworks VM 0.1"
+	depends on BR2_PACKAGE_SKY_CRAFTWORKS
+
+endchoice
+
+config BR2_PACKAGE_SKY_CRAFTWORKS_VERSION
+	string
+	default "0.1"		if BR2_PACKAGE_SKY_CRAFTWORKS_0_1
+
+endif
+

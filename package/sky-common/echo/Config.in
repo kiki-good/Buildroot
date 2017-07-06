@@ -1,0 +1,6 @@
+config BR2_PACKAGE_ECHO
+	bool "echo"
+	default n
+	help
+	A static utilty which does nothing but return success always.
+	Added to replace the busybox echo.

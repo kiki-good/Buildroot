@@ -1,0 +1,121 @@
+diff -Naur udev-164/extras/hid2hci/70-hid2hci.rules udev-164-mod/extras/hid2hci/70-hid2hci.rules
+--- udev-164/extras/hid2hci/70-hid2hci.rules	2010-07-23 11:08:13.000000000 +0100
++++ udev-164-mod/extras/hid2hci/70-hid2hci.rules	2015-07-16 12:42:49.697850498 +0100
+@@ -3,27 +3,6 @@
+ ACTION=="remove", GOTO="hid2hci_end"
+ SUBSYSTEM!="usb", GOTO="hid2hci_end"
+ 
+-# Variety of Dell Bluetooth devices - match on a mouse device that is
+-# self powered and where a HID report needs to be sent to switch modes
+-# Known supported devices: 413c:8154, 413c:8158, 413c:8162
+-ATTR{bInterfaceClass}=="03", ATTR{bInterfaceSubClass}=="01", ATTR{bInterfaceProtocol}=="02", \
+-  ATTRS{bDeviceClass}=="00", ATTRS{idVendor}=="413c", ATTRS{bmAttributes}=="e0", \
+-  RUN+="hid2hci --method=dell --devpath=%p", ENV{HID2HCI_SWITCH}="1"
+-
+-# Logitech devices
+-KERNEL=="hiddev*", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c70[35e]", \
+-  RUN+="hid2hci --method=logitech-hid --devpath=%p"
+-KERNEL=="hidraw*", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c70[4abc]|c71[34bc]", \
+-  RUN+="hid2hci --method=logitech-hid --devpath=%p"
+-
+-ENV{DEVTYPE}!="usb_device", GOTO="hid2hci_end"
+-
+-# When a Dell device recovers from S3, the mouse child needs to be repoked
+-# Unfortunately the only event seen is the BT device disappearing, so the mouse
+-# device needs to be chased down on the USB bus.
+-ATTR{bDeviceClass}=="e0", ATTR{bDeviceSubClass}=="01", ATTR{bDeviceProtocol}=="01", ATTR{idVendor}=="413c", \
+-  ENV{REMOVE_CMD}="/sbin/udevadm trigger --action=change --subsystem-match=usb --property-match=HID2HCI_SWITCH=1"
+-
+ # CSR devices
+ ATTR{idVendor}=="0a12|0458|05ac", ATTR{idProduct}=="1000", RUN+="hid2hci --method=csr --devpath=%p"
+ 
+diff -Naur udev-164/extras/rule_generator/75-persistent-net-generator.rules udev-164-mod/extras/rule_generator/75-persistent-net-generator.rules
+--- udev-164/extras/rule_generator/75-persistent-net-generator.rules	2010-09-03 13:08:14.000000000 +0100
++++ udev-164-mod/extras/rule_generator/75-persistent-net-generator.rules	2015-07-16 12:42:49.698850511 +0100
+@@ -34,32 +34,6 @@
+ # ignore VMWare virtual interfaces
+ ENV{MATCHADDR}=="00:0c:29:*|00:50:56:*", GOTO="persistent_net_generator_end"
+ 
+-# These vendors are known to violate the local MAC address assignment scheme
+-# Interlan, DEC (UNIBUS or QBUS), Apollo, Cisco, Racal-Datacom
+-ENV{MATCHADDR}=="02:07:01:*", GOTO="globally_administered_whitelist"
+-# 3Com
+-ENV{MATCHADDR}=="02:60:60:*", GOTO="globally_administered_whitelist"
+-# 3Com IBM PC; Imagen; Valid; Cisco; Apple
+-ENV{MATCHADDR}=="02:60:8c:*", GOTO="globally_administered_whitelist"
+-# Intel
+-ENV{MATCHADDR}=="02:a0:c9:*", GOTO="globally_administered_whitelist"
+-# Olivetti
+-ENV{MATCHADDR}=="02:aa:3c:*", GOTO="globally_administered_whitelist"
+-# CMC Masscomp; Silicon Graphics; Prime EXL
+-ENV{MATCHADDR}=="02:cf:1f:*", GOTO="globally_administered_whitelist"
+-# Prominet Corporation Gigabit Ethernet Switch
+-ENV{MATCHADDR}=="02:e0:3b:*", GOTO="globally_administered_whitelist"
+-# BTI (Bus-Tech, Inc.) IBM Mainframes
+-ENV{MATCHADDR}=="02:e6:d3:*", GOTO="globally_administered_whitelist"
+-# Realtek
+-ENV{MATCHADDR}=="52:54:00:*", GOTO="globally_administered_whitelist"
+-# Novell 2000
+-ENV{MATCHADDR}=="52:54:4c:*", GOTO="globally_administered_whitelist"
+-# Realtec
+-ENV{MATCHADDR}=="52:54:ab:*", GOTO="globally_administered_whitelist"
+-# Kingston Technologies
+-ENV{MATCHADDR}=="e2:0c:0f:*", GOTO="globally_administered_whitelist"
+-
+ # match interface dev_id
+ ATTR{dev_id}=="?*", ENV{MATCHDEVID}="$attr{dev_id}"
+ 
+@@ -74,14 +48,6 @@
+ # build comment line for generated rule:
+ SUBSYSTEMS=="pci", ENV{COMMENT}="PCI device $attr{vendor}:$attr{device} ($driver)"
+ SUBSYSTEMS=="usb", ATTRS{idVendor}=="?*", ENV{COMMENT}="USB device 0x$attr{idVendor}:0x$attr{idProduct} ($driver)"
+-SUBSYSTEMS=="pcmcia", ENV{COMMENT}="PCMCIA device $attr{card_id}:$attr{manf_id} ($driver)"
+-SUBSYSTEMS=="ieee1394", ENV{COMMENT}="Firewire device $attr{host_id})"
+-
+-# ibmveth likes to use "locally administered" MAC addresses
+-DRIVERS=="ibmveth", ENV{MATCHADDR}="$attr{address}", ENV{COMMENT}="ibmveth ($id)"
+-
+-# S/390 uses id matches only, do not use MAC address match
+-SUBSYSTEMS=="ccwgroup", ENV{COMMENT}="S/390 $driver device at $id", ENV{MATCHID}="$id", ENV{MATCHDRV}="$driver", ENV{MATCHADDR}=""
+ 
+ # see if we got enough data to create a rule
+ ENV{MATCHADDR}=="", ENV{MATCHID}=="", ENV{INTERFACE_NAME}=="", GOTO="persistent_net_generator_end"
+diff -Naur udev-164/rules/rules.d/50-udev-default.rules udev-164-mod/rules/rules.d/50-udev-default.rules
+--- udev-164/rules/rules.d/50-udev-default.rules	2015-07-16 12:42:09.869634777 +0100
++++ udev-164-mod/rules/rules.d/50-udev-default.rules	2015-07-16 12:42:49.698850511 +0100
+@@ -3,19 +3,6 @@
+ SUBSYSTEM=="block", SYMLINK{unique}+="block/%M:%m"
+ SUBSYSTEM!="block", SYMLINK{unique}+="char/%M:%m"
+ 
+-KERNEL=="pty[pqrstuvwxyzabcdef][0123456789abcdef]", GROUP="tty", MODE="0660"
+-KERNEL=="tty[pqrstuvwxyzabcdef][0123456789abcdef]", GROUP="tty", MODE="0660"
+-KERNEL=="ptmx",			GROUP="tty", MODE="0666"
+-KERNEL=="tty",			GROUP="tty", MODE="0666"
+-KERNEL=="tty[0-9]*",		GROUP="tty", MODE="0620"
+-KERNEL=="vcs|vcs[0-9]*|vcsa|vcsa[0-9]*", GROUP="tty"
+-
+-# serial
+-KERNEL=="tty[A-Z]*[0-9]|pppox[0-9]*|ircomm[0-9]*|noz[0-9]*|rfcomm[0-9]*", GROUP="root"
+-
+-# virtio serial / console ports
+-KERNEL=="vport*", ATTR{name}=="?*", SYMLINK+="virtio-ports/$attr{name}"
+-
+ # mem
+ KERNEL=="zero|full|random", MODE="0666"
+ KERNEL=="null|urandom", MODE="0660",  GROUP="system"
+@@ -24,7 +11,6 @@
+ # input
+ KERNEL=="mouse*|mice|event*",	MODE="0640"
+ KERNEL=="ts[0-9]*|uinput",	MODE="0640"
+-KERNEL=="js[0-9]*",		MODE="0644"
+ 
+ # libusb device nodes
+ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", MODE="0660", GROUP="NDS_MW"
+@@ -46,7 +32,6 @@
+ 
+ # network
+ KERNEL=="tun",			MODE="0666", OPTIONS+="static_node=net/tun"
+-KERNEL=="rfkill",		MODE="0644"
+ 
+ # CPU
+ KERNEL=="cpu[0-9]*",		MODE="0444"

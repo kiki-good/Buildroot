@@ -1,0 +1,20 @@
+--- ltp-full-20070228/testcases/misc/math/float/float_bessel.c	2007-03-01 04:40:32.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/misc/math/float/float_bessel.c	2013-05-23 18:39:38.044151819 +0100
+@@ -24,7 +24,9 @@
+ /*                                                                            */
+ /******************************************************************************/
+ #include "tfloat.h"
++const TH_FUNC th_func[] = {};
+ 
++#if 0
+ const TH_FUNC th_func[] = {
+ 	{FUNC_NORMAL, 30, j0,    "j0",    "j0_inp.ref",    "j0_out.ref2",
+ 		""},
+@@ -39,6 +41,7 @@
+ };
+ 
+ #define NB_FUNC  (sizeof(th_func)/sizeof(TH_FUNC))
++#endif
+ 
+ #define GENERATOR "genbessel"
+ #include "main.c"

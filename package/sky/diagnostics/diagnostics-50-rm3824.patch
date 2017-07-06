@@ -1,0 +1,136 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/dslf_mesh.xml diagnostics-1.3_new/apps/mifd/mgmtif/dslf_mesh.xml
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/dslf_mesh.xml	2016-03-08 11:36:59.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/dslf_mesh.xml	2016-03-08 14:36:26.642230654 +0000
+@@ -23,4 +23,11 @@
+     <description>AirTies Mesh Routing Table, data from /proc/air_mesh_rt.</description>
+     <syntax type="string" />
+   </attribute>
+-</tns:mgmtns>
+\ No newline at end of file
++  <attribute name="Sky_network_diagnostics">
++    <nodeid>Device.Mesh</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>The sky network diagnostics table containing RSSI and TX retries.</description>
++    <syntax type="string" />
++  </attribute>
++</tns:mgmtns>
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_mesh.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_mesh.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_mesh.c	2016-03-08 11:36:59.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_mesh.c	2016-03-09 16:48:07.521846706 +0000
+@@ -45,6 +45,9 @@
+ 			case DEVICE(AIR_MESH_RT):
+ 				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
+ 			break;
++			case DEVICE(SKY_NETWORK_DIAGNOSTICS):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
+ 			default:
+ 			break;
+ 		}
+@@ -65,6 +68,14 @@
+ 			if (sts != EOK) {
+ 				break;
+ 			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(SKY_NETWORK_DIAGNOSTICS):
++		{
++			sts = get_mesh_air_mesh_rt(VENDOR_RSSI_DATA_FILENAME, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
+ 			return mif_request_set_value(req, id, buf, sizeof(buf));
+ 		}
+ 		default:
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_mesh.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_mesh.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_mesh.c	2016-03-08 11:36:59.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_mesh.c	2016-03-09 17:02:45.685157336 +0000
+@@ -71,10 +71,18 @@
+ int get_mesh_air_mesh_rt(char *deviceId, char *buf, size_t length)
+ {
+ 
+-	if (eVENDORHOOK_OK == vendor_hook_read_text_file(deviceId, buf, length) ) {
+-	}else {
++	if (eVENDORHOOK_OK != vendor_hook_read_text_file(deviceId, buf, length) ) {
+ 		snprintf(buf, length, "Info not Available");
+ 	}
+ 	return EOK;
+ }
+ 
++int get_mesh_sky_network_diagnostics(char *deviceId, char *buf, size_t length)
++{
++	if (eVENDORHOOK_OK != vendor_hook_read_text_file(deviceId, buf, length) ) {
++		snprintf(buf, length, "Info not Available");
++	}
++	return EOK;
++}
++
++
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_mesh.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_mesh.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_mesh.h	2016-03-08 11:36:59.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_mesh.h	2016-03-09 16:48:35.267806284 +0000
+@@ -28,7 +28,8 @@
+ ** Defines and Macros
+ */
+ #define VENDOR_MESH_PROC_FILENAME "/dev/air_mesh_rt"
+-#define VENDOR_MESH_PROC_DEVICE_BUFFER      ((8 * 1024) + 1)
++#define VENDOR_RSSI_DATA_FILENAME "/tmp/sky_rssi_data.txt"
++#define VENDOR_MESH_PROC_DEVICE_BUFFER      ((4 * 1024) + 1)
+ 
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+@@ -44,5 +45,7 @@
+ ** Functions
+ */
+ int get_mesh_air_mesh_rt(char *deviceId, char *, size_t);
++int get_mesh_sky_network_diagnostics(char *deviceId, char *buf, size_t length);
++
+ #endif
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c	2016-03-08 11:36:59.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c	2016-03-10 11:00:14.987701327 +0000
+@@ -103,7 +103,6 @@
+ ** @retval  eVENDORHOOK_OK								/proc device read and buffer loaded OK.
+ ** @retval  eVENDORHOOK_PROCDEVICE_FAIL					/proc device doesn't exist.
+ ** @retval  eVENDORHOOK_PROCDEVICE_READ_FAIL			/proc device read fail.
+-** @retval  eVENDORHOOK_PROCDEVICE_BUFFER_TOO_SMALL	/proc device buffer too small.
+ */
+ 
+ vendor_hook_proc_device_status_t
+@@ -124,7 +123,8 @@
+ 		VENDOR_LOG_ERROR("\n%s: File: %s doesn't exist\n",__FUNCTION__, pFilename);
+ 		return eVENDORHOOK_PROCDEVICE_FAIL;
+ 	}
+-	bytes_read = fread ( pBuffer, 1, length, fp );
++	/* Buffer must be + 1 to work. */
++	bytes_read = fread ( pBuffer, 1, length - 1, fp );
+ 	fclose ( fp );
+ 
+ 	/* Return if read failed. */
+@@ -132,13 +132,6 @@
+ 		VENDOR_LOG_ERROR("\n%s: File: %s read failed.\n",__FUNCTION__, pFilename);
+ 		return eVENDORHOOK_PROCDEVICE_READ_FAIL;
+ 	}
+-
+-	/* Return if buffer isn't big enough. */
+-	if ( bytes_read == length){
+-		VENDOR_LOG_ERROR("\n%s: File: %s Buffer too small.\n",__FUNCTION__, pFilename);
+-		return eVENDORHOOK_PROCDEVICE_BUFFER_TOO_SMALL;
+-	}
+-
+ 	/* NULL terminate the text. */
+ 	pBuffer[bytes_read] = '\0';
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_datamodel.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_datamodel.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_datamodel.c	2016-03-08 11:36:59.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_datamodel.c	2016-03-09 10:26:57.215511872 +0000
+@@ -47,6 +47,6 @@
+ 
+ int get_x_sky_com_datamodel_versionminor(cm_tran_id_t tid, char *buf, size_t length)
+ {
+-	snprintf(buf, length, "20");
++	snprintf(buf, length, "23");
+ 	return EOK;
+ }

@@ -1,0 +1,13 @@
+diff -Naur procps-3.2.7/Makefile procps-3.2.7_mod/Makefile
+--- procps-3.2.7/Makefile	2006-06-24 10:02:25.000000000 +0100
++++ procps-3.2.7_mod/Makefile	2013-10-07 14:09:49.133808349 +0100
+@@ -174,7 +174,8 @@
+ # want this rule first, use := on ALL, and ALL not filled in yet
+ all: do_all
+ 
+--include */module.mk
++#-include */module.mk
++-include proc/module.mk ps/module.mk
+ 
+ do_all:    $(ALL)
+ 

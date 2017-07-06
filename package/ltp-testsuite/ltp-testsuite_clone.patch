@@ -1,0 +1,24 @@
+diff -Naur ltp-full-20070228_orig/testcases/kernel/syscalls/clone/clone02.c ltp-full-20070228/testcases/kernel/syscalls/clone/clone02.c
+--- ltp-full-20070228_orig/testcases/kernel/syscalls/clone/clone02.c	2007-03-01 04:40:37.000000000 +0000
++++ ltp-full-20070228/testcases/kernel/syscalls/clone/clone02.c	2014-11-03 06:28:34.368294846 +0000
+@@ -95,7 +95,7 @@
+ /* workaround for libc bug */
+ #define __THROW
+ #endif
+-
++#define _GNU_SOURCE
+ #include <errno.h>
+ #include <sched.h> 
+ #include <fcntl.h>
+diff -Naur ltp-full-20070228_orig/testcases/kernel/syscalls/clone/clone05.c ltp-full-20070228/testcases/kernel/syscalls/clone/clone05.c
+--- ltp-full-20070228_orig/testcases/kernel/syscalls/clone/clone05.c	2007-03-01 04:40:37.000000000 +0000
++++ ltp-full-20070228/testcases/kernel/syscalls/clone/clone05.c	2014-11-03 06:28:52.683395616 +0000
+@@ -69,7 +69,7 @@
+ /* workaround for libc bug */
+ #define __THROW
+ #endif
+-
++#define _GNU_SOURCE
+ #include <errno.h>
+ #include <sched.h>
+ #include <sys/wait.h>

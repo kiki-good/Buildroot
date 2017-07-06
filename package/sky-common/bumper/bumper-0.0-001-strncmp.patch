@@ -1,0 +1,17 @@
+--- bumper-0.0-old/src/bumper.c	2014-07-11 11:08:29.348279559 +0100
++++ bumper-0.0/src/bumper.c	2014-07-11 11:10:31.832282704 +0100
+@@ -175,10 +175,12 @@
+ {
+ 	int rc = -1;
+ 	struct params *itr = head;
+-
++	int length = -1;
++	
+ 	for ( itr=head;itr != NULL;itr=itr->next )
+ 	{
+-		if ( strstr ( process,itr->process ) != NULL )
++		length = strlen(itr->process);
++		if ( strncmp ( process,itr->process,length ) == 0 )
+ 		{
+ 			*prio = itr->prio;
+ 			*policy = itr->policy;

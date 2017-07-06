@@ -1,0 +1,61 @@
+diff -Naur udev-164/extras/v4l_id/v4l_id.c udev-164_mod/extras/v4l_id/v4l_id.c
+--- udev-164/extras/v4l_id/v4l_id.c	2009-12-03 12:45:03.000000000 +0000
++++ udev-164_mod/extras/v4l_id/v4l_id.c	2014-12-12 10:51:45.439140114 +0000
+@@ -28,7 +28,6 @@
+ #include <sys/types.h>
+ #include <sys/time.h>
+ #include <sys/ioctl.h>
+-#include <linux/videodev.h>
+ #include <linux/videodev2.h>
+ 
+ int main (int argc, char *argv[])
+@@ -39,7 +38,6 @@
+ 	};
+ 	int fd;
+ 	char *device;
+-	struct video_capability v1cap;
+ 	struct v4l2_capability v2cap;
+ 
+ 	while (1) {
+@@ -82,19 +80,6 @@
+ 		if ((v2cap.capabilities & V4L2_CAP_RADIO) > 0)
+ 			printf("radio:");
+ 		printf("\n");
+-	} else if (ioctl (fd, VIDIOCGCAP, &v1cap) == 0) {
+-		printf("ID_V4L_VERSION=1\n");
+-		printf("ID_V4L_PRODUCT=%s\n", v1cap.name);
+-		printf("ID_V4L_CAPABILITIES=:");
+-		if ((v1cap.type & VID_TYPE_CAPTURE) > 0)
+-			printf("capture:");
+-		if ((v1cap.type & VID_TYPE_OVERLAY) > 0)
+-			printf("video_overlay:");
+-		if (v1cap.audios > 0)
+-			printf("audio:");
+-		if ((v1cap.type & VID_TYPE_TUNER) > 0)
+-			printf("tuner:");
+-		printf("\n");
+ 	}
+ 
+ 	close (fd);
+diff -Naur udev-164/libudev/libudev-util-private.c udev-164_mod/libudev/libudev-util-private.c
+--- udev-164/libudev/libudev-util-private.c	2010-08-03 10:42:26.000000000 +0100
++++ udev-164_mod/libudev/libudev-util-private.c	2014-12-12 10:49:56.867137328 +0000
+@@ -21,6 +21,7 @@
+ #include <grp.h>
+ #include <sys/wait.h>
+ #include <sys/param.h>
++#include <sys/resource.h>
+ 
+ #include "libudev.h"
+ #include "libudev-private.h"
+diff -Naur udev-164/udev/udevd.c udev-164_mod/udev/udevd.c
+--- udev-164/udev/udevd.c	2010-10-13 12:08:29.000000000 +0100
++++ udev-164_mod/udev/udevd.c	2014-12-12 10:50:53.831138791 +0000
+@@ -43,6 +43,7 @@
+ #include <sys/ioctl.h>
+ #include <sys/inotify.h>
+ #include <sys/utsname.h>
++#include <sys/resource.h>
+ 
+ #include "udev.h"
+ #include "sd-daemon.h"

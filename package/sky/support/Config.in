@@ -1,0 +1,7 @@
+config BR2_PACKAGE_SKY_SUPPORT
+	bool "Sky Support software"
+	default N
+	help
+	  Include Sky Support software in the rootfs. If this
+	  package is included, the support software will be
+	  automatically started at boot time.

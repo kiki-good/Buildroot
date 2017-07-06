@@ -1,0 +1,35 @@
+Patch is added to fix the compiltaition error with GCC-4.9.0 or later.
+It is caused with the fact the GCC-4.9.0 "now warns about unused
+right-hand side of a comma expression that contains no side effects",
+according to https://gcc.gnu.org/gcc-4.9/porting_to.html
+
+That's why to provide future opportunity to build json-c with newer
+version of compiler, there had been added a special macro
+ADVANCE_CHAR_INCREMENT that does not use comma expression and only
+performs 2 incrementations.
+
+diff --git a/json_tokener.c b/json_tokener.c
+index 1c82484..2b0e1f1 100644
+--- a/json_tokener.c
++++ b/json_tokener.c
+@@ -212,6 +212,8 @@ char* strndup(const char* str, size_t n)
+ #define ADVANCE_CHAR(str, tok) \
+   ( ++(str), ((tok)->char_offset)++, c)
+ 
++#define ADVANCE_CHAR_INCREMENT(str, tok) \
++  ++(str); ((tok)->char_offset)++;
+ 
+ /* End optimization macro defs */
+ 
+@@ -476,8 +478,8 @@ struct json_object* json_tokener_parse_ex(struct json_tokener *tok,
+                       (str[1] == '\\') &&
+                       (str[2] == 'u'))
+                   {
+-	            ADVANCE_CHAR(str, tok);
+-	            ADVANCE_CHAR(str, tok);
++	            ADVANCE_CHAR_INCREMENT(str, tok);
++	            ADVANCE_CHAR_INCREMENT(str, tok);
+ 
+                     /* Advance to the first char of the next sequence and
+                      * continue processing with the next sequence.
+

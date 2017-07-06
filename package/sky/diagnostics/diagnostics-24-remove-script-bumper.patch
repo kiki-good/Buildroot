@@ -1,0 +1,13 @@
+diff -Naurr diagnostics-1.3_orig/apps/cmd/tr069.sh diagnostics-1.3_new/apps/cmd/tr069.sh
+--- diagnostics-1.3_orig/apps/cmd/tr069.sh	2015-06-22 15:15:24.000000000 +0100
++++ diagnostics-1.3_new/apps/cmd/tr069.sh	2015-06-22 15:25:32.589333951 +0100
+@@ -105,9 +105,6 @@
+     if test -f ${PACEBIN}/uploadd ; then
+         ${PACEBIN}/uploadd
+     fi
+-    if test -f /sbin/bumper ; then
+-	/sbin/bumper /opt/pace/etc/bumper_tr69.cfg
+-    fi
+ 	;;
+   stop)
+     ${PACEBIN}/cwmd -t

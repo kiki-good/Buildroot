@@ -1,0 +1,27 @@
+From 5a78eb1361c502799a1e2dc22f3d6214f1c1d41a Mon Sep 17 00:00:00 2001
+From: Can <can.ilhan@airties.com>
+Date: Wed, 11 Dec 2013 16:29:00 +0200
+Subject: [PATCH 18/26] Change usleep time between events since it is insanely
+ high
+
+Issue:SHR-137
+---
+ iwevent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/iwevent.c b/iwevent.c
+index e8e2d6e..3201f06 100644
+--- a/iwevent.c
++++ b/iwevent.c
+@@ -621,7 +621,7 @@ print_event_stream(int		ifindex,
+ 	    printf("(Invalid event)\n");
+ 	  /* Push data out *now*, in case we are redirected to a pipe */
+ 	  fflush(stdout);
+-		usleep(300000);	//bilal: awf-ng'nin eventleri sira ile handle edebilmesi icin gerekli!
++		usleep(100000);	//bilal: awf-ng'nin eventleri sira ile handle edebilmesi icin gerekli!
+ 	}
+     }
+   while(ret > 0);
+-- 
+1.9.1
+

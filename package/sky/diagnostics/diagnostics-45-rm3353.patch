@@ -1,0 +1,296 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet.c	2015-09-16 14:31:59.034782698 +0100
+@@ -108,11 +108,10 @@
+ 			break;
+ 		}
+ 		default:
++			syslog(LOG_ERR, "Unsupported Get Request in %s id %d\n", __FUNCTION__, id);
+ 			return ENOENT;
+ 	}
+-	VENDOR_ASSERT(VENDOR_STATUS_OK != result);
+-	syslog(LOG_ERR, "get_config of attribute(%d) failed in (%s), result: %d\n", id, __func__, result);
+-	return result;
++	return EFAIL;
+ }
+ 
+ int
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface.c	2015-09-16 14:32:07.992776591 +0100
+@@ -221,13 +221,11 @@
+ 		}
+ 		default:
+ 		{
+-			syslog(LOG_ERR, "Invalid Entry in Get Config: %s\n", __func__);
++			syslog(LOG_ERR, "Unsupported Get Request in %s id %d\n", __FUNCTION__, id);
+ 			return ENOENT;
+ 		}
+     }
+-	VENDOR_ASSERT(VENDOR_STATUS_OK != result);
+-	syslog(LOG_ERR, "get_config of attribute(%d) failed in (%s), result: %d\n", id, __func__, result);
+-    return result;
++	return EFAIL;
+ }
+ 
+ int
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface_stats.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface_stats.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface_stats.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface_stats.c	2015-09-16 14:31:50.534498425 +0100
+@@ -261,13 +261,11 @@
+ 		}
+ 		default:
+ 		{
+-			syslog(LOG_ERR, "Invalid Entry: %s \n", __func__);
++			syslog(LOG_ERR, "Unsupported Get Request in %s id %d\n", __FUNCTION__, id);
+ 			return ENOENT;
+ 		}
+     }
+-	VENDOR_ASSERT(VENDOR_STATUS_OK != result);
+-	syslog(LOG_ERR, "get_config of attribute(%d) failed in (%s), result: %d\n", id, __func__, result);
+-    return result;
++	return EFAIL;
+ }
+ 
+ int
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_link.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_link.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_link.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_link.c	2015-09-16 14:31:25.618213075 +0100
+@@ -183,11 +183,10 @@
+ 			return mif_request_set_value(req, id, &enable, sizeof(enable));
+ 		}
+ 		default:
++			syslog(LOG_ERR, "Unsupported Get Request in %s id %d\n", __FUNCTION__, id);
+ 			return ENOENT;
+     }
+-	VENDOR_ASSERT(VENDOR_STATUS_OK != result);
+-	syslog(LOG_ERR, "get_config of attribute(%d) failed in (%s), result: %d\n", id, __func__, result);
+-    return result;
++	return EFAIL;
+ }
+ 
+ int
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_link_stats.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_link_stats.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_link_stats.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_link_stats.c	2015-09-16 14:31:40.316992629 +0100
+@@ -258,11 +258,10 @@
+ 			return mif_request_set_value(req, id, &uintvalue, sizeof(uintvalue));
+ 		}
+ 		default:
++			syslog(LOG_ERR, "Unsupported Get Request in %s id %d\n", __FUNCTION__, id);
+ 			return ENOENT;
+ 	}
+-	VENDOR_ASSERT(VENDOR_STATUS_OK != result);
+-	syslog(LOG_ERR, "get_config of attribute(%d) failed in (%s), result: %d\n", id, __func__, result);
+-	return result;
++	return EFAIL;
+ }
+ 
+ int
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_device_ethernet.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_device_ethernet.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_device_ethernet.c	2015-09-14 11:17:46.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_device_ethernet.c	2015-09-15 16:57:36.915481044 +0100
+@@ -177,6 +177,7 @@
+ 	/*Copy the full pathname of the matching eth interface in pEthEntry ..
+ 	for Ex: /sys/class/net/eth0*/
+ 	if(NULL ==strncpy(pEthEntry, ent->d_name, BSKYB_ETH_INTERFACE_ENTRY_MAX_LEN)){
++		closedir(dir);
+ 		return FALSE ;
+ 	}
+ 	closedir(dir);
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c	2015-09-14 11:17:46.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c	2015-09-16 13:53:41.474026732 +0100
+@@ -325,6 +325,7 @@
+ 	}
+     pLineBuf = calloc(1, maxLineLength);
+     if(NULL == pLineBuf){
++		fclose(fp);
+         return eVENDORHOOK_PROCDEVICE_FAIL;
+     }
+ 	while (fgets(pLineBuf, maxLineLength, fp) != NULL) {
+@@ -332,6 +333,8 @@
+ 		totalBytesRead += strlen(pLineBuf);
+ 	}
+     if(totalBytesRead > maxBufSize){
++		fclose(fp);
++		free(pLineBuf);
+         return eVENDORHOOK_PROCDEVICE_FAIL;
+     }
+ 	pBuffer[totalBytesRead] = '\0';
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usbconfigurationinterface.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usbconfigurationinterface.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usbconfigurationinterface.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usbconfigurationinterface.c	2015-09-16 10:17:57.043598294 +0100
+@@ -270,21 +270,22 @@
+ 	return VENDOR_STATUS_INVALID_PARAM;
+     }
+     while(NULL != pConfigData->fileName){
+-	VENDOR_ASSERT((USB_SYS_ENTRY_MAX_LENGTH >= sizeof(path)));
+-	snprintf(path, sizeof(path), "%s/%s", pDevDir, pConfigData->fileName);
+-	if(NULL == (fp = fopen(path, "wb"))){
+-	    VENDOR_LOG_ERROR("Failed to open file: %s\n", __func__);
+-	    return result;
+-	}
++		VENDOR_ASSERT((USB_SYS_ENTRY_MAX_LENGTH >= sizeof(path)));
++		snprintf(path, sizeof(path), "%s/%s", pDevDir, pConfigData->fileName);
++		if(NULL == (fp = fopen(path, "wb"))){
++		    VENDOR_LOG_ERROR("Failed to open file: %s\n", __func__);
++		    return result;
++		}
+ 
+-	result = fwrite(pConfigData->pValue, strlen(pConfigData->pValue), 1, fp);
+-	if (result == 0) {
+-	    result = VENDOR_STATUS_ERROR;
+-	    VENDOR_LOG_ERROR("Failed to write data to file: %s\n", __func__);
+-	    break;
+-	}
+-	fclose(fp);
+-	pConfigData = &bskyb_usbConfigData[++i];
++		result = fwrite(pConfigData->pValue, strlen(pConfigData->pValue), 1, fp);
++		if (result == 0) {
++		    result = VENDOR_STATUS_ERROR;
++		    VENDOR_LOG_ERROR("Failed to write data to file: %s\n", __func__);
++			fclose(fp);
++		    break;
++		}
++		fclose(fp);
++		pConfigData = &bskyb_usbConfigData[++i];
+     }
+     return VENDOR_STATUS_OK;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usbdevice.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usbdevice.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usbdevice.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usbdevice.c	2015-09-16 10:16:35.191171787 +0100
+@@ -184,6 +184,7 @@
+ 	sprintf (pDeviceEntry, "%s/%s", hub_path, device_list[deviceId - 1]);
+ 	matchFound = true;
+     }
++    closedir(dir);
+     return matchFound;
+ }
+ 
+@@ -368,6 +369,7 @@
+ 	    }
+ 
+ 	    strcpy(pValue, usb_class_code_to_string(value));
++		closedir(dir);
+ 	    break;
+ 	default:
+ 	    VENDOR_LOG_WARN("%s: Unsupported usb Variable Requested: %d\n", __FUNCTION__, variable);
+@@ -516,21 +518,22 @@
+ 	return VENDOR_STATUS_INVALID_PARAM;
+     }
+     while(NULL != pDevData->fileName){
+-	VENDOR_ASSERT((USB_SYS_ENTRY_MAX_LENGTH >= sizeof(path)));
+-	snprintf(path, sizeof(path), "%s/%s", pDevDir, pDevData->fileName);
+-	if(NULL == (fp = fopen(path, "wb"))){
+-	    VENDOR_LOG_ERROR("Failed to open file: %s\n", __func__);
+-	    return result;
+-	}
++		VENDOR_ASSERT((USB_SYS_ENTRY_MAX_LENGTH >= sizeof(path)));
++		snprintf(path, sizeof(path), "%s/%s", pDevDir, pDevData->fileName);
++		if(NULL == (fp = fopen(path, "wb"))){
++		    VENDOR_LOG_ERROR("Failed to open file: %s\n", __func__);
++		    return result;
++		}
+ 
+-	result = fwrite(pDevData->pValue, strlen(pDevData->pValue), 1, fp);
+-	if (result == 0) {
+-	    result = VENDOR_STATUS_ERROR;
+-	    VENDOR_LOG_ERROR("Failed to write data to file: %s\n", __func__);
+-	    break;
+-	}
+-	fclose(fp);
+-	pDevData = &bskyb_usbDevData[++i];
++		result = fwrite(pDevData->pValue, strlen(pDevData->pValue), 1, fp);
++		if (result == 0) {
++		    result = VENDOR_STATUS_ERROR;
++		    VENDOR_LOG_ERROR("Failed to write data to file: %s\n", __func__);
++			fclose(fp);
++		    break;
++		}
++		fclose(fp);
++		pDevData = &bskyb_usbDevData[++i];
+     }
+     return VENDOR_STATUS_OK;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usbhost.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usbhost.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usbhost.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usbhost.c	2015-09-16 10:20:04.473309582 +0100
+@@ -312,21 +312,22 @@
+ 	return VENDOR_STATUS_INVALID_PARAM;
+     }
+     while(NULL != pHostData->fileName){
+-	VENDOR_ASSERT((USB_SYS_ENTRY_MAX_LENGTH >= sizeof(path)));
+-	snprintf(path, sizeof(path), "%s/%s", pPortDir, pHostData->fileName);
+-	if(NULL == (fp = fopen(path, "wb"))){
+-	    VENDOR_LOG_ERROR("Failed to open file: %s\n", __func__);
+-	    return result;
+-	}
++		VENDOR_ASSERT((USB_SYS_ENTRY_MAX_LENGTH >= sizeof(path)));
++		snprintf(path, sizeof(path), "%s/%s", pPortDir, pHostData->fileName);
++		if(NULL == (fp = fopen(path, "wb"))){
++		    VENDOR_LOG_ERROR("Failed to open file: %s\n", __func__);
++		    return result;
++		}
+ 
+-	result = fwrite(pHostData->pValue, strlen(pHostData->pValue), 1, fp);
+-	if (result == 0) {
+-	    result = VENDOR_STATUS_ERROR;
+-	    VENDOR_LOG_ERROR("Failed to write data to file: %s\n", __func__);
+-	    break;
+-	}
+-	fclose(fp);
+-	pHostData = &bskyb_usbHostStringData[++i];
++		result = fwrite(pHostData->pValue, strlen(pHostData->pValue), 1, fp);
++		if (result == 0) {
++		    result = VENDOR_STATUS_ERROR;
++		    VENDOR_LOG_ERROR("Failed to write data to file: %s\n", __func__);
++			fclose(fp);
++		    break;
++		}
++		fclose(fp);
++		pHostData = &bskyb_usbHostStringData[++i];
+     }
+     return VENDOR_STATUS_OK;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usbport.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usbport.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_usbport.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_usbport.c	2015-09-16 10:20:40.468658710 +0100
+@@ -320,21 +320,22 @@
+ 	return VENDOR_STATUS_INVALID_PARAM;
+     }
+     while(NULL != pPortData->fileName){
+-	VENDOR_ASSERT((USB_SYS_ENTRY_MAX_LENGTH >= sizeof(path)));
+-	snprintf(path, sizeof(path), "%s/%s", pPortDir, pPortData->fileName);
+-	if(NULL == (fp = fopen(path, "wb"))){
+-	    VENDOR_LOG_ERROR("Failed to open file: %s\n", __func__);
+-	    return result;
+-	}
++		VENDOR_ASSERT((USB_SYS_ENTRY_MAX_LENGTH >= sizeof(path)));
++		snprintf(path, sizeof(path), "%s/%s", pPortDir, pPortData->fileName);
++		if(NULL == (fp = fopen(path, "wb"))){
++		    VENDOR_LOG_ERROR("Failed to open file: %s\n", __func__);
++		    return result;
++		}
+ 
+-	result = fwrite(pPortData->pValue, strlen(pPortData->pValue), 1, fp);
+-	if (result == 0) {
+-	    result = VENDOR_STATUS_ERROR;
+-	    VENDOR_LOG_ERROR("Failed to write data to file: %s\n", __func__);
+-	    break;
+-	}
+-	fclose(fp);
+-	pPortData = &bskyb_usbPortData[++i];
++		result = fwrite(pPortData->pValue, strlen(pPortData->pValue), 1, fp);
++		if (result == 0) {
++		    result = VENDOR_STATUS_ERROR;
++		    VENDOR_LOG_ERROR("Failed to write data to file: %s\n", __func__);
++			fclose(fp);
++		    break;
++		}
++		fclose(fp);
++		pPortData = &bskyb_usbPortData[++i];
+     }
+     return VENDOR_STATUS_OK;
+ }

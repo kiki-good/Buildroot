@@ -1,0 +1,11 @@
+--- a/src/lxc/lxc_driver.c	2016-03-29 20:36:13.981239410 +0100
++++ b/src/lxc/lxc_driver.c	2016-03-29 21:10:55.356450147 +0100
+@@ -1547,7 +1547,7 @@
+ 
+ static int lxcCheckNetNsSupport(void)
+ {
+-    const char *argv[] = {"ip", "link", "set", "lo", "netns", "-1", NULL};
++    const char *argv[] = {IP_PATH, "link", "set", "lo", "netns", "-1", NULL};
+     int ip_rc;
+ 
+     if (virRun(argv, &ip_rc) < 0 || ip_rc == 255)

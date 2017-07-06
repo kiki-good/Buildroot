@@ -1,0 +1,19 @@
+--- ltp-full-20070228/testcases/network/sockets/Makefile.orig	2007-03-01 04:40:28.000000000 +0000
++++ ltp-full-20070228/testcases/network/sockets/Makefile	2009-07-20 13:52:05.000000000 +0100
+@@ -26,10 +26,15 @@
+ SRCS=$(wildcard *.c)
+ TARGETS=$(patsubst %.c,%,$(SRCS))
+ 
++SH_SRCS=$(wildcard *.sh)
++SH_TARGETS=$(patsubst %.sh,%,$(SH_SRCS))
++
++
+ all: $(TARGETS)
+ 
+ install:
+ 	@set -e; for i in $(TARGETS) ; do ln -f $$i ../../bin/$$i ; done ;
++	@set -e; for i in $(SH_TARGETS) ; do ln -f $$i.sh ../../bin/$$i.sh ; done ;
+ 
+ clean:
+ 	rm -f $(TARGETS)
+

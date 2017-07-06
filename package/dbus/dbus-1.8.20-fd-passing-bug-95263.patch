@@ -1,0 +1,133 @@
+From a3de97be19fbfaf824b15fb13d692c3848d1619f Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Thu, 5 May 2016 12:59:52 +0200
+Subject: [PATCH] bus: fix in-flight fd counting logic
+
+When a busy connection manages to always keep an fd queued, but still is
+processing messages, then this might cause dbus connection to kick it
+from the bus anyway, because the number of queued fds never goes down to
+zero.
+
+This patch changes that, and resets the in-flight timer each time the
+first fd is enqueued or any fd is dequeued.
+
+Note that the actual resetting of the in-flight timer was previously
+already broken, as the base time to which count the interval timer was
+not reset by this function. This is also fixed with this patch, it adds
+_dbus_loop_restart_timeout() for this purpose.
+
+This also adds a log message whenever the fd-in-flight timer hits, since
+the timer elapsing should usually be a very exceptional condition, and a
+clear indication of a bug or attack somewhere.
+
+https://bugs.freedesktop.org/show_bug.cgi?id=95263
+https://github.com/systemd/systemd/issues/1961
+---
+ bus/connection.c     | 26 ++++++++++++++++++++------
+ dbus/dbus-mainloop.c | 26 ++++++++++++++++++++++++++
+ dbus/dbus-mainloop.h |  2 ++
+ 3 files changed, 48 insertions(+), 6 deletions(-)
+
+diff --git a/bus/connection.c b/bus/connection.c
+index 67793ba..0fe3e02 100644
+--- a/bus/connection.c
++++ b/bus/connection.c
+@@ -651,19 +651,25 @@ check_pending_fds_cb (DBusConnection *connection)
+   _dbus_verbose ("Pending fds count changed on connection %p: %d -> %d\n",
+                  connection, n_pending_unix_fds_old, n_pending_unix_fds_new);
+ 
+-  if (n_pending_unix_fds_old == 0 && n_pending_unix_fds_new > 0)
++  if (n_pending_unix_fds_new == 0)
+     {
++      /* Stop timer if there are no fds left */
++      _dbus_timeout_set_enabled (d->pending_unix_fds_timeout, FALSE);
++    }
++  else if ((n_pending_unix_fds_old == 0 && n_pending_unix_fds_new > 0) ||
++           n_pending_unix_fds_new < n_pending_unix_fds_old)
++    {
++      /* Start timer an fd is enqueued for the first time and then each time an fd is removed,
++         i.e. client made forward progress */
+       _dbus_timeout_set_interval (d->pending_unix_fds_timeout,
+               bus_context_get_pending_fd_timeout (d->connections->context));
+       _dbus_timeout_set_enabled (d->pending_unix_fds_timeout, TRUE);
+-    }
+ 
+-  if (n_pending_unix_fds_old > 0 && n_pending_unix_fds_new == 0)
+-    {
+-      _dbus_timeout_set_enabled (d->pending_unix_fds_timeout, FALSE);
++      /* Restart the time-out with the current time. */
++      _dbus_loop_restart_timeout (bus_context_get_loop (d->connections->context),
++                                  d->pending_unix_fds_timeout);
+     }
+ 
+-
+   d->n_pending_unix_fds = n_pending_unix_fds_new;
+ }
+ 
+@@ -671,6 +677,14 @@ static dbus_bool_t
+ pending_unix_fds_timeout_cb (void *data)
+ {
+   DBusConnection *connection = data;
++  BusConnectionData *d;
++
++  d = BUS_CONNECTION_DATA (connection);
++  _dbus_assert(d != NULL);
++
++  bus_context_log (d->connections->context, DBUS_SYSTEM_LOG_INFO,
++                   "Client sent too many file descriptors, disconnecting.");
++
+   dbus_connection_close (connection);
+   return TRUE;
+ }
+diff --git a/dbus/dbus-mainloop.c b/dbus/dbus-mainloop.c
+index f6736fe..3d3ac80 100644
+--- a/dbus/dbus-mainloop.c
++++ b/dbus/dbus-mainloop.c
+@@ -418,6 +418,32 @@ _dbus_loop_remove_timeout (DBusLoop           *loop,
+   _dbus_warn ("could not find timeout %p to remove\n", timeout);
+ }
+ 
++void
++_dbus_loop_restart_timeout (DBusLoop            *loop,
++                            DBusTimeout         *timeout) {
++
++  DBusList *link;
++
++  link = _dbus_list_get_first_link (&loop->timeouts);
++  while (link != NULL)
++    {
++      DBusList *next = _dbus_list_get_next_link (&loop->timeouts, link);
++      TimeoutCallback *this = link->data;
++
++      if (this->timeout == timeout)
++        {
++          _dbus_get_monotonic_time (&this->last_tv_sec,
++                                    &this->last_tv_usec);
++          return;
++        }
++
++      link = next;
++    }
++
++  _dbus_warn ("could not find timeout %p to restart\n", timeout);
++}
++
++
+ /* Convolutions from GLib, there really must be a better way
+  * to do this.
+  */
+diff --git a/dbus/dbus-mainloop.h b/dbus/dbus-mainloop.h
+index a76cb6f..cc60500 100644
+--- a/dbus/dbus-mainloop.h
++++ b/dbus/dbus-mainloop.h
+@@ -47,6 +47,8 @@ dbus_bool_t _dbus_loop_add_timeout    (DBusLoop            *loop,
+                                        DBusTimeout         *timeout);
+ void        _dbus_loop_remove_timeout (DBusLoop            *loop,
+                                        DBusTimeout         *timeout);
++void        _dbus_loop_restart_timeout(DBusLoop            *loop,
++                                       DBusTimeout         *timeout);
+ 
+ dbus_bool_t _dbus_loop_queue_dispatch (DBusLoop            *loop,
+                                        DBusConnection      *connection);
+-- 
+2.7.4

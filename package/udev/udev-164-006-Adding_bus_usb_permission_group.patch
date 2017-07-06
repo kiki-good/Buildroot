@@ -1,0 +1,12 @@
+diff -Naur udev-164/rules/rules.d/50-udev-default.rules udev-164_mod/rules/rules.d/50-udev-default.rules
+--- udev-164/rules/rules.d/50-udev-default.rules	2015-07-10 17:27:51.127420875 +0100
++++ udev-164_mod/rules/rules.d/50-udev-default.rules	2015-07-10 17:29:24.352916709 +0100
+@@ -27,7 +27,7 @@
+ KERNEL=="js[0-9]*",		MODE="0644"
+ 
+ # libusb device nodes
+-SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", MODE="0664"
++SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", MODE="0660", GROUP="NDS_MW"
+ 
+ 
+ # block

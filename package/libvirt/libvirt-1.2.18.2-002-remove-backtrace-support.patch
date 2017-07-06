@@ -1,0 +1,27 @@
+--- a/src/util/virlog.c	2015-12-23 23:15:31.000000000 +0000
++++ b/src/util/virlog.c	2016-03-29 19:57:37.342337161 +0100
+@@ -629,21 +629,14 @@
+ static void
+ virLogStackTraceToFd(int fd)
+ {
+-    void *array[100];
+-    int size;
+-    static bool doneWarning;
++    /* [sky] Backtrace removed as not all rootfs's contain libubacktrace */
++    static bool doneWarning = false;
+     const char *msg = "Stack trace not available on this platform\n";
+ 
+-#define STRIP_DEPTH 3
+-    size = backtrace(array, ARRAY_CARDINALITY(array));
+-    if (size) {
+-        backtrace_symbols_fd(array +  STRIP_DEPTH, size - STRIP_DEPTH, fd);
+-        ignore_value(safewrite(fd, "\n", 1));
+-    } else if (!doneWarning) {
++    if (!doneWarning) {
+         ignore_value(safewrite(fd, msg, strlen(msg)));
+         doneWarning = true;
+     }
+-#undef STRIP_DEPTH
+ }
+ 
+ static void

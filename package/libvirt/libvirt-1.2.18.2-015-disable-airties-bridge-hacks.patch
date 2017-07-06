@@ -1,0 +1,59 @@
+--- a/src/util/virnetdevbridge.c	2015-09-22 01:18:03.000000000 +0100
++++ b/src/util/virnetdevbridge.c	2016-03-29 21:13:46.494280637 +0100
+@@ -385,6 +385,36 @@
+ }
+ #endif
+ 
++/**
++ * virNetDevBridgeDisableAirtiesMeshHacks:
++ * @brname: the bridge name
++ *
++ * This function disables the AirTies mesh hacks on the bridge
++ *
++ * Returns 0 in case of success or -1 on failure
++ */
++static int
++virNetDevBridgeDisableAirtiesMeshHacks(const char *brname)
++{
++    char *path = NULL;
++    int ret = -1;
++
++    if (virAsprintf(&path, "%s/%s/bridge/mesh_enabled", SYSFS_NET_DIR, brname) < 0)
++        return -1;
++
++    if (virFileExists(path)) {
++        if (virFileWriteStr(path, "0", 0) < 0) {
++            virReportSystemError(errno,
++                                 _("Unable to set bridge %s mesh_enabled"), brname);
++            goto cleanup;
++        }
++    }
++
++    ret = 0;
++cleanup:
++    VIR_FREE(path);
++    return ret;
++}
+ 
+ /**
+  * virNetDevBridgeCreate:
+@@ -410,6 +440,9 @@
+         goto cleanup;
+     }
+ 
++    /* [Sky] disable the mesh hacks on this bridge */
++    virNetDevBridgeDisableAirtiesMeshHacks(brname);
++
+     ret = 0;
+ 
+  cleanup:
+@@ -536,6 +569,9 @@
+     if (virNetDevSetName(ifr.ifr_name, brname) == -1)
+         goto cleanup;
+ 
++    /* [Sky] disable the mesh hacks on this bridge */
++    virNetDevBridgeDisableAirtiesMeshHacks(brname);
++
+     ret = 0;
+  cleanup:
+     VIR_FORCE_CLOSE(s);

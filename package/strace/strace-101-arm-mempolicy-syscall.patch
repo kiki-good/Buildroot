@@ -1,0 +1,14 @@
+diff -Naur strace-4.5.18-orig/linux/arm/syscallent.h strace-4.5.18/linux/arm/syscallent.h
+--- strace-4.5.18-orig/linux/arm/syscallent.h	2009-07-03 16:24:56.000000000 +0100
++++ strace-4.5.18/linux/arm/syscallent.h	2009-07-03 16:47:23.000000000 +0100
+@@ -350,8 +350,8 @@
+ 	{ 3,	TD,	sys_inotify_add_watch,	"inotify_add_watch" }, /* 317 */
+ 	{ 2,	TD,	sys_inotify_rm_watch,	"inotify_rm_watch" }, /* 318 */
+ 	{ 6,	0,	sys_mbind,		"mbind"		}, /* 319 */
+-	{ 3,	0,	sys_set_mempolicy,	"set_mempolicy"	}, /* 320 */
+-	{ 5,	0,	sys_get_mempolicy,	"get_mempolicy"	}, /* 321 */
++	{ 5,	0,	sys_get_mempolicy,	"get_mempolicy"	}, /* 320 */
++	{ 3,	0,	sys_set_mempolicy,	"set_mempolicy"	}, /* 321 */
+ 	{ 4,	TD|TF,	sys_openat,		"openat"	}, /* 322 */
+ 	{ 3,	TD|TF,	sys_mkdirat,		"mkdirat"	}, /* 323 */
+ 	{ 4,	TD|TF,	sys_mknodat,		"mknodat"	}, /* 324 */

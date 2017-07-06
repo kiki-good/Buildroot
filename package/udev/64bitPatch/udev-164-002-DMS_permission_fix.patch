@@ -1,0 +1,66 @@
+diff -Naur udev-164_orig/rules/rules.d/50-udev-default.rules udev-164/rules/rules.d/50-udev-default.rules
+--- udev-164_orig/rules/rules.d/50-udev-default.rules	2010-09-28 23:49:23.000000000 +0100
++++ udev-164/rules/rules.d/50-udev-default.rules	2013-09-05 16:20:04.125674123 +0100
+@@ -69,7 +69,7 @@
+ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{ID_USB_INTERFACES}=="*:0701*:", GROUP="lp", MODE="0664"
+ 
+ # block
+-SUBSYSTEM=="block", GROUP="disk"
++SUBSYSTEM=="block", GROUP="NDS_MW"
+ 
+ # floppy
+ SUBSYSTEM=="block", KERNEL=="fd[0-9]", GROUP="floppy"
+@@ -86,13 +86,13 @@
+ SUBSYSTEM=="scsi_generic|scsi_tape", SUBSYSTEMS=="scsi", ATTRS{type}=="1|8", GROUP="tape"
+ 
+ # block-related
+-KERNEL=="sch[0-9]*", GROUP="disk"
+-SUBSYSTEM=="scsi_generic", SUBSYSTEMS=="scsi", ATTRS{type}=="0", GROUP="disk"
+-KERNEL=="pg[0-9]*", GROUP="disk"
+-KERNEL=="qft[0-9]*|nqft[0-9]*|zqft[0-9]*|nzqft[0-9]*|rawqft[0-9]*|nrawqft[0-9]*", GROUP="disk"
+-KERNEL=="rawctl", GROUP="disk"
+-SUBSYSTEM=="raw", KERNEL=="raw[0-9]*", GROUP="disk"
+-SUBSYSTEM=="aoe", GROUP="disk", MODE="0220"
++KERNEL=="sch[0-9]*", GROUP="NDS_MW"
++SUBSYSTEM=="scsi_generic", SUBSYSTEMS=="scsi", ATTRS{type}=="0", GROUP="NDS_MW"
++KERNEL=="pg[0-9]*", GROUP="NDS_MW"
++KERNEL=="qft[0-9]*|nqft[0-9]*|zqft[0-9]*|nzqft[0-9]*|rawqft[0-9]*|nrawqft[0-9]*", GROUP="NDS_MW"
++KERNEL=="rawctl", GROUP="NDS_MW"
++SUBSYSTEM=="raw", KERNEL=="raw[0-9]*", GROUP="NDS_MW"
++SUBSYSTEM=="aoe", GROUP="NDS_MW", MODE="0220"
+ SUBSYSTEM=="aoe", KERNEL=="err", MODE="0440"
+ 
+ # network
+diff -Naur udev-164_orig/rules/rules.d/60-persistent-storage.rules udev-164/rules/rules.d/60-persistent-storage.rules
+--- udev-164_orig/rules/rules.d/60-persistent-storage.rules	2010-06-29 16:22:58.000000000 +0100
++++ udev-164/rules/rules.d/60-persistent-storage.rules	2013-09-05 16:20:48.889675273 +0100
+@@ -25,22 +25,22 @@
+ # USB devices use their own serial number
+ KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", SUBSYSTEMS=="usb", IMPORT{program}="usb_id --export %p"
+ # ATA devices with their own "ata" kernel subsystem
+-KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", SUBSYSTEMS=="ata", IMPORT{program}="ata_id --export $tempnode"
++KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", SUBSYSTEMS=="ata", IMPORT{program}="ata_id --export $tempnode" MODE="0666"
+ # ATA devices using the "scsi" subsystem
+-KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", SUBSYSTEMS=="scsi", ATTRS{vendor}=="ATA", IMPORT{program}="ata_id --export $tempnode"
++KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", SUBSYSTEMS=="scsi", ATTRS{vendor}=="ATA", IMPORT{program}="ata_id --export $tempnode" MODE="0666"
+ # scsi devices
+-KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", IMPORT{program}="scsi_id --export --whitelisted -d $tempnode", ENV{ID_BUS}="scsi"
++KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", IMPORT{program}="scsi_id --export --whitelisted -d $tempnode", ENV{ID_BUS}="scsi" MODE="0666"
+ KERNEL=="cciss*", ENV{DEVTYPE}=="disk", ENV{ID_SERIAL}!="?*", IMPORT{program}="scsi_id --export --whitelisted -d $tempnode", ENV{ID_BUS}="cciss"
+-KERNEL=="sd*|sr*|cciss*", ENV{DEVTYPE}=="disk", ENV{ID_SERIAL}=="?*", SYMLINK+="disk/by-id/$env{ID_BUS}-$env{ID_SERIAL}"
+-KERNEL=="sd*|cciss*", ENV{DEVTYPE}=="partition", ENV{ID_SERIAL}=="?*", SYMLINK+="disk/by-id/$env{ID_BUS}-$env{ID_SERIAL}-part%n"
++KERNEL=="sd*|sr*|cciss*", ENV{DEVTYPE}=="disk", ENV{ID_SERIAL}=="?*", SYMLINK+="disk/by-id/$env{ID_BUS}-$env{ID_SERIAL}" MODE="0666"
++KERNEL=="sd*|cciss*", ENV{DEVTYPE}=="partition", ENV{ID_SERIAL}=="?*", SYMLINK+="disk/by-id/$env{ID_BUS}-$env{ID_SERIAL}-part%n" MODE="0666"
+ 
+ # firewire
+ KERNEL=="sd*[!0-9]|sr*", ATTRS{ieee1394_id}=="?*", SYMLINK+="disk/by-id/ieee1394-$attr{ieee1394_id}"
+ KERNEL=="sd*[0-9]", ATTRS{ieee1394_id}=="?*", SYMLINK+="disk/by-id/ieee1394-$attr{ieee1394_id}-part%n"
+ 
+ # scsi compat links for ATA devices
+-KERNEL=="sd*[!0-9]", ENV{ID_BUS}=="ata", PROGRAM="scsi_id --whitelisted --replace-whitespace -p0x80 -d$tempnode", RESULT=="?*", ENV{ID_SCSI_COMPAT}="$result", SYMLINK+="disk/by-id/scsi-$env{ID_SCSI_COMPAT}"
+-KERNEL=="sd*[0-9]", ENV{ID_SCSI_COMPAT}=="?*", SYMLINK+="disk/by-id/scsi-$env{ID_SCSI_COMPAT}-part%n"
++KERNEL=="sd*[!0-9]", ENV{ID_BUS}=="ata", PROGRAM="scsi_id --whitelisted --replace-whitespace -p0x80 -d$tempnode", RESULT=="?*", ENV{ID_SCSI_COMPAT}="$result", SYMLINK+="disk/by-id/scsi-$env{ID_SCSI_COMPAT}" MODE="0666"
++KERNEL=="sd*[0-9]", ENV{ID_SCSI_COMPAT}=="?*", SYMLINK+="disk/by-id/scsi-$env{ID_SCSI_COMPAT}-part%n" MODE="0666"
+ 
+ KERNEL=="mmcblk[0-9]", SUBSYSTEMS=="mmc", ATTRS{name}=="?*", ATTRS{serial}=="?*", ENV{ID_NAME}="$attr{name}", ENV{ID_SERIAL}="$attr{serial}", SYMLINK+="disk/by-id/mmc-$env{ID_NAME}_$env{ID_SERIAL}"
+ KERNEL=="mmcblk[0-9]p[0-9]", ENV{ID_NAME}=="?*", ENV{ID_SERIAL}=="?*", SYMLINK+="disk/by-id/mmc-$env{ID_NAME}_$env{ID_SERIAL}-part%n"

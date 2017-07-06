@@ -1,0 +1,294 @@
+diff -Naurr diagnostics-1.3_orig/include/libhttp/httpc.h diagnostics-1.3_new/include/libhttp/httpc.h
+--- diagnostics-1.3_orig/include/libhttp/httpc.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/include/libhttp/httpc.h	2015-06-26 13:59:26.886045449 +0100
+@@ -22,6 +22,8 @@
+ #include <libmap/multimap.h>
+ #include <event.h>
+ 
++#undef SKY_USE_CARES_LIBRARY
++
+ /* general headers: */
+ #define HTTP_HDR_CACHE_CONTROL          "Cache-Control"
+ #define HTTP_HDR_CONNECTION             "Connection"
+diff -Naurr diagnostics-1.3_orig/libs/libhttp/httpc.c diagnostics-1.3_new/libs/libhttp/httpc.c
+--- diagnostics-1.3_orig/libs/libhttp/httpc.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/libs/libhttp/httpc.c	2015-06-30 09:37:10.011769187 +0100
+@@ -20,6 +20,7 @@
+ #include <sys/time.h>
+ #include <netinet/in.h>
+ #include <netinet/tcp.h>
++#include <netdb.h>
+ #include <arpa/inet.h>
+ 
+ #include <stdio.h>
+@@ -44,8 +45,10 @@
+ #endif
+ 
+ #include <event.h>
++#ifdef SKY_USE_CARES_LIBRARY
+ #include <ares.h>
+ #include <ares_dns.h>
++#endif
+ #include <libmap/multimap.h>
+ #include <libnetutil/ipaddr.h>
+ #include <libnetutil/uri.h>
+@@ -217,10 +220,12 @@
+ #define HR_DEFAULT_TIMEOUT (30 * 60 * 1000) /* 30 minutes */
+ 	int             hr_timeout;
+ 
++#ifdef SKY_USE_CARES_LIBRARY
+ 	/* async resolver state */
+ 	ares_channel    hr_ares_channel;
+ #define HR_ARES_SOCKS_NUM 2
+ 	int             hr_ares_socks[HR_ARES_SOCKS_NUM];
++#endif
+ 
+ 	/* request state */
+ 	multimap_t      hr_req_hdrs;
+@@ -730,6 +735,7 @@
+ 	/* ignore case */
+ 	multimap_setcasekeys(&req->hr_reply_hdrs, 1);
+ 
++#ifdef SKY_USE_CARES_LIBRARY
+ 	/* setup an ares channel for resolves */
+ 	status = ares_init_options(&req->hr_ares_channel, NULL, 0);
+ 	if (status != ARES_SUCCESS) {
+@@ -738,6 +744,7 @@
+ 		/* ares status needs to be converted to an "errno" */
+ 		return EFAIL;
+ 	}
++#endif
+ 
+ 	/* overall timeout */
+ 	req->hr_timeout = HR_DEFAULT_TIMEOUT;
+@@ -758,7 +765,9 @@
+ 	multimap_destroy(&req->hr_req_hdrs);
+ 	multimap_destroy(&req->hr_reply_hdrs);
+ 
++#ifdef SKY_USE_CARES_LIBRARY
+ 	ares_destroy(req->hr_ares_channel);
++#endif
+ 
+ 	if (req->hr_url) {
+ 		free(req->hr_url);
+@@ -2037,6 +2046,7 @@
+ 	return EOK;
+ }
+ 
++#ifdef SKY_USE_CARES_LIBRARY
+ static int
+ _ares_poll_setup(httpc_context_t *context,
+ 		 httpc_req_t *req,
+@@ -2100,6 +2110,7 @@
+ 
+ 	return EOK;
+ }
++#endif
+ 
+ static int
+ _con_poll_setup(httpc_context_t *context,
+@@ -2227,8 +2238,12 @@
+ 			return EOK;
+ 		case HTTPC_REQ_STATE_LOOKUP:
+ 			/* resolving */
++#ifdef SKY_USE_CARES_LIBRARY			
+ 			return _ares_poll_setup(context, req,
+ 						pfd, pfdcnt, timeout);
++#else
++			return EOK;
++#endif
+ 		case HTTPC_REQ_STATE_QUEUED:
+ 		case HTTPC_REQ_STATE_REQUEST_HDR:
+ 		case HTTPC_REQ_STATE_REQUEST_BODY:
+@@ -2273,6 +2288,7 @@
+ }
+ 
+ 
++#ifdef SKY_USE_CARES_LIBRARY
+ static int
+ _ares_poll_dispatch(httpc_context_t *context,
+ 		    httpc_req_t *req,
+@@ -2328,6 +2344,7 @@
+ 	}
+ 	return EOK;
+ }
++#endif
+ 
+ static int
+ _con_poll_dispatch(httpc_context_t *context,
+@@ -2413,7 +2430,11 @@
+ 			return EOK;
+ 		case HTTPC_REQ_STATE_LOOKUP:
+ 			/* resolving */
++#ifdef SKY_USE_CARES_LIBRARY
+ 			return _ares_poll_dispatch(context, req, pfd, pfdcnt);
++#else
++			return EOK;
++#endif
+ 		case HTTPC_REQ_STATE_QUEUED:
+ 		case HTTPC_REQ_STATE_REQUEST_HDR:
+ 		case HTTPC_REQ_STATE_REQUEST_BODY:
+@@ -3736,6 +3757,7 @@
+ 	return err;
+ }
+ 
++#ifdef SKY_USE_CARES_LIBRARY
+ /**
+  * ares_gethostbyname_callback function is called by libcares to return host
+  * ipaddress
+@@ -3822,6 +3844,118 @@
+ 	}
+ 	return;
+ }
++#else
++/**
++ * httpc_getaddrinfo function obtain IP via getaddrinfo
++ * 
++ *
++ * @param arg           - http request.context
++ * @param servname  - Server Name to do the DNS on.
++ * @param family       -  AF_UNSPEC, or AF_INET, AF_INET6 to force version.
++ */
++static void
++httpc_getaddrinfo(void *arg,
++					  const char *servname,
++					  int family)
++{
++	struct addrinfo hints, *res, *p;
++	int status;
++	size_t ss_size;
++	char ipstr[INET6_ADDRSTRLEN];
++	void *addr = NULL;
++	httpc_req_t *req;
++	nu_ipaddr_t ipaddr;
++
++	req = (httpc_req_t *)arg;
++	if (req == NULL) {
++		/* something went really wrong - just return */
++		return;
++	}
++
++	memset(&hints, 0, sizeof hints);
++	hints.ai_family = family;
++	hints.ai_socktype = SOCK_STREAM;
++
++	/* getaddrinfo, freeaddrinfo, gai_strerror - network address and service translation.  */
++	if ((status = getaddrinfo(servname, NULL, &hints, &res)) != 0) {
++		_httpc_syslog(req, LOG_WARNING, "httpc_getaddrinfo status %u getaddrinfo: %s",
++			      status, gai_strerror(status));
++		req->hr_state = HTTPC_REQ_STATE_ERROR;
++		return;
++	}
++
++	for(p = res;p != NULL; p = p->ai_next) {
++
++		/* ignore elements with unsupported address family, */
++		/* settle family-specific sockaddr structure size.	*/
++		if(p->ai_family == AF_INET){
++		  ss_size = sizeof(struct sockaddr_in);
++		}else if(p->ai_family == AF_INET6){
++		  ss_size = sizeof(struct sockaddr_in6);
++		}else{
++			continue;
++		}
++	
++		/* ignore elements without required address info */
++		if((p->ai_addr == NULL) || !(p->ai_addrlen > 0)){
++			continue;
++		}
++
++		/* ignore elements with bogus address size */
++		if((size_t)p->ai_addrlen < ss_size){
++			continue;
++		}
++
++		/* get the pointer to the address itself,  */
++		/* different fields in IPv4 and IPv6:       */
++		if ((family == AF_INET) && (p->ai_family == AF_INET)) { /* IPv4 */
++			struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
++			addr = &(ipv4->sin_addr);
++			break;
++		} else if ((family == AF_INET6) && (p->ai_family == AF_INET6)){ /* IPv6 */
++			struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
++			addr = &(ipv6->sin6_addr);
++			break;
++		} else {
++			_httpc_syslog(req, LOG_WARNING, "httpc_getaddrinfo DNS Failure");
++			req->hr_state = HTTPC_REQ_STATE_ERROR;
++			freeaddrinfo(res); /* free the linked list	*/
++			return;
++		}
++
++	}
++
++	freeaddrinfo(res); /* free the linked list  */
++
++	/* convert the IP to a string */
++	inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr);
++	_httpc_syslog(req, LOG_INFO, "httpc_getaddrinfo IP = %s", ipstr);
++
++	/* see if the ip passes this test. */
++	status = nu_ipaddr_from_str(ipstr, &ipaddr);
++	if (status != EOK) {
++		/* Not an IP address. */
++		_httpc_syslog(req, LOG_WARNING, "httpc_getaddrinfo DNS Failure - Not an IP Address");
++		req->hr_state = HTTPC_REQ_STATE_ERROR;
++		return;
++	}
++	/* this is an ip address */
++	memcpy(&req->hr_raddr, &ipaddr, sizeof(nu_ipaddr_t));
++
++	/* start the connection */
++	req->hr_state = HTTPC_REQ_STATE_REQUEST_HDR;
++	status = httpc_tcp_con(req->hr_context, req,
++			    &req->hr_raddr, req->hr_rport);
++	if (status != EOK) {
++		_httpc_syslog(req, LOG_WARNING,
++			      "httpc_getaddrinfo tcp connection error - %d", status);
++		memset(&req->hr_raddr, 0, sizeof(nu_ipaddr_t));
++		req->hr_state = HTTPC_REQ_STATE_ERROR;
++	}
++
++	return;
++}
++#endif
+ 
+ static int
+ _httpc_lookup(httpc_context_t *context, httpc_req_t *req, httpc_proto_t *proto)
+@@ -3902,8 +4036,12 @@
+ 
+ 	/* need to start a resolv */
+ 	req->hr_state = HTTPC_REQ_STATE_LOOKUP;
++#ifdef SKY_USE_CARES_LIBRARY
+ 	ares_gethostbyname(req->hr_ares_channel, buf, AF_INET,
+ 			   _ares_gethostbyname_cb, (void *)req);
++#else
++	httpc_getaddrinfo((void *)req, buf, AF_INET);
++#endif
+ 	free(buf); /* don't need the buffer anymore */
+ 	return EOK;
+ }
+diff -Naurr diagnostics-1.3_orig/libs/libhttp/Makefile.am diagnostics-1.3_new/libs/libhttp/Makefile.am
+--- diagnostics-1.3_orig/libs/libhttp/Makefile.am	2015-06-15 12:22:08.000000000 +0100
++++ diagnostics-1.3_new/libs/libhttp/Makefile.am	2015-06-29 15:05:21.347530788 +0100
+@@ -17,7 +17,7 @@
+ libhttp_la_SOURCES = httpc.c httpauth.c httpcookie.c urlescape.c
+ libhttp_la_CPPFLAGS = $(AM_CPPFLAGS) -D_GNU_SOURCE
+ #libhttp_la_LDFLAGS = -lbsd -lcares -lssl
+-libhttp_la_LDFLAGS = -lcares -lssl
++libhttp_la_LDFLAGS = -lssl
+ libhttp_la_LIBADD =  $(proj_libmap)
+ libhttp_la_LIBADD += $(proj_libnetutil)
+ 
+diff -Naurr diagnostics-1.3_orig/libs/liblm/Makefile.am diagnostics-1.3_new/libs/liblm/Makefile.am
+--- diagnostics-1.3_orig/libs/liblm/Makefile.am	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/libs/liblm/Makefile.am	2015-06-29 15:22:45.477667635 +0100
+@@ -21,7 +21,7 @@
+ 		lmd_clnt.c \
+ 		mod.c
+ 
+-liblm_la_LDFLAGS = -lcares
++liblm_la_LDFLAGS = 
+ liblm_la_LIBADD =  $(proj_libarpc)
+ liblm_la_LIBADD += $(proj_libnetutil)
+ liblm_la_LIBADD += $(proj_libmap)

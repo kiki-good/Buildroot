@@ -1,0 +1,6 @@
+config BR2_PACKAGE_LIBXMLSEC
+	bool "libxmlsec"
+	help
+	  XML Security Library
+
+	  http://www.aleksey.com/xmlsec/

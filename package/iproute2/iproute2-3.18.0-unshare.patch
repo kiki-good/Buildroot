@@ -1,0 +1,18 @@
+--- a/ip/ipnetns.c	2015-02-20 13:51:18.013215178 +0000
++++ b/ip/ipnetns.c	2015-02-20 14:02:39.900940644 +0000
+@@ -54,6 +54,15 @@
+ }
+ #endif /* HAVE_SETNS */
+ 
++
++/* [bSkyb] The uclibc version used by Broadcom doesn't have the unshare
++ * function, so instead we just replace the call with a direct syscall.
++ */
++#ifdef __UCLIBC__
++#define unshare(flags)   syscall(SYS_unshare, (flags))
++#endif
++
++
+ static int usage(void)
+ {
+ 	fprintf(stderr, "Usage: ip netns list\n");

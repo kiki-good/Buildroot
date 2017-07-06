@@ -1,0 +1,11 @@
+--- tr69-data-model_Orig/apps/uploadd/Makefile.am	2014-02-18 16:15:34.646407788 +0000
++++ tr69-data-model/apps/uploadd/Makefile.am	2014-02-18 16:31:10.656237725 +0000
+@@ -4,7 +4,7 @@
+ 
+ uploadd_SOURCES = main.c 
+ 
+-uploadd_LDFLAGS = -lpthread
++uploadd_LDFLAGS = -lpthread -lresolv
+ 
+ uploadd_LDADD = $(proj_libarpc)
+ uploadd_LDADD += $(proj_libcm_client)

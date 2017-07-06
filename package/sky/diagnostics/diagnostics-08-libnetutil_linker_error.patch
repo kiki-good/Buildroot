@@ -1,0 +1,12 @@
+diff -rupN tr69-data-model-orig/apps/cwmd/Makefile.am tr69-data-model/apps/cwmd/Makefile.am
+--- tr69-data-model-orig/apps/cwmd/Makefile.am	2014-02-18 11:41:33.912773978 +0000
++++ tr69-data-model/apps/cwmd/Makefile.am	2014-02-18 14:13:45.662650863 +0000
+@@ -18,7 +18,7 @@ cwmd_SOURCES +=  cwmd_work.c cwmd.c
+ 
+ 
+ #cwmd_LDFLAGS = -lxml2 -lcrypto -lresolv -lpthread -lm -ldl
+-cwmd_LDFLAGS = -lxml2 -lresolv -lpthread -lm -ldl
++cwmd_LDFLAGS = -lxml2 -lresolv -lpthread -lm -ldl -lcrypto
+ #httpd_LDFLAGS = -lbsd -lxml2 -lxslt -lssl -lpthread
+ 
+ 

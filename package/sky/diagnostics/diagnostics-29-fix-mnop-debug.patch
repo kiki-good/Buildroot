@@ -1,0 +1,776 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif.c	2015-07-10 13:12:54.973511847 +0100
+@@ -1595,7 +1595,7 @@
+             break;
+         }
+         sts = mn->mn_ops->mnop_get_config(&mreq, ma->ma_id);
+-        if (sts != EOK) {
++        if ((sts != EOK) && (sts != EFAIL)) {
+             syslog(LOG_ERR, "mnop_get_config on %s: %s",
+                      path, strerror(sts));
+         }
+@@ -1730,7 +1730,7 @@
+                 break;
+             }
+             sts = mn->mn_ops->mnop_get_config(&mreq, ma->ma_id);
+-            if (sts != EOK) {
++            if ((sts != EOK) && (sts != EFAIL)) {
+ 
+             	syslog(LOG_DEBUG, "mgmtif: get_config attr=%s sts=%u\n", ma->ma_name, sts);
+                 syslog(LOG_ERR, "mnop_get_config on %s: %s", 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_avplayers_avplayer.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_avplayers_avplayer.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_avplayers_avplayer.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_avplayers_avplayer.c	2015-07-10 13:29:58.047807767 +0100
+@@ -179,7 +179,6 @@
+         default:
+             break;
+     }
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg2part2.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg2part2.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg2part2.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg2part2.c	2015-07-10 13:30:10.723874541 +0100
+@@ -99,7 +99,6 @@
+             return EFAIL;
+         }
+     }
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg4part10.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg4part10.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg4part10.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg4part10.c	2015-07-10 13:30:19.216919306 +0100
+@@ -99,7 +99,6 @@
+             return EFAIL;
+         }
+     }
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg4part2.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg4part2.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg4part2.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_mpeg4part2.c	2015-07-10 13:30:31.265982845 +0100
+@@ -98,7 +98,6 @@
+             return EFAIL;
+         }
+     }
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_smptevc1.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_smptevc1.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_smptevc1.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_capabilities_videodecoder_smptevc1.c	2015-07-10 13:30:41.194035228 +0100
+@@ -98,7 +98,6 @@
+             return EFAIL;
+         }
+     }
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_hdmi.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_hdmi.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_hdmi.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_hdmi.c	2015-07-10 13:30:47.287067389 +0100
+@@ -134,7 +134,6 @@
+ 			syslog(LOG_ERR, "Unsupported Get Request in %s\n", __FUNCTION__);
+ 			return EFAIL;
+ 	}
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_spdif.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_spdif.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_spdif.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_spdif.c	2015-07-10 13:30:57.997123942 +0100
+@@ -164,7 +164,6 @@
+ 		}
+ 		break;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_videodecoder.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_videodecoder.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_videodecoder.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_videodecoder.c	2015-07-10 13:31:07.874176122 +0100
+@@ -164,7 +164,6 @@
+             return EFAIL;
+         }
+     }
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo.c	2015-07-10 13:28:44.020418729 +0100
+@@ -419,7 +419,6 @@
+ 			syslog(LOG_ERR, "Unsupported Get Request in %s\n", __FUNCTION__);
+ 			return EFAIL;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_temperaturestatus.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_temperaturestatus.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_temperaturestatus.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_temperaturestatus.c	2015-07-10 13:31:14.072208878 +0100
+@@ -80,7 +80,6 @@
+ 			break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_clock.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_clock.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_clock.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_clock.c	2015-07-10 13:31:43.619371714 +0100
+@@ -89,7 +89,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_energy.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_energy.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_energy.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_energy.c	2015-07-10 13:31:53.574417853 +0100
+@@ -133,7 +133,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_fan.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_fan.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_fan.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_fan.c	2015-07-10 13:32:00.397453984 +0100
+@@ -99,7 +99,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_mcuresetstatistics.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_mcuresetstatistics.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_mcuresetstatistics.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_mcuresetstatistics.c	2015-07-10 13:32:05.658481850 +0100
+@@ -124,7 +124,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_power.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_power.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_power.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_power.c	2015-07-10 13:32:10.919509723 +0100
+@@ -197,7 +197,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_resetstatus.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_resetstatus.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_resetstatus.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_resetstatus.c	2015-07-10 13:32:18.553550177 +0100
+@@ -187,7 +187,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_status.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_status.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_status.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_status.c	2015-07-10 13:32:30.888615570 +0100
+@@ -120,7 +120,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_wakeup.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_wakeup.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_wakeup.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_wakeup.c	2015-07-10 13:32:39.754662591 +0100
+@@ -88,7 +88,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_endpoint_profile.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_endpoint_profile.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_endpoint_profile.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_endpoint_profile.c	2015-07-10 13:33:19.654372269 +0100
+@@ -154,7 +154,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -242,7 +241,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_endpoint_security.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_endpoint_security.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_endpoint_security.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_endpoint_security.c	2015-07-10 13:33:50.300037274 +0100
+@@ -95,7 +95,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -118,7 +117,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_endpoint_stats.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_endpoint_stats.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_endpoint_stats.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_endpoint_stats.c	2015-07-10 13:34:00.732092758 +0100
+@@ -131,7 +131,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -154,7 +153,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_endpoint_wps.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_endpoint_wps.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_endpoint_wps.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_endpoint_wps.c	2015-07-10 13:34:15.354170559 +0100
+@@ -140,7 +140,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -193,7 +192,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 
+ 	return sts;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_fan_alerts.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_fan_alerts.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_fan_alerts.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_fan_alerts.c	2015-07-10 13:34:25.227223112 +0100
+@@ -106,7 +106,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_fan_speed.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_fan_speed.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_fan_speed.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_fan_speed.c	2015-07-10 13:34:31.698257565 +0100
+@@ -117,7 +117,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_frontend_x_sky_com_dvbs_tunerdefaults.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_frontend_x_sky_com_dvbs_tunerdefaults.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_frontend_x_sky_com_dvbs_tunerdefaults.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_frontend_x_sky_com_dvbs_tunerdefaults.c	2015-07-10 13:34:36.520283242 +0100
+@@ -121,7 +121,6 @@
+ 			return EFAIL;
+ 		break;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_hdmi_displaydevice.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_hdmi_displaydevice.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_hdmi_displaydevice.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_hdmi_displaydevice.c	2015-07-10 13:34:42.270313867 +0100
+@@ -182,7 +182,6 @@
+ 			syslog(LOG_ERR, "Unsupported Get Request in %s\n", __FUNCTION__);
+ 			return EFAIL;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_homeplug.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_homeplug.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_homeplug.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_homeplug.c	2015-07-10 13:34:54.587379484 +0100
+@@ -87,7 +87,6 @@
+ 
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -102,7 +101,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_homeplug_interface.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_homeplug_interface.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_homeplug_interface.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_homeplug_interface.c	2015-07-10 13:35:06.785444491 +0100
+@@ -270,7 +270,6 @@
+ 
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -375,7 +374,6 @@
+ 
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_homeplug_interface_stats.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_homeplug_interface_stats.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_homeplug_interface_stats.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_homeplug_interface_stats.c	2015-07-10 13:35:20.821519321 +0100
+@@ -323,7 +323,6 @@
+ 
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -346,7 +345,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_power_lowvoltagedetection.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_power_lowvoltagedetection.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_power_lowvoltagedetection.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_power_lowvoltagedetection.c	2015-07-10 13:35:28.874562267 +0100
+@@ -139,7 +139,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_power_powerfailure.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_power_powerfailure.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_power_powerfailure.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_power_powerfailure.c	2015-07-10 13:35:36.429602566 +0100
+@@ -101,7 +101,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_radio_stats.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_radio_stats.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_radio_stats.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_radio_stats.c	2015-07-10 13:35:48.614667578 +0100
+@@ -178,7 +178,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -202,7 +201,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_avplayers.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_avplayers.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_avplayers.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_avplayers.c	2015-07-10 13:35:55.879706350 +0100
+@@ -117,7 +117,6 @@
+ 	default:
+ 	break;
+     }
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_x_sky_com_frontpanel.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_x_sky_com_frontpanel.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_x_sky_com_frontpanel.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_x_sky_com_frontpanel.c	2015-07-10 13:36:01.215734833 +0100
+@@ -95,7 +95,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_x_sky_com_remotecontrol.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_x_sky_com_remotecontrol.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_x_sky_com_remotecontrol.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_x_sky_com_remotecontrol.c	2015-07-10 13:36:10.446784113 +0100
+@@ -153,7 +153,6 @@
+ 	    syslog(LOG_ERR, "Unsupported Get Request in %s\n", __FUNCTION__);
+ 	    return EFAIL;
+     }
+-    syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_storageservice_physicalmedium_smart.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_storageservice_physicalmedium_smart.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_storageservice_physicalmedium_smart.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_storageservice_physicalmedium_smart.c	2015-07-10 13:36:18.859829038 +0100
+@@ -232,7 +232,6 @@
+ 			break;
+ 	}
+ 	
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_temperaturestatus_temperaturesensor.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_temperaturestatus_temperaturesensor.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_temperaturestatus_temperaturesensor.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_temperaturestatus_temperaturesensor.c	2015-07-10 13:26:33.699738285 +0100
+@@ -270,7 +270,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_tuner_scanchannel.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_tuner_scanchannel.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_tuner_scanchannel.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_tuner_scanchannel.c	2015-07-10 13:36:23.757855197 +0100
+@@ -79,7 +79,6 @@
+ 			return EFAIL;
+ 		break;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb.c	2015-07-10 13:36:32.146900007 +0100
+@@ -114,7 +114,6 @@
+ 			return ENOENT;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+     return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_interface.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_interface.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_interface.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_interface.c	2015-07-10 13:36:40.789946183 +0100
+@@ -183,7 +183,6 @@
+ 			return ENOENT;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_interface_stats.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_interface_stats.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_interface_stats.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_interface_stats.c	2015-07-10 13:36:46.458976477 +0100
+@@ -212,7 +212,6 @@
+ 		default:
+ 			return ENOENT;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_port.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_port.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_port.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_port.c	2015-07-10 13:37:02.507062252 +0100
+@@ -166,7 +166,6 @@
+ 		default:
+ 			return ENOENT;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts.c	2015-07-10 13:37:07.815090630 +0100
+@@ -98,7 +98,6 @@
+ 		default:
+ 			return ENOENT;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host.c	2015-07-10 13:37:12.935118006 +0100
+@@ -179,7 +179,6 @@
+ 		default:
+ 			return ENOENT;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device.c	2015-07-10 13:37:18.348146951 +0100
+@@ -281,7 +281,6 @@
+ 		default:
+ 			return ENOENT;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device_configuration.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device_configuration.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device_configuration.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device_configuration.c	2015-07-10 13:37:25.492185159 +0100
+@@ -131,7 +131,6 @@
+ 		default:
+ 			return ENOENT;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device_configuration_interface.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device_configuration_interface.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device_configuration_interface.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_usb_usbhosts_host_device_configuration_interface.c	2015-07-10 13:37:35.410238212 +0100
+@@ -149,7 +149,6 @@
+ 		default:
+ 			return ENOENT;
+     }
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_wifi.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_wifi.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_wifi.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_wifi.c	2015-07-10 13:37:47.904305060 +0100
+@@ -110,7 +110,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -125,7 +124,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_wifi_endpoint.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_wifi_endpoint.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_wifi_endpoint.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_wifi_endpoint.c	2015-07-10 13:37:56.733335957 +0100
+@@ -165,7 +165,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -230,7 +229,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_wifi_radio.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_wifi_radio.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_wifi_radio.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_wifi_radio.c	2015-07-10 13:38:05.440365312 +0100
+@@ -405,7 +405,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -623,7 +622,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_wifi_ssid.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_wifi_ssid.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_wifi_ssid.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_wifi_ssid.c	2015-07-10 13:38:15.248399743 +0100
+@@ -189,7 +189,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EOK;
+ }
+ 
+@@ -267,7 +266,6 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_osm.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_osm.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_osm.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_osm.c	2015-07-10 13:38:48.693526654 +0100
+@@ -1373,6 +1373,5 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return sts;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbs_lnb.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbs_lnb.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbs_lnb.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbs_lnb.c	2015-07-10 13:38:54.267549062 +0100
+@@ -124,7 +124,6 @@
+ 			syslog(LOG_ERR, "Unsupported Get Request in %s\n", __FUNCTION__);
+ 			return EFAIL;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbs_tuner.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbs_tuner.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbs_tuner.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbs_tuner.c	2015-07-10 13:38:59.327569681 +0100
+@@ -459,7 +459,6 @@
+ 		}
+ 		break;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_frontpanel_buttons.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_frontpanel_buttons.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_frontpanel_buttons.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_frontpanel_buttons.c	2015-07-10 13:39:04.000588946 +0100
+@@ -115,7 +115,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_frontpanel_leds.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_frontpanel_leds.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_frontpanel_leds.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_frontpanel_leds.c	2015-07-10 13:39:10.369615538 +0100
+@@ -104,7 +104,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_reboot.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_reboot.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_reboot.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_reboot.c	2015-07-10 13:39:14.862634518 +0100
+@@ -95,7 +95,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_standby.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_standby.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_standby.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_standby.c	2015-07-10 13:39:21.005660752 +0100
+@@ -127,7 +127,6 @@
+ 		break;
+ 	}
+ 
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_wakeup_config.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_wakeup_config.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_wakeup_config.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_supportmcu_wakeup_config.c	2015-07-10 13:39:27.286687902 +0100
+@@ -157,7 +157,6 @@
+ 			syslog(LOG_ERR, "Unsupported Get Request in %s\n", __FUNCTION__);
+ 		break;
+ 	}
+-	syslog(LOG_ERR, "Error in %s, Variable: %d\n", __FUNCTION__, id);
+ 	return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_device_ethernet_interface.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_device_ethernet_interface.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_device_ethernet_interface.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_device_ethernet_interface.c	2015-07-10 14:02:29.677919366 +0100
+@@ -430,7 +430,6 @@
+ 			result = VENDOR_STATUS_UNSUPPORTED;
+ 		}
+ 	}
+-	syslog(LOG_ERR, "Error in (%s): result (%d), Variable (%d)", __func__, result, variable);
+ 	return result ;
+ }
+ 

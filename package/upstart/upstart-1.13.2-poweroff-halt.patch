@@ -1,0 +1,68 @@
+diff -Naur upstart-1.13.2/util/Makefile.am upstart-1.13.2-mod/util/Makefile.am
+--- upstart-1.13.2/util/Makefile.am	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2-mod/util/Makefile.am	2015-06-22 17:34:58.205284049 +0100
+@@ -149,13 +149,6 @@
+ 	  ln -sf "$$src" "$(DESTDIR)$(man8dir)/$$inst"; \
+ 	done
+ 
+-	src=`echo reboot | sed '$(transform)'`.8; \
+-	for symlink in halt poweroff; do \
+-	  inst=`echo $$symlink | sed '$(transform)'`.8; \
+-          echo " ln -sf '$$src' '$(DESTDIR)$(man8dir)/$$inst'"; \
+-	  ln -sf "$$src" "$(DESTDIR)$(man8dir)/$$inst"; \
+-	done
+-
+ install-exec-hook:
+ 	src=`echo initctl | sed '$(transform);s/$$/$(EXEEXT)/'`; \
+ 	for symlink in start stop restart reload status; do \
+@@ -164,15 +157,8 @@
+ 	  ln -sf "$$src" "$(DESTDIR)$(sbindir)/$$inst"; \
+ 	done
+ 
+-	src=`echo reboot | sed '$(transform);s/$$/$(EXEEXT)/'`; \
+-	for symlink in halt poweroff; do \
+-	  inst=`echo $$symlink | sed '$(transform);s/$$/$(EXEEXT)/'`; \
+-          echo " ln -sf '$$src' '$(DESTDIR)$(sbindir)/$$inst'"; \
+-	  ln -sf "$$src" "$(DESTDIR)$(sbindir)/$$inst"; \
+-	done
+-
+ uninstall-hook:
+-	for symlink in start stop restart reload status halt poweroff; do \
++	for symlink in start stop restart reload status; do \
+ 	  file=`echo $$symlink | sed '$(transform)'`.8; \
+           echo " rm -f '$(DESTDIR)$(man8dir)/$$file'"; \
+ 	  rm -f "$(DESTDIR)$(man8dir)/$$file"; \
+diff -Naur upstart-1.13.2/util/Makefile.in upstart-1.13.2-mod/util/Makefile.in
+--- upstart-1.13.2/util/Makefile.in	2014-09-04 11:54:53.000000000 +0100
++++ upstart-1.13.2-mod/util/Makefile.in	2015-06-22 17:34:20.500057722 +0100
+@@ -1587,13 +1587,6 @@
+ 	  ln -sf "$$src" "$(DESTDIR)$(man8dir)/$$inst"; \
+ 	done
+ 
+-	src=`echo reboot | sed '$(transform)'`.8; \
+-	for symlink in halt poweroff; do \
+-	  inst=`echo $$symlink | sed '$(transform)'`.8; \
+-          echo " ln -sf '$$src' '$(DESTDIR)$(man8dir)/$$inst'"; \
+-	  ln -sf "$$src" "$(DESTDIR)$(man8dir)/$$inst"; \
+-	done
+-
+ install-exec-hook:
+ 	src=`echo initctl | sed '$(transform);s/$$/$(EXEEXT)/'`; \
+ 	for symlink in start stop restart reload status; do \
+@@ -1602,15 +1595,8 @@
+ 	  ln -sf "$$src" "$(DESTDIR)$(sbindir)/$$inst"; \
+ 	done
+ 
+-	src=`echo reboot | sed '$(transform);s/$$/$(EXEEXT)/'`; \
+-	for symlink in halt poweroff; do \
+-	  inst=`echo $$symlink | sed '$(transform);s/$$/$(EXEEXT)/'`; \
+-          echo " ln -sf '$$src' '$(DESTDIR)$(sbindir)/$$inst'"; \
+-	  ln -sf "$$src" "$(DESTDIR)$(sbindir)/$$inst"; \
+-	done
+-
+ uninstall-hook:
+-	for symlink in start stop restart reload status halt poweroff; do \
++	for symlink in start stop restart reload status; do \
+ 	  file=`echo $$symlink | sed '$(transform)'`.8; \
+           echo " rm -f '$(DESTDIR)$(man8dir)/$$file'"; \
+ 	  rm -f "$(DESTDIR)$(man8dir)/$$file"; \

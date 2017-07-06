@@ -1,0 +1,10 @@
+--- strace-4.5.14.orig/system.c 2008-05-15 20:23:16.000000000 -0700
++++ strace-4.5.14/system.c 2008-05-15 20:24:03.000000000 -0700
+@@ -65,7 +65,7 @@
+ #include <linux/capability.h>
+ #endif
+ 
+-#ifdef SYS_cacheflush
++#if defined SYS_cacheflush && !defined ARM
+ #include <asm/cachectl.h>
+ #endif

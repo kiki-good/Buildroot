@@ -1,0 +1,523 @@
+--- bluez-5.8_old/client/main.c	2013-06-26 17:17:07.000000000 +0100
++++ bluez-5.8/client/main.c	2015-10-15 19:39:50.621375321 +0100
+@@ -726,6 +726,240 @@
+ 	}
+ }
+ 
++static void append_variant(DBusMessageIter *iter, int type, void *val)
++{
++	DBusMessageIter value;
++	char sig[2] = { type, '\0' };
++
++	dbus_message_iter_open_container(iter, DBUS_TYPE_VARIANT, sig, &value);
++
++	dbus_message_iter_append_basic(&value, type, val);
++
++	dbus_message_iter_close_container(iter, &value);
++}
++
++static void dict_append_entry(DBusMessageIter *dict, const char *key,
++							int type, void *val)
++{
++	DBusMessageIter entry;
++
++	if (type == DBUS_TYPE_STRING) {
++		const char *str = *((const char **) val);
++
++		if (str == NULL)
++			return;
++	}
++
++	dbus_message_iter_open_container(dict, DBUS_TYPE_DICT_ENTRY,
++							NULL, &entry);
++
++	dbus_message_iter_append_basic(&entry, DBUS_TYPE_STRING, &key);
++
++	append_variant(&entry, type, val);
++
++	dbus_message_iter_close_container(dict, &entry);
++}
++
++#define	DISTANCE_VAL_INVALID	0x7FFF
++#define SCAN_IDLE_TIME_DEFAULT  -1
++
++struct set_discovery_filter_args {
++	char *transport;
++	dbus_uint16_t rssi;
++	dbus_int16_t pathloss;    
++    dbus_int32_t idle_time;
++	GSList *uuids;
++};
++
++static void set_discovery_filter_setup(DBusMessageIter *iter,
++					   void *user_data)
++{
++	struct set_discovery_filter_args *args = user_data;
++	DBusMessageIter dict;
++
++	dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
++			    DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING
++			    DBUS_TYPE_STRING_AS_STRING
++			    DBUS_TYPE_VARIANT_AS_STRING
++			    DBUS_DICT_ENTRY_END_CHAR_AS_STRING, &dict);
++
++	if (args->uuids != NULL) {
++		DBusMessageIter entry, value, arrayIter;
++		char *uuids = "UUIDs";
++		GSList *l;
++
++		dbus_message_iter_open_container(&dict, DBUS_TYPE_DICT_ENTRY,
++						 NULL, &entry);
++		/* dict key */
++		dbus_message_iter_append_basic(&entry, DBUS_TYPE_STRING,
++					       &uuids);
++
++		dbus_message_iter_open_container(&entry, DBUS_TYPE_VARIANT,
++						 "as", &value);
++
++		dbus_message_iter_open_container(&value, DBUS_TYPE_ARRAY, "s",
++						 &arrayIter);
++
++		for (l = args->uuids; l != NULL; l = g_slist_next(l))
++			/* list->data contains string representation of uuid */
++			dbus_message_iter_append_basic(&arrayIter,
++						       DBUS_TYPE_STRING,
++						       &l->data);
++
++		dbus_message_iter_close_container(&value, &arrayIter);
++
++		/* close vararg*/
++		dbus_message_iter_close_container(&entry, &value);
++
++		/* close entry */
++		dbus_message_iter_close_container(&dict, &entry);
++	}
++
++	if (args->pathloss != DISTANCE_VAL_INVALID)
++		dict_append_entry(&dict, "Pathloss", DBUS_TYPE_UINT16,
++				  &args->pathloss);
++
++	if (args->rssi != DISTANCE_VAL_INVALID)
++		dict_append_entry(&dict, "RSSI", DBUS_TYPE_INT16, &args->rssi);
++
++	if (args->transport != NULL)
++		dict_append_entry(&dict, "Transport", DBUS_TYPE_STRING,
++				  &args->transport);
++
++	if (args->idle_time != SCAN_IDLE_TIME_DEFAULT)
++		dict_append_entry(&dict, "IdleTime", DBUS_TYPE_INT32,
++				  &args->idle_time);
++
++	dbus_message_iter_close_container(iter, &dict);
++}
++
++
++static void set_discovery_filter_reply(DBusMessage *message,
++				       void *user_data)
++{
++	DBusError error;
++
++	dbus_error_init(&error);
++	if (dbus_set_error_from_message(&error, message) == TRUE) {
++		rl_printf("SetDiscoveryFilter failed: %s\n", error.name);
++		dbus_error_free(&error);
++		return;
++	}
++
++	rl_printf("SetDiscoveryFilter success\n");
++}
++
++static gint filtered_scan_rssi = DISTANCE_VAL_INVALID;
++static gint filtered_scan_pathloss = DISTANCE_VAL_INVALID;
++static GSList *filtered_scan_uuids;
++static char *filtered_scan_transport;
++static gint filtered_scan_idle_time = SCAN_IDLE_TIME_DEFAULT;
++
++static void cmd_set_scan_filter_commit(void)
++{
++	struct set_discovery_filter_args args;
++
++	args.uuids = NULL;
++	args.pathloss = filtered_scan_pathloss;
++	args.rssi = filtered_scan_rssi;
++	args.transport = filtered_scan_transport;
++	args.uuids = filtered_scan_uuids;
++    args.idle_time = filtered_scan_idle_time;
++
++	if (check_default_ctrl() == FALSE)
++		return;
++
++	if (g_dbus_proxy_method_call(default_ctrl, "SetDiscoveryFilter",
++		set_discovery_filter_setup, set_discovery_filter_reply,
++		&args, NULL) == FALSE) {
++		rl_printf("Failed to set discovery filter\n");
++		return;
++	}
++}
++
++static void cmd_set_scan_filter_uuids(const char *arg)
++{
++	char *uuid_str, *saveptr, *uuids, *uuidstmp;
++
++	g_slist_free_full(filtered_scan_uuids, g_free);
++	filtered_scan_uuids = NULL;
++
++	if (!arg || !strlen(arg))
++		return;
++
++	uuids = g_strdup(arg);
++	for (uuidstmp = uuids; ; uuidstmp = NULL) {
++		uuid_str = strtok_r(uuidstmp, " \t", &saveptr);
++		if (uuid_str == NULL)
++			break;
++	    filtered_scan_uuids = g_slist_append(filtered_scan_uuids,
++							strdup(uuid_str));
++	}
++
++	g_free(uuids);
++
++	cmd_set_scan_filter_commit();
++}
++
++static void cmd_set_scan_filter_rssi(const char *arg)
++{
++	filtered_scan_pathloss = DISTANCE_VAL_INVALID;
++
++	if (!arg || !strlen(arg))
++		filtered_scan_rssi = DISTANCE_VAL_INVALID;
++	else
++		filtered_scan_rssi = atoi(arg);
++
++	cmd_set_scan_filter_commit();
++}
++
++static void cmd_set_scan_filter_pathloss(const char *arg)
++{
++	filtered_scan_rssi = DISTANCE_VAL_INVALID;
++
++	if (!arg || !strlen(arg))
++		filtered_scan_pathloss = DISTANCE_VAL_INVALID;
++	else
++		filtered_scan_pathloss = atoi(arg);
++
++	cmd_set_scan_filter_commit();
++}
++
++static void cmd_set_scan_filter_transport(const char *arg)
++{
++	g_free(filtered_scan_transport);
++
++	if (!arg || !strlen(arg))
++		filtered_scan_transport = NULL;
++	else
++		filtered_scan_transport = g_strdup(arg);
++
++	cmd_set_scan_filter_commit();
++}
++
++static void cmd_set_scan_filter_idle_time(const char *arg)
++{
++	if (!arg || !strlen(arg))
++		filtered_scan_idle_time = DISTANCE_VAL_INVALID;
++	else
++		filtered_scan_idle_time = atoi(arg);
++
++	cmd_set_scan_filter_commit();
++}
++
++static void cmd_set_scan_filter_clear(const char *arg)
++{
++	/* set default values for all options */
++	filtered_scan_rssi = DISTANCE_VAL_INVALID;
++	filtered_scan_pathloss = DISTANCE_VAL_INVALID;
++	g_slist_free_full(filtered_scan_uuids, g_free);
++	filtered_scan_uuids = NULL;
++	g_free(filtered_scan_transport);
++	filtered_scan_transport = NULL;
++    filtered_scan_idle_time = SCAN_IDLE_TIME_DEFAULT;
++	cmd_set_scan_filter_commit();
++}
++
+ static void cmd_info(const char *arg)
+ {
+ 	GDBusProxy *proxy;
+@@ -1058,7 +1292,20 @@
+ 				"Enable/disable agent with given capability",
+ 							capability_generator},
+ 	{ "default-agent",NULL,       cmd_default_agent,
+-				"Set agent as the default one" },
++			"Set agent as the default one" },
++    { "set-scan-filter-uuids", "[uuid1 uuid2 ...]",
++            cmd_set_scan_filter_uuids, "Set scan filter uuids" },
++    { "set-scan-filter-rssi", "[rssi]", cmd_set_scan_filter_rssi,
++                "Set scan filter rssi, and clears pathloss" },
++    { "set-scan-filter-pathloss", "[pathloss]",
++                        cmd_set_scan_filter_pathloss,
++                "Set scan filter pathloss, and clears rssi" },
++    { "set-scan-filter-transport", "[transport]",        
++        cmd_set_scan_filter_transport, "Set scan filter transport" },        
++    { "set-scan-filter-idle-time", "[idle-time]",
++        cmd_set_scan_filter_idle_time, "Set scan filter idle time" },
++    { "set-scan-filter-clear", "", cmd_set_scan_filter_clear,
++        "Clears discovery filter." },
+ 	{ "scan",         "<on/off>", cmd_scan, "Scan for devices" },
+ 	{ "info",         "<dev>",    cmd_info, "Device information",
+ 							dev_generator },
+--- bluez-5.8_old/src/adapter.c	2015-10-15 14:26:28.482159985 +0100
++++ bluez-5.8/src/adapter.c	2015-10-15 20:20:28.808781828 +0100
+@@ -89,6 +89,15 @@
+ #define TEMP_DEV_TIMEOUT (30)
+ #define BONDING_TIMEOUT (2 * 60)
+ 
++#define SCAN_TYPE_BREDR (1 << BDADDR_BREDR)
++#define SCAN_TYPE_LE ((1 << BDADDR_LE_PUBLIC) | (1 << BDADDR_LE_RANDOM))
++#define SCAN_TYPE_DUAL (SCAN_TYPE_BREDR | SCAN_TYPE_LE)
++
++#define HCI_RSSI_INVALID	127
++#define DISTANCE_VAL_INVALID	0x7FFF
++#define PATHLOSS_MAX		137
++#define SCAN_IDLE_TIME_DEFAULT -1
++
+ static DBusConnection *dbus_conn = NULL;
+ 
+ static GList *adapter_list = NULL;
+@@ -105,6 +114,14 @@
+ 
+ static GSList *adapter_drivers = NULL;
+ 
++struct discovery_filter {
++	uint8_t type;
++	uint16_t pathloss;
++	int16_t rssi;
++    int32_t idle_time;
++	GSList *uuids;
++};
++
+ struct watch_client {
+ 	struct btd_adapter *adapter;
+ 	char *owner;
+@@ -191,6 +208,8 @@
+ 	guint pair_device_timeout;
+ 
+ 	bool is_default;		/* true if adapter is default one */
++
++    struct discovery_filter *discovery_filter;
+ };
+ 
+ static struct btd_adapter *btd_adapter_lookup(uint16_t index)
+@@ -1273,8 +1292,6 @@
+ 	struct mgmt_cp_start_discovery cp;
+ 	uint8_t new_type;
+ 
+-	DBG("");
+-
+ 	adapter->discovery_idle_timeout = 0;
+ 
+ 	if (adapter->current_settings & MGMT_SETTING_BREDR)
+@@ -1285,6 +1302,13 @@
+ 	if (adapter->current_settings & MGMT_SETTING_LE)
+ 		new_type |= (1 << BDADDR_LE_PUBLIC) | (1 << BDADDR_LE_RANDOM);
+ 
++    // if there is a discovery filter and it is not set to 'auto' use the filter transport type
++    if (adapter->discovery_filter && adapter->discovery_filter->type != SCAN_TYPE_DUAL) {
++        new_type = adapter->discovery_filter->type;
++    }
++
++    DBG("new_type = %d",new_type);
++    
+ 	if (adapter->discovery_enable == 0x01) {
+ 		/*
+ 		 * If there is an already running discovery and it has the
+@@ -1326,7 +1350,7 @@
+ static void trigger_start_discovery(struct btd_adapter *adapter, guint delay)
+ {
+ 
+-	DBG("");
++	DBG("delay = %d",delay);
+ 
+ 	cancel_passive_scanning(adapter);
+ 
+@@ -1457,7 +1481,11 @@
+ 
+ 	switch (adapter->discovery_enable) {
+ 	case 0x00:
+-		trigger_start_discovery(adapter, IDLE_DISCOV_TIMEOUT);
++        if (adapter->discovery_filter && adapter->discovery_filter->idle_time != SCAN_IDLE_TIME_DEFAULT) {
++    		trigger_start_discovery(adapter, adapter->discovery_filter->idle_time);
++        } else  {
++    		trigger_start_discovery(adapter, IDLE_DISCOV_TIMEOUT);
++        }        
+ 		break;
+ 
+ 	case 0x01:
+@@ -1652,6 +1680,152 @@
+ 	return dbus_message_new_method_return(msg);
+ }
+ 
++static bool parse_idle_time(DBusMessageIter *value, int32_t *idle_time)
++{
++	if (dbus_message_iter_get_arg_type(value) != DBUS_TYPE_INT32)
++		return false;
++
++	dbus_message_iter_get_basic(value, idle_time);
++	/* pathloss filter must be smaller that PATHLOSS_MAX */
++	return true;
++}
++
++static bool parse_transport(DBusMessageIter *value, uint8_t *transport)
++{
++	char *transport_str;
++
++	if (dbus_message_iter_get_arg_type(value) != DBUS_TYPE_STRING)
++		return false;
++
++	dbus_message_iter_get_basic(value, &transport_str);
++
++	if (!strcmp(transport_str, "bredr"))
++		*transport = SCAN_TYPE_BREDR;
++	else if (!strcmp(transport_str, "le"))
++		*transport = SCAN_TYPE_LE;
++	else if (!strcmp(transport_str, "auto"))
++		*transport = SCAN_TYPE_DUAL;
++	else
++		return false;
++
++	return true;
++}
++
++static bool parse_discovery_filter_entry(char *key, DBusMessageIter *value,
++						struct discovery_filter *filter)
++{
++	if (!strcmp("Transport", key))
++		return parse_transport(value, &filter->type);
++
++	if (!strcmp("IdleTime", key))
++		return parse_idle_time(value, &filter->idle_time);
++
++	DBG("Unknown key parameter: %s!\n", key);
++	return false;
++}
++
++/*
++ * This method is responsible for parsing parameters to SetDiscoveryFilter. If
++ * filter in msg was empty, sets *filter to NULL. If whole parsing was
++ * successful, sets *filter to proper value.
++ * Returns false on any error, and true on success.
++ */
++static bool parse_discovery_filter_dict(struct discovery_filter **filter,
++							DBusMessage *msg)
++{
++	DBusMessageIter iter, subiter, dictiter, variantiter;
++	bool is_empty = true;
++
++	*filter = g_try_malloc(sizeof(**filter));
++	if (!*filter)
++		return false;
++
++	(*filter)->uuids = NULL;
++	(*filter)->pathloss = DISTANCE_VAL_INVALID;
++	(*filter)->rssi = DISTANCE_VAL_INVALID;
++	(*filter)->type = SCAN_TYPE_DUAL;
++    (*filter)->idle_time = SCAN_IDLE_TIME_DEFAULT;
++
++	dbus_message_iter_init(msg, &iter);
++	if (dbus_message_iter_get_arg_type(&iter) != DBUS_TYPE_ARRAY ||
++	    dbus_message_iter_get_element_type(&iter) != DBUS_TYPE_DICT_ENTRY)
++		goto invalid_args;
++
++	dbus_message_iter_recurse(&iter, &subiter);
++	do {
++		int type = dbus_message_iter_get_arg_type(&subiter);
++		char *key;
++
++		if (type == DBUS_TYPE_INVALID)
++			break;
++
++		is_empty = false;
++		dbus_message_iter_recurse(&subiter, &dictiter);
++
++		dbus_message_iter_get_basic(&dictiter, &key);
++		if (!dbus_message_iter_next(&dictiter))
++			goto invalid_args;
++
++		if (dbus_message_iter_get_arg_type(&dictiter) !=
++							     DBUS_TYPE_VARIANT)
++			goto invalid_args;
++
++		dbus_message_iter_recurse(&dictiter, &variantiter);
++
++		if (!parse_discovery_filter_entry(key, &variantiter, *filter))
++			goto invalid_args;
++
++		dbus_message_iter_next(&subiter);
++	} while (true);
++
++	if (is_empty) {
++		g_free(*filter);
++		*filter = NULL;        
++        DBG("filtered discovery params empty clearing filter");
++		return true;
++	}
++
++	/* only pathlos or rssi can be set, never both */
++	if ((*filter)->pathloss != DISTANCE_VAL_INVALID &&
++	    (*filter)->rssi != DISTANCE_VAL_INVALID)
++		goto invalid_args;
++
++	DBG("filtered discovery params: transport: %d rssi: %d pathloss: %d idle_time: %d",
++	    (*filter)->type, (*filter)->rssi, (*filter)->pathloss, (*filter)->idle_time);
++
++	return true;
++
++invalid_args:
++	g_slist_free_full((*filter)->uuids, g_free);
++	g_free(*filter);
++	*filter = NULL;
++	return false;
++}
++
++static DBusMessage *set_discovery_filter(DBusConnection *conn,
++					DBusMessage *msg, void *user_data)
++{
++	struct btd_adapter *adapter = user_data;
++	struct watch_client *client;
++	struct discovery_filter *discovery_filter = NULL;
++	const char *sender = dbus_message_get_sender(msg);
++	bool is_discovering;
++
++	DBG("sender %s", sender);
++
++	if (!(adapter->current_settings & MGMT_SETTING_POWERED))
++		return btd_error_not_ready(msg);
++
++	/* parse parameters */
++	if (!parse_discovery_filter_dict(&discovery_filter, msg))
++		return btd_error_invalid_args(msg);
++
++    g_free(adapter->discovery_filter);
++    adapter->discovery_filter = discovery_filter;
++
++	return dbus_message_new_method_return(msg);
++}
++
+ static DBusMessage *stop_discovery(DBusConnection *conn,
+ 					DBusMessage *msg, void *user_data)
+ {
+@@ -2162,6 +2336,9 @@
+ 
+ static const GDBusMethodTable adapter_methods[] = {
+ 	{ GDBUS_METHOD("StartDiscovery", NULL, NULL, start_discovery) },
++    { GDBUS_METHOD("SetDiscoveryFilter",
++				GDBUS_ARGS({ "properties", "a{sv}" }), NULL,
++				set_discovery_filter) },
+ 	{ GDBUS_METHOD("StopDiscovery", NULL, NULL, stop_discovery) },
+ 	{ GDBUS_ASYNC_METHOD("RemoveDevice",
+ 			GDBUS_ARGS({ "device", "o" }), NULL, remove_device) },
+@@ -2956,6 +3133,7 @@
+ 	g_free(adapter->stored_alias);
+ 	g_free(adapter->current_alias);
+ 	g_free(adapter->modalias);
++    g_free(adapter->discovery_filter);
+ 	g_free(adapter);
+ }
+ 

@@ -1,0 +1,220 @@
+diff -Naur plc-utils-0.00/ether/Makefile plc-utils-0.00_mod/ether/Makefile
+--- plc-utils-0.00/ether/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/ether/Makefile	2015-04-13 11:25:44.615796940 +0100
+@@ -27,13 +27,13 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ install: $(TOOLS) library
+-	install -m ${SUID_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f ${TOOLS}
+ check:
+diff -Naur plc-utils-0.00/key/Makefile plc-utils-0.00_mod/key/Makefile
+--- plc-utils-0.00/key/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/key/Makefile	2015-04-13 11:16:26.335782609 +0100
+@@ -28,13 +28,13 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ install: $(TOOLS)
+-	install -m ${BIN_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f ${TOOLS}
+ 	cd ${MAN}; rm -f ${PAGES}
+diff -Naur plc-utils-0.00/mdio/Makefile plc-utils-0.00_mod/mdio/Makefile
+--- plc-utils-0.00/mdio/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/mdio/Makefile	2015-04-13 11:25:01.651795837 +0100
+@@ -27,13 +27,13 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ install: $(TOOLS) library
+-	install -m ${BIN_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f int6k ${TOOLS}
+ 	cd ${MAN}; rm -f int6k ${PAGES}
+diff -Naur plc-utils-0.00/mme/Makefile plc-utils-0.00_mod/mme/Makefile
+--- plc-utils-0.00/mme/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/mme/Makefile	2015-04-13 11:46:29.863828906 +0100
+@@ -27,13 +27,13 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ install: $(TOOLS) library
+-	install -m ${BIN_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f ${TOOLS}
+ check:
+diff -Naur plc-utils-0.00/nvm/Makefile plc-utils-0.00_mod/nvm/Makefile
+--- plc-utils-0.00/nvm/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/nvm/Makefile	2015-04-13 11:16:12.007782240 +0100
+@@ -28,12 +28,12 @@
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ install: $(TOOLS) library
+-	install -m ${BIN_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f ${TOOLS}
+ check:
+diff -Naur plc-utils-0.00/pib/Makefile plc-utils-0.00_mod/pib/Makefile
+--- plc-utils-0.00/pib/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/pib/Makefile	2015-04-13 11:28:36.987801364 +0100
+@@ -30,12 +30,12 @@
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ install: $(TOOLS) library
+-	install -m ${BIN_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f ${TOOLS} 
+ check:
+diff -Naur plc-utils-0.00/plc/Makefile plc-utils-0.00_mod/plc/Makefile
+--- plc-utils-0.00/plc/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/plc/Makefile	2015-04-13 11:15:03.787780490 +0100
+@@ -32,13 +32,13 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ install: $(TOOLS) library
+-	install -m ${SUID_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f int6k ${TOOLS}
+ 	cd ${MAN}; rm -f int6k ${PAGES}
+diff -Naur plc-utils-0.00/ram/Makefile plc-utils-0.00_mod/ram/Makefile
+--- plc-utils-0.00/ram/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/ram/Makefile	2015-04-13 11:27:26.043799544 +0100
+@@ -27,13 +27,13 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ install: $(TOOLS) library
+-	install -m ${BIN_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f ${TOOLS}
+ 	cd ${MAN}; rm -f ${PAGES}
+diff -Naur plc-utils-0.00/serial/Makefile plc-utils-0.00_mod/serial/Makefile
+--- plc-utils-0.00/serial/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/serial/Makefile	2015-04-13 11:27:59.847800411 +0100
+@@ -27,13 +27,13 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+-	test -d ${MAN} || install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	test -d ${MAN} || install -d ${MAN}
++	install ${PAGES} ${MAN}
+ install: $(TOOLS) library
+-	install -m ${BIN_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f int6k ${TOOLS}
+ 	cd ${MAN}; rm -f int6k ${PAGES}
+diff -Naur plc-utils-0.00/slac/Makefile plc-utils-0.00_mod/slac/Makefile
+--- plc-utils-0.00/slac/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/slac/Makefile	2015-04-13 11:26:47.219798547 +0100
+@@ -27,13 +27,13 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+-	if [ ! -d ${MAN} ]; then install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${MAN}; fi
+-	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}
++	if [ ! -d ${MAN} ]; then install -d ${MAN}; fi
++	install ${PAGES} ${MAN}
+ install: compile library
+-	install -m ${SUID_PERM} -o ${OWNER} -g ${GROUP} ${TOOLS} ${BIN}
++	install ${TOOLS} ${BIN}
+ uninstall:
+ 	cd ${BIN}; rm -f plc ${TOOLS}
+ 	cd ${MAN}; rm -f plc ${PAGES}
+diff -Naur plc-utils-0.00/tools/Makefile plc-utils-0.00_mod/tools/Makefile
+--- plc-utils-0.00/tools/Makefile	2015-02-23 20:22:08.000000000 +0000
++++ plc-utils-0.00_mod/tools/Makefile	2015-04-13 11:26:05.135797467 +0100
+@@ -27,7 +27,7 @@
+ 	if [ ! -z ${STRIP} ]; then ${STRIP} ${TOOLS}; fi
+ 	if [ -x /usr/local/bin/upx ]; then upx --best ${TOOLS}; fi
+ library:
+-	install -m ${DIR_PERM} -o ${OWNER} -g ${GROUP} -d ${BIN}
++	install -d ${BIN}
+ scripts:
+ manuals:
+ #	install -m ${MAN_PERM} -o ${OWNER} -g ${GROUP} ${PAGES} ${MAN}

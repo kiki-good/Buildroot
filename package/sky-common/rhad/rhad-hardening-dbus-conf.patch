@@ -1,0 +1,39 @@
+diff -Naur rhad/rhad.conf rhad_mod/rhad.conf
+--- rhad/rhad.conf	2015-10-08 13:01:30.000000000 +0100
++++ rhad_mod/rhad.conf	2015-10-13 11:42:31.407488126 +0100
+@@ -3,7 +3,7 @@
+  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+ <busconfig>
+ 
+-        <policy user="system">
++        <policy user="RCU_USR">
+                 <allow own="com.sky.rhad"/>
+                 <allow send_destination="com.sky.rhad"/>
+ 		<allow send_interface="com.sky.rhad.Device1"/>
+@@ -14,7 +14,8 @@
+                 <allow receive_sender="com.sky.rhad"/>
+         </policy>
+ 
+-        <policy user="root">
++        <policy user="NDS_U3">
++                <allow own="com.sky.rhad"/>
+                 <allow send_destination="com.sky.rhad"/>
+ 		<allow send_interface="com.sky.rhad.Device1"/>
+ 		<allow send_interface="com.sky.rhad.Audio1"/>
+@@ -24,7 +25,7 @@
+                 <allow receive_sender="com.sky.rhad"/>
+         </policy>
+ 
+-        <policy user="darwin">
++        <policy user="root">
+                 <allow send_destination="com.sky.rhad"/>
+ 		<allow send_interface="com.sky.rhad.Device1"/>
+ 		<allow send_interface="com.sky.rhad.Audio1"/>
+@@ -34,7 +35,6 @@
+                 <allow receive_sender="com.sky.rhad"/>
+         </policy>
+ 
+-
+         <policy context="default">
+                 <deny send_destination="com.sky.rhad"/>
+                 <deny receive_sender="com.sky.rhad"/>

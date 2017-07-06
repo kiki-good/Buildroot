@@ -1,0 +1,8 @@
+--- ltp-full-20070228/testcases/misc/Makefile	2007-03-01 04:40:32.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/misc/Makefile	2013-05-23 18:48:12.456165022 +0100
+@@ -1,4 +1,4 @@
+-SUBDIRS = crash f00f math 
++SUBDIRS = crash f00f 
+ 
+ all:
+ 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

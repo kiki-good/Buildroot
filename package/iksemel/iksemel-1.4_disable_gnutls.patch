@@ -1,0 +1,12 @@
+diff -rupaN iksemel-1.4/configure iksemel-1.4_Patched/configure
+--- iksemel-1.4/configure	2009-07-23 12:17:01.000000000 +0100
++++ iksemel-1.4_Patched/configure	2014-09-18 17:33:34.245909914 +0100
+@@ -21441,7 +21441,7 @@ fi
+ $as_echo "yes" >&6; }
+ 
+ cat >>confdefs.h <<\_ACEOF
+-#define HAVE_GNUTLS /**/
++#undef HAVE_GNUTLS /**/
+ _ACEOF
+ 
+   else

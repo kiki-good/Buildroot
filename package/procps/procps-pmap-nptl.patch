@@ -1,0 +1,72 @@
+This patch lets the pmap utility handle multi-threaded NPTL apps.
+
+In NPTL, /proc/PID/maps becomes /proc/PID/task/TID/maps, where PID is
+the process id (pid) and TID is the thread id. For each thread of a
+given process, the maps file is the same, so pmap just needs to read
+one of them. Unfortunately, although /proc/PID/task/TID/maps exists
+for threaded apps, it is empty. So this patch adds code to derive the
+id of one of the process's threads and read its map file. If the
+process isn't a multi-threaded NPTL app, it continues to use
+/proc/PID/maps.
+
+Index: procps-3.2.7/pmap.c
+===================================================================
+--- procps-3.2.7.orig/pmap.c
++++ procps-3.2.7/pmap.c
+@@ -17,6 +17,7 @@
+ #include <fcntl.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <dirent.h>
+ 
+ #include <sys/ipc.h>
+ #include <sys/shm.h>
+@@ -120,7 +121,7 @@ static const char *mapping_name(proc_t *
+ }
+ 
+ static int one_proc(proc_t *p){
+-  char buf[32];
++  char buf[64];
+   char mapbuf[9600];
+   char cmdbuf[512];
+   unsigned long total_shared = 0ul;
+@@ -131,7 +132,38 @@ static int one_proc(proc_t *p){
+   // uses the tty width to determine this.
+   int maxcmd = 0xfffff;
+ 
+-  sprintf(buf,"/proc/%u/maps",p->tgid);
++  DIR *dir;
++  struct dirent *ent;
++  unsigned long tid = 0;
++
++  // Determine if process is NPTL and multi-threaded
++  sprintf(buf, "/proc/%u/task", p->tgid);
++  dir = opendir(buf);
++  if (dir != NULL) {
++    for (;;) {
++      char *endptr;
++
++      tid = 0;
++      ent = readdir(dir);
++      if (ent == NULL) {
++	break;
++      }
++      tid = strtoul(ent->d_name, &endptr, 10);
++      if (*endptr == '\0') {
++	if (tid == (unsigned long) p->tgid) {
++	  continue;
++	}
++	break;
++      }
++    }
++    closedir(dir);
++  }
++
++  if ((tid != 0) && (tid != (unsigned long) p->tgid)) {
++    sprintf(buf,"/proc/%u/task/%lu/maps",p->tgid, tid);
++  } else {
++    sprintf(buf,"/proc/%u/maps",p->tgid);
++  }
+   if(!freopen(buf, "r", stdin)) return 1;
+ 
+   escape_command(cmdbuf, p, sizeof cmdbuf, &maxcmd, ESC_ARGS|ESC_BRACKETS);

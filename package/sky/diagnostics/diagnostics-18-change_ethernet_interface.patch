@@ -1,0 +1,254 @@
+diff -Naurr diagnostics-1.3_orig/apps/cwmd/cwmd_connreq.c diagnostics-1.3_new/apps/cwmd/cwmd_connreq.c
+--- diagnostics-1.3_orig/apps/cwmd/cwmd_connreq.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/cwmd/cwmd_connreq.c	2015-05-15 09:57:48.420843197 +0100
+@@ -1260,11 +1260,7 @@
+           * Changing for Dallas STB
+           strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
+          */
+-         if (EOK != get_eth_interface(ifr.ifr_name, IFNAMSIZ-1)) {
+-             cwmd_log(LOG_WARNING, "connreq: failed to get eth interface: %s. Setting to eth0", 
+-                      strerror(err));
+-             strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
+-         }
++         strncpy(ifr.ifr_name, "br0", IFNAMSIZ-1);
+          ioctl(ifr_fd, SIOCGIFADDR, &ifr);
+          close(ifr_fd);
+ 
+diff -Naurr diagnostics-1.3_orig/apps/iptest/main.c diagnostics-1.3_new/apps/iptest/main.c
+--- diagnostics-1.3_orig/apps/iptest/main.c	2015-05-14 17:06:19.000000000 +0100
++++ diagnostics-1.3_new/apps/iptest/main.c	2015-05-20 13:53:22.786267396 +0100
+@@ -18,11 +18,11 @@
+ /*---------------------------------------------------------------------------
+ ** Includes
+ */
++#include <sys/ioctl.h>
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
+ #include <sys/socket.h>
+-#include <netdb.h>
+-#include <ifaddrs.h>
++#include <sys/types.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -30,13 +30,13 @@
+ #include <linux/if.h>
+ #include <stdbool.h>
+ #include <syslog.h>
++#include <string.h>
+ 
+ /*---------------------------------------------------------------------------
+ ** Defines and Macros
+ */
+ #define SKY_TR69_IPTEST_SLEEP_TIME           (60)
+-#define SKY_TR69_IPTEST_HOSTNAME_MAX         (1025)
+-#define SKY_TR69_BSKYB_NODE_ADDRESS          ("www.sky.com")
++#define SKY_TR69_IPTEST_NO_IP_ADDRESS_SLEEP_TIME  (15)
+ 
+ /*---------------------------------------------------------------------------
+ ** Data
+@@ -49,82 +49,53 @@
+ 
+ int main(int argc, char *argv[])
+ {
+-	struct ifaddrs *ifap, *ifa;
++	int ifr_fd;
++	struct ifreq ifr;
+ 	struct sockaddr_in *sa;
+-	struct addrinfo *addrInfo;
+-	struct addrinfo *tmpAddr;
+ 	bool isIPObtained = false;
+-	bool isDNSWorking = false;
+ 	bool secondIteration = false;
+ 	char *addr;
+-	char hostname[SKY_TR69_IPTEST_HOSTNAME_MAX] = "";
+ 	int it = 0;
+ 	int error;
+ 		
+-	fprintf(stderr, "\n[======================= TR069 - IP & DNS Test =======================]\n");
++	fprintf(stderr, "\n[======================= TR069 - IP Test =======================]\n");
+ 	
+ 	for (;;) {
+ 
+ 		isIPObtained = false;
+-		isDNSWorking = false;
+ 
+ 		if (!secondIteration) {
+ 			fprintf(stderr, "\n[TR069] Checking for IP address - iteration %d\n",  ++it);
+ 		} else {
+-			fprintf(stderr, "\n[TR069] Checking again for IP address & DNS \n");
++			fprintf(stderr, "\n[TR069] Checking again for IP address \n");
+ 		}
+ 
+-		getifaddrs (&ifap);
+-		for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+-			if ((strcmp("lo", ifa->ifa_name) == 0) || !(ifa->ifa_flags & (IFF_RUNNING))) {
+-				continue;
+-			}
+-			if (ifa->ifa_addr->sa_family == AF_INET) {
+-				sa = (struct sockaddr_in *) ifa->ifa_addr;
+-				addr = inet_ntoa(sa->sin_addr);
+-				fprintf(stderr, "\n[TR069] Found valid IP address <%s>\n", addr);
+-				isIPObtained = true;
+-				break;
+-			}
+-		}
+-		freeifaddrs(ifap);
+-
+-		if(isIPObtained == true) {
+-			/* resolve the domain name into a list of addresses */
+-			error = getaddrinfo(SKY_TR69_BSKYB_NODE_ADDRESS, NULL, NULL, &addrInfo);
+-			if (error != 0) {   
+-				fprintf(stderr, "\n[TR069] Failed to resolve domain name : %s\n", gai_strerror(error));
+-			} else {
+-				for (tmpAddr = addrInfo; tmpAddr != NULL; tmpAddr = tmpAddr->ai_next) {   
+-
+-					error = getnameinfo(tmpAddr->ai_addr, tmpAddr->ai_addrlen, hostname, 
+-					                    SKY_TR69_IPTEST_HOSTNAME_MAX, NULL, 0, 0); 
+-					if (error != 0) {
+-						fprintf(stderr, "\n[TR069] Failed to get hostname : %s\n", gai_strerror(error));
+-						continue;
+-					}
+-
+-					if (*hostname != '\0') {
+-						isDNSWorking = true;
+-					}
+-				}   
+-				freeaddrinfo(addrInfo);
+-			}
+-			
+-			fprintf(stderr, "\n[TR069] DNS is %s \n", isDNSWorking ? "working" : "not working");
++         	ifr_fd = socket(AF_INET, SOCK_DGRAM, 0);
++         	ifr.ifr_addr.sa_family = AF_INET;
++         	strncpy(ifr.ifr_name, "br0", IFNAMSIZ-1);
++         	if (ioctl(ifr_fd, SIOCGIFADDR, &ifr) == -1) {
++	        	close(ifr_fd);
++			sleep(SKY_TR69_IPTEST_NO_IP_ADDRESS_SLEEP_TIME);
++			continue;
++		}else{
++		        close(ifr_fd);
++			fprintf(stderr, "\n[TR069] Interface <%s>\n", ifr.ifr_name);
++			sa = (struct sockaddr_in *)&ifr.ifr_addr;
++			addr = inet_ntoa(sa->sin_addr);
++			fprintf(stderr, "\n[TR069] Found valid IP address <%s>\n", addr);
++			isIPObtained = true;
+ 		}
+ 
+-		if (isIPObtained && isDNSWorking) {
++		if (isIPObtained) {
+ 			if (secondIteration) {
+ 				break;
+ 			} else {
+ 				sleep(SKY_TR69_IPTEST_SLEEP_TIME);
+ 				secondIteration = true;
+ 			}
+-		} else if ((!isIPObtained) || (!isDNSWorking)) {
++		} else if (!isIPObtained) {
+ 			secondIteration = false;
+-			fprintf(stderr, "\n[TR069] %s - going to sleep for %d seconds\n",
+-			        (!isIPObtained) ? "Failed to get valid IP address " : "DNS is not working ",
++			fprintf(stderr, "\n[TR069] Failed to get valid IP Address - going to sleep for %d seconds\n",
+ 			        SKY_TR69_IPTEST_SLEEP_TIME);
+ 			sleep(SKY_TR69_IPTEST_SLEEP_TIME);
+ 		}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2014-12-04 12:42:42.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-05-15 14:59:43.567576705 +0100
+@@ -33,7 +33,6 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+-#include <ifaddrs.h>
+ #include <dirent.h>
+ #include <libcm/cmlegacy.h>
+ #include <librgw_compat/lib_bba.h>
+@@ -385,31 +384,24 @@
+ 
+ int get_deviceinfo_ipaddress(char* buf, size_t length)
+ {
++int fd;
++struct ifreq ifr;
+ 
+-	struct ifaddrs *ifap, *ifa;
+-	struct sockaddr_in *sa;
+-	char *addr;
+-	bool bIsIPaddressObtained = FALSE;
+-
+-	getifaddrs (&ifap);
+-	for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+-		if ((strcmp("lo", ifa->ifa_name) == 0) || !(ifa->ifa_flags & (IFF_RUNNING))) {
+-			continue;
+-		}
+-		if (ifa->ifa_addr->sa_family == AF_INET) {
+-			sa = (struct sockaddr_in *) ifa->ifa_addr;
+-			addr = inet_ntoa(sa->sin_addr);
+-			strncpy(buf, addr, length);
+-			bIsIPaddressObtained = TRUE ;
+-			break;
+-		}
+-	}
+-
+-	freeifaddrs(ifap);
+-	if(bIsIPaddressObtained == TRUE){
+-		return EOK ;
+-	}
+-	return EFAIL;
++	fd = socket(AF_INET, SOCK_DGRAM, 0);
++
++	/* I want to get an IPv4 IP address */
++	ifr.ifr_addr.sa_family = AF_INET;
++
++	/* I want IP address attached to "br0" */
++	strncpy(ifr.ifr_name, "br0", IFNAMSIZ-1);
++
++	ioctl(fd, SIOCGIFADDR, &ifr);
++
++	close(fd);
++
++	/* display result */
++	snprintf(buf, length, inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
++ return EOK;
+ }
+ 
+ int get_deviceinfo_x_7c4ca5_ipaddress(cm_tran_id_t tid, char *buf, size_t length)
+diff -Naurr diagnostics-1.3_orig/libs/libboard/info.c diagnostics-1.3_new/libs/libboard/info.c
+--- diagnostics-1.3_orig/libs/libboard/info.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/libs/libboard/info.c	2015-05-15 10:08:47.100866232 +0100
+@@ -102,9 +102,7 @@
+         ifr_fd = socket(PF_INET, SOCK_DGRAM, 0);
+ 
+         memset(&ifr, 0x00, sizeof(ifr));
+-        if (EOK != get_eth_interface(ifr.ifr_name, IFNAMSIZ-1)) {
+-            return EIO;
+-        }
++	strncpy(ifr.ifr_name, "br0", IFNAMSIZ-1);
+         ioctl(ifr_fd, SIOCGIFHWADDR, &ifr);
+         close(ifr_fd);
+ 
+diff -Naurr diagnostics-1.3_orig/libs/librgw_compat/lib_cms.c diagnostics-1.3_new/libs/librgw_compat/lib_cms.c
+--- diagnostics-1.3_orig/libs/librgw_compat/lib_cms.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/libs/librgw_compat/lib_cms.c	2015-05-15 10:05:30.846688048 +0100
+@@ -2501,10 +2501,7 @@
+ 
+ 	ifr_fd = socket(AF_INET, SOCK_DGRAM, 0);
+ 	ifr.ifr_addr.sa_family = AF_INET;
+-	if (EOK != get_eth_interface(ifr.ifr_name, IFNAMSIZ-1)) {
+-		return EIO;
+-	}
+-
++	strncpy(ifr.ifr_name, "br0", IFNAMSIZ-1);
+ 	ioctl(ifr_fd, SIOCGIFADDR, &ifr);
+ 	close(ifr_fd);
+ 
+@@ -2521,10 +2518,7 @@
+ 
+ 	ifr_fd = socket(AF_INET, SOCK_DGRAM, 0);
+ 	ifr.ifr_addr.sa_family = AF_INET;
+-	if (EOK != get_eth_interface(ifr.ifr_name, IFNAMSIZ-1)) {
+-		return EIO;
+-	}
+-	
++	strncpy(ifr.ifr_name, "br0", IFNAMSIZ-1);
+ 	ioctl(ifr_fd, SIOCGIFADDR, &ifr);
+ 	close(ifr_fd);
+ 

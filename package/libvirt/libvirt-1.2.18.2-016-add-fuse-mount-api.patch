@@ -1,0 +1,463 @@
+--- a/daemon/remote.c	2015-12-23 22:54:18.000000000 +0000
++++ b/daemon/remote.c	2016-03-29 21:29:52.354142382 +0100
+@@ -6667,6 +6667,54 @@
+ }
+ 
+ 
++static int
++remoteDispatchDomainMountFuseFs(virNetServerPtr server ATTRIBUTE_UNUSED,
++                                virNetServerClientPtr client,
++                                virNetMessagePtr msg,
++                                virNetMessageErrorPtr rerr,
++                                remote_domain_mount_fuse_fs_args *args)
++{
++    virDomainPtr dom = NULL;
++    int rv = -1;
++    int fd = -1;
++    struct daemonClientPrivate *priv =
++    virNetServerClientGetPrivateData(client);
++
++    if (!priv->conn) {
++        virReportError(VIR_ERR_INTERNAL_ERROR, "%s", _("connection not open"));
++        goto cleanup;
++    }
++
++    if (!(dom = get_nonnull_domain(priv->conn, args->dom)))
++        goto cleanup;
++
++    if (msg->nfds != 1) {
++        virReportError(VIR_ERR_INTERNAL_ERROR, "%s", _("invalid number of fds"));
++        goto cleanup;
++    }
++    if ((fd = virNetMessageDupFD(msg, 0)) < 0)
++        goto cleanup;
++
++
++    if ((rv = virDomainMountFuseFS(dom,
++                                   fd,
++                                   args->mountpoint,
++                                   (const char**)args->mountoptions.mountoptions_val,
++                                   args->mountoptions.mountoptions_len)) < 0)
++        goto cleanup;
++
++    rv = 0;
++
++cleanup:
++    VIR_FORCE_CLOSE(fd);
++    if (rv < 0)
++        virNetMessageSaveError(rerr);
++
++    virObjectUnref(dom);
++    return rv;
++}
++
++
+ /*----- Helpers. -----*/
+ 
+ /* get_nonnull_domain and get_nonnull_network turn an on-wire
+--- a/include/libvirt/libvirt-domain.h	2016-03-29 21:27:31.871907813 +0100
++++ b/include/libvirt/libvirt-domain.h	2016-03-29 21:29:52.354142382 +0100
+@@ -3651,6 +3651,12 @@
+                        virDomainFSInfoPtr **info,
+                        unsigned int flags);
+ 
++int virDomainMountFuseFS(virDomainPtr dom,
++                         int fusefd,
++                         const char *mountpoint,
++                         const char **mountoptions,
++                         unsigned int nmountoptions);
++
+ int virDomainGetTime(virDomainPtr dom,
+                      long long *seconds,
+                      unsigned int *nseconds,
+--- a/src/driver-hypervisor.h	2015-12-23 22:54:18.000000000 +0000
++++ b/src/driver-hypervisor.h	2016-03-29 21:29:52.358142324 +0100
+@@ -1207,6 +1207,13 @@
+                                const char *password,
+                                unsigned int flags);
+ 
++typedef int
++(*virDrvDomainMountFuseFS)(virDomainPtr dom,
++                           int fusefd,
++                           const char *mountpoints,
++                           const char **mountoptions,
++                           unsigned int nmountoptions);
++
+ typedef struct _virHypervisorDriver virHypervisorDriver;
+ typedef virHypervisorDriver *virHypervisorDriverPtr;
+ 
+@@ -1437,6 +1444,7 @@
+     virDrvDomainGetFSInfo domainGetFSInfo;
+     virDrvDomainInterfaceAddresses domainInterfaceAddresses;
+     virDrvDomainSetUserPassword domainSetUserPassword;
++    virDrvDomainMountFuseFS domainMountFuseFS;
+ };
+ 
+ 
+--- a/src/libvirt-domain.c	2015-12-23 23:31:03.000000000 +0000
++++ b/src/libvirt-domain.c	2016-03-29 21:29:52.362142193 +0100
+@@ -11582,3 +11582,55 @@
+ 
+     VIR_FREE(iface);
+ }
++
++
++/**
++ * virDomainMountFuseFS:
++ * @dom: a domain object
++ * @fusefd: the fd to use for mounting the FUSE filesystem
++ * @mountpoint: the mount point within the domain
++ * @mountoptions: any extra mount options, maybe null
++ *
++ *
++ *
++ * Returns 0 on success, -1 otherwise.
++ */
++int
++virDomainMountFuseFS(virDomainPtr dom,
++                     int fusefd,
++                     const char *mountpoint,
++                     const char **mountoptions,
++                     unsigned int nmountoptions)
++{
++    VIR_DOMAIN_DEBUG(dom, "fusefd=%d, mountpoint='%s', mountoptions=%p, "
++                     "nmountoptions=%u", fusefd, NULLSTR(mountpoint),
++                     mountoptions, nmountoptions);
++
++    virResetLastError();
++
++    virCheckDomainReturn(dom, -1);
++    virCheckReadOnlyGoto(dom->conn->flags, error);
++    virCheckNonNegativeArgGoto(fusefd, error);
++    virCheckNonNullArgGoto(mountpoint, error);
++    if (nmountoptions)
++        virCheckNonNullArgGoto(mountoptions, error);
++    else
++        virCheckNullArgGoto(mountoptions, error);
++
++
++    if (dom->conn->driver->domainMountFuseFS) {
++        int ret = dom->conn->driver->domainMountFuseFS(dom, fusefd,
++                                                       mountpoint,
++                                                       mountoptions,
++                                                       nmountoptions);
++        if (ret < 0)
++            goto error;
++        return ret;
++    }
++
++    virReportUnsupportedError();
++
++error:
++    virDispatchError(dom->conn);
++    return -1;
++}
+--- a/src/libvirt_public.syms	2015-12-23 22:54:18.000000000 +0000
++++ b/src/libvirt_public.syms	2016-03-29 21:29:52.362142193 +0100
+@@ -720,4 +720,10 @@
+         virTypedParamsAddStringList;
+ } LIBVIRT_1.2.16;
+ 
++LIBVIRT_1.2.18 {
++    global:
++        virDomainMountFuseFS;
++} LIBVIRT_1.2.17;
++
++
+ # .... define new API here using predicted next version number ....
+--- a/src/lxc/lxc_driver.c	2016-03-29 21:27:47.831707605 +0100
++++ b/src/lxc/lxc_driver.c	2016-03-29 21:29:52.366142093 +0100
+@@ -33,6 +33,7 @@
+ #include <sys/stat.h>
+ #include <sys/un.h>
+ #include <sys/poll.h>
++#include <sys/mount.h>
+ #include <unistd.h>
+ #include <wait.h>
+ 
+@@ -5759,6 +5760,177 @@
+ }
+ 
+ 
++struct lxcDomainMountFuseFSData {
++    virLXCDriverPtr driver;
++    virDomainDefPtr vmdef;
++    int fusefd;
++    const char *mountpoint;
++    const char **mountoptions;
++    unsigned int mountoptionslen;
++};
++
++
++struct lxcDomainMountFuseMountFlags {
++    const char* name;
++    int flag;
++};
++
++static const struct lxcDomainMountFuseMountFlags lxcFuseMountFlags[] = {
++    {"ro",      MS_RDONLY         },
++    {"nosuid",  MS_NOSUID,        },
++    {"nodev",   MS_NODEV,         },
++    {"noexec",  MS_NOEXEC,        },
++    {"sync",    MS_SYNCHRONOUS    },
++    {"noatime", MS_NOATIME,       },
++};
++
++
++static int
++lxcDomainMountFuseFSCallback(pid_t pid ATTRIBUTE_UNUSED,
++                             void *opaque)
++{
++    struct lxcDomainMountFuseFSData *data = opaque;
++    int ret = -1;
++    char *mnt_fd_opt = NULL;
++    const char **mnt_opts = NULL;
++    size_t mnt_nopts = 0;
++    char *mnt_data = NULL;
++    char *sec_mount_options = NULL;
++    int flags = 0;
++    unsigned int i, j;
++
++    virSecurityManagerPostFork(data->driver->securityManager);
++
++    /* TODO:
++     sec_mount_options = virSecurityManagerGetMountOptions(data->driver->securityManager,
++     data->vmdef)))
++     */
++
++    if (virFileMakePath(data->mountpoint) < 0) {
++        virReportSystemError(errno,
++                             _("Failed to create %s"),
++                             data->mountpoint);
++        goto cleanup;
++    }
++
++    if (virAsprintf(&mnt_fd_opt, "fd=%i", data->fusefd) < 0)
++        goto cleanup;
++
++    if (VIR_ALLOC_N(mnt_opts, data->mountoptionslen + 2) < 0)
++        goto cleanup;
++
++    mnt_opts[mnt_nopts++] = mnt_fd_opt;
++
++    for (i = 0; i < data->mountoptionslen; i++) {
++        const char* opt = data->mountoptions[i];
++        if (opt) {
++
++            for (j = 0; j < ARRAY_CARDINALITY(lxcFuseMountFlags); j++) {
++                if (STREQ(opt, lxcFuseMountFlags[j].name)) {
++                    flags |= lxcFuseMountFlags[j].flag;
++                    break;
++                }
++            }
++
++            if (j == ARRAY_CARDINALITY(lxcFuseMountFlags))
++                mnt_opts[mnt_nopts++] = opt;
++        }
++    }
++
++    mnt_opts[mnt_nopts++] = NULL;
++    mnt_data = virStringJoin(mnt_opts, ",");
++
++    VIR_INFO("Mount fuse on %s type=fuse flags=%x, opts='%s'",
++             data->mountpoint, flags, mnt_data);
++
++    if (mount("fuse", data->mountpoint, "fuse", flags, mnt_data) < 0) {
++
++        FILE *fp = fopen("/home/error.txt", "w");
++        fprintf(fp, "Failed to mount directory %s as fuse (%d - %s)", data->mountpoint, errno, strerror(errno));
++        fclose(fp);
++
++        virReportSystemError(errno,
++                             _("Failed to mount directory %s as fuse"),
++                             data->mountpoint);
++        goto cleanup;
++    }
++
++    ret = 0;
++
++cleanup:
++    VIR_FREE(mnt_fd_opt);
++    VIR_FREE(mnt_opts);
++    VIR_FREE(mnt_data);
++    VIR_FREE(sec_mount_options);
++    return ret;
++}
++
++
++static int
++lxcDomainMountFuseFS(virDomainPtr dom,
++                     int fusefd,
++                     const char *mountpoint,
++                     const char **mountoptions,
++                     unsigned int mountoptionslen)
++{
++    virLXCDriverPtr driver = dom->conn->privateData;
++    virDomainObjPtr vm = NULL;
++    int ret = -1;
++    virLXCDomainObjPrivatePtr priv;
++    struct lxcDomainMountFuseFSData data;
++
++    memset(&data, 0, sizeof(data));
++
++    data.driver = driver;
++    data.fusefd = fusefd;
++    data.mountpoint = mountpoint;
++    data.mountoptions = mountoptions;
++    data.mountoptionslen = mountoptionslen;
++
++    if (!(vm = lxcDomObjFromDomain(dom)))
++        return ret;
++
++    priv = vm->privateData;
++
++    if (virDomainMountFuseFsEnsureACL(dom->conn, vm->def) < 0)
++        goto cleanup;
++
++    if (!virDomainObjIsActive(vm)) {
++        virReportError(VIR_ERR_OPERATION_INVALID, "%s",
++                       _("domain is not running"));
++        goto cleanup;
++    }
++
++    if (priv->initpid == 0) {
++        virReportError(VIR_ERR_OPERATION_INVALID,
++                       "%s", _("Init process ID is not yet known"));
++        goto cleanup;
++    }
++
++    if (virSecurityManagerPreFork(driver->securityManager) < 0)
++        goto cleanup;
++
++    if ((ret = virProcessRunInMountNamespace(priv->initpid,
++                                             lxcDomainMountFuseFSCallback,
++                                             &data)) < 0) {
++        virSecurityManagerPostFork(driver->securityManager);
++        goto cleanup;
++    }
++
++    virSecurityManagerPostFork(driver->securityManager);
++
++
++
++    virReportError(VIR_ERR_OPERATION_INVALID, "%s",
++                   _("lxcDomainMountFuseFS : not implemented"));
++
++cleanup:
++    if (vm)
++        virObjectUnlock(vm);
++    return ret;
++}
++
++
+ /* Function Tables */
+ static virHypervisorDriver lxcHypervisorDriver = {
+     .name = LXC_DRIVER_NAME,
+@@ -5852,6 +6024,7 @@
+     .nodeGetFreePages = lxcNodeGetFreePages, /* 1.2.6 */
+     .nodeAllocPages = lxcNodeAllocPages, /* 1.2.9 */
+     .domainHasManagedSaveImage = lxcDomainHasManagedSaveImage, /* 1.2.13 */
++    .domainMountFuseFS = lxcDomainMountFuseFS, /* [sky] */
+ };
+ 
+ static virConnectDriver lxcConnectDriver = {
+--- a/src/remote/remote_driver.c	2015-12-23 22:54:18.000000000 +0000
++++ b/src/remote/remote_driver.c	2016-03-29 21:30:50.121419802 +0100
+@@ -8038,6 +8038,50 @@
+ }
+ 
+ 
++static int
++remoteDomainMountFuseFS(virDomainPtr dom, int fusefd,
++                        const char *mountpoint,
++                        const char **mountoptions,
++                        unsigned int mountoptionslen)
++{
++    int rv = -1;
++    struct private_data *priv = dom->conn->privateData;
++    remote_domain_mount_fuse_fs_args args;
++    int fdin[] = { fusefd };
++    size_t fdinlen = ARRAY_CARDINALITY(fdin);
++
++    remoteDriverLock(priv);
++
++    if (mountoptionslen > REMOTE_DOMAIN_FUSE_MOUNTOPTIONS_MAX) {
++        virReportError(VIR_ERR_RPC,
++                       _("%s length greater than maximum: %d > %d"),
++                       "mountoptions", (int)mountoptionslen, REMOTE_DOMAIN_FUSE_MOUNTOPTIONS_MAX);
++        goto cleanup;
++    }
++
++    make_nonnull_domain(&args.dom, dom);
++    args.mountpoint = (char *)mountpoint;
++    args.mountoptions.mountoptions_val = (char **)mountoptions;
++    args.mountoptions.mountoptions_len = mountoptionslen;
++
++
++    if (callFull(dom->conn, priv, 0,
++                 fdin, fdinlen,
++                 NULL, NULL,
++                 REMOTE_PROC_DOMAIN_MOUNT_FUSE_FS,
++                 (xdrproc_t) xdr_remote_domain_mount_fuse_fs_args, (char *) &args,
++                 (xdrproc_t) xdr_void, (char *) NULL) == -1) {
++        goto cleanup;
++    }
++
++    rv = 0;
++
++cleanup:
++    remoteDriverUnlock(priv);
++    return rv;
++}
++
++
+ /* get_nonnull_domain and get_nonnull_network turn an on-wire
+  * (name, uuid) pair into virDomainPtr or virNetworkPtr object.
+  * These can return NULL if underlying memory allocations fail,
+@@ -8387,6 +8431,7 @@
+     .domainGetFSInfo = remoteDomainGetFSInfo, /* 1.2.11 */
+     .domainInterfaceAddresses = remoteDomainInterfaceAddresses, /* 1.2.14 */
+     .domainSetUserPassword = remoteDomainSetUserPassword, /* 1.2.16 */
++    .domainMountFuseFS = remoteDomainMountFuseFS, /* [sky] */
+ };
+ 
+ static virNetworkDriver network_driver = {
+--- a/src/remote/remote_protocol.x	2016-03-29 21:27:31.887908203 +0100
++++ b/src/remote/remote_protocol.x	2016-03-29 21:29:52.374141948 +0100
+@@ -265,6 +265,9 @@
+ /* Upper limit on number of IP addresses per interface */
+ const REMOTE_DOMAIN_IP_ADDR_MAX = 2048;
+ 
++/* Upper limit on number of mountoptions to fuse mount */
++const REMOTE_DOMAIN_FUSE_MOUNTOPTIONS_MAX = 256;
++
+ /* UUID.  VIR_UUID_BUFLEN definition comes from libvirt.h */
+ typedef opaque remote_uuid[VIR_UUID_BUFLEN];
+ 
+@@ -3233,6 +3236,12 @@
+ };
+ 
+ 
++struct remote_domain_mount_fuse_fs_args {
++    remote_nonnull_domain dom;
++    remote_nonnull_string mountpoint;
++    remote_nonnull_string mountoptions<REMOTE_DOMAIN_FUSE_MOUNTOPTIONS_MAX>; /* (const char **) */
++};
++
+ /*----- Protocol. -----*/
+ 
+ /* Define the program number, protocol version and procedure numbers here. */
+@@ -5698,5 +5707,11 @@
+      * @generate:both
+      * @acl: domain:set_password
+      */
+-    REMOTE_PROC_DOMAIN_SET_USER_PASSWORD = 357
++    REMOTE_PROC_DOMAIN_SET_USER_PASSWORD = 357,
++
++    /**
++     * @generate: none
++     * @acl: domain:write
++     */
++    REMOTE_PROC_DOMAIN_MOUNT_FUSE_FS = 358
+ };
+

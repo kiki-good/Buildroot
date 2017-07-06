@@ -1,0 +1,6 @@
+config BR2_PACKAGE_NETKITRSH
+	bool "netkitrsh"
+	help
+	  Standard Linux remote shell (rsh) client and server.
+
+	  ftp://ftp.uk.linux.org/pub/linux/Networking/netkit/

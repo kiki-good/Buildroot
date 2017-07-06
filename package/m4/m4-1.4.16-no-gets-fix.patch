@@ -1,0 +1,15 @@
+--- m4-1.4.16/lib/stdio.in.h	2011-03-01 16:39:29.000000000 +0000
++++ m4-1.4.16_Patched/lib/stdio.in.h	2014-03-13 11:12:16.206972039 +0000
+@@ -161,8 +161,10 @@
+ /* It is very rare that the developer ever has full control of stdin,
+    so any use of gets warrants an unconditional warning.  Assume it is
+    always declared, since it is required by C89.  */
+-#undef gets
+-_GL_WARN_ON_USE (gets, "gets is a security hole - use fgets instead");
++
++   /*Commented for preventing compilation errors*/
++/*#undef gets
++_GL_WARN_ON_USE (gets, "gets is a security hole - use fgets instead");*/
+ 
+ #if @GNULIB_FOPEN@
+ # if @REPLACE_FOPEN@

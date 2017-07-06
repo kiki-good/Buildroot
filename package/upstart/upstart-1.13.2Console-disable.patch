@@ -1,0 +1,34 @@
+diff -Naur upstart-1.13.2/conf/rc.conf upstart-1.13.2_Mod/conf/rc.conf
+--- upstart-1.13.2/conf/rc.conf	2012-12-04 17:14:47.000000000 +0000
++++ upstart-1.13.2_Mod/conf/rc.conf	2015-02-12 09:52:08.244560010 +0000
+@@ -14,5 +14,5 @@
+ 
+ task
+ 
+-console output
++console none
+ exec /etc/init.d/rc $RUNLEVEL
+diff -Naur upstart-1.13.2/conf/rcS.conf upstart-1.13.2_Mod/conf/rcS.conf
+--- upstart-1.13.2/conf/rcS.conf	2012-12-04 17:14:47.000000000 +0000
++++ upstart-1.13.2_Mod/conf/rcS.conf	2015-02-12 09:52:23.188560394 +0000
+@@ -10,7 +10,7 @@
+ start on runlevel S
+ stop on runlevel [!S]
+ 
+-console owner
++console none
+ exec /sbin/sulogin
+ 
+ post-stop script
+diff -Naur upstart-1.13.2/conf/rc-sysinit.conf upstart-1.13.2_Mod/conf/rc-sysinit.conf
+--- upstart-1.13.2/conf/rc-sysinit.conf	2012-12-04 17:14:47.000000000 +0000
++++ upstart-1.13.2_Mod/conf/rc-sysinit.conf	2015-02-12 09:52:42.344560885 +0000
+@@ -25,7 +25,7 @@
+ 
+ task
+ 
+-console owner
++console none
+ script
+     # Check for default runlevel in /etc/inittab
+     if [ -r /etc/inittab ]

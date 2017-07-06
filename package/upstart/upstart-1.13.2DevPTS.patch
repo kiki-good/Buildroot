@@ -1,0 +1,89 @@
+diff -Naur upstart-1.13.2/init/job_process.c upstart-1.13.2_mod/init/job_process.c
+--- upstart-1.13.2/init/job_process.c	2014-09-03 17:27:24.000000000 +0100
++++ upstart-1.13.2_mod/init/job_process.c	2015-07-22 16:20:14.560606326 +0100
+@@ -119,7 +119,7 @@
+  * If TRUE, do not log any job output.
+  *
+  **/
+-int disable_job_logging = 0;
++int disable_job_logging = 1;
+ 
+ /**
+  * no_inherit_env:
+diff -Naur upstart-1.13.2/init/main.c upstart-1.13.2_mod/init/main.c
+--- upstart-1.13.2/init/main.c	2015-07-22 16:19:42.260605493 +0100
++++ upstart-1.13.2_mod/init/main.c	2015-07-22 16:20:32.124606774 +0100
+@@ -327,28 +327,6 @@
+ 		/* Check if key /dev entries already exist; if they do,
+ 		 * we should assume we don't need to mount /dev.
+ 		 */
+-		if (system_check_file ("/dev/ptmx", S_IFCHR, makedev (5, 2)) < 0
+-			|| system_check_file ("/dev/pts", S_IFDIR, 0) < 0)
+-			needs_devtmpfs = 1;
+-
+-		if (needs_devtmpfs) {
+-			if (system_mount ("devtmpfs", "/dev",
+-					  MS_RELATIME, NULL) < 0) {
+-				NihError *err;
+-
+-				err = nih_error_get ();
+-				nih_error ("%s: %s", _("Unable to mount /dev filesystem"),
+-						err->message);
+-				nih_free (err);
+-			}
+-
+-			/* Required to exist before /dev/pts accessed */
+-			system_mknod ("/dev/ptmx", (S_IFCHR | 0666), makedev (5, 2));
+-
+-			if (mkdir ("/dev/pts", 0755) < 0 && errno != EEXIST)
+-				nih_error ("%s: %s", _("Cannot create directory"), "/dev/pts");
+-		}
+-
+ 		if (system_mount ("devpts", "/dev/pts", MS_RELATIME,
+ 				  "gid=5,mode=0620") < 0) {
+ 			NihError *err;
+@@ -359,39 +337,15 @@
+ 			nih_free (err);
+ 		}
+ 
+-		/* These devices must exist, but we have to have handled the /dev
+-		 * check (and possible mount) prior to considering
+-		 * creating them. And yet, if /dev is not available from
+-		 * the outset and an error occurs, we are unable to report it,
+-		 * hence these checks are performed as early as is
+-		 * feasible.
+-		 */
+-		system_mknod ("/dev/null", (S_IFCHR | 0666), makedev (1, 3));
+-		system_mknod ("/dev/tty", (S_IFCHR | 0666), makedev (5, 0));
+-		system_mknod ("/dev/console", (S_IFCHR | 0600), makedev (5, 1));
+-		system_mknod ("/dev/kmsg", (S_IFCHR | 0600), makedev (1, 11));
+ 
+-		/* Set the standard file descriptors to the ordinary console device,
+-		 * resetting it to sane defaults unless we're inheriting from another
+-		 * init process which we know left it in a sane state.
+-		 */
+-		if (system_setup_console (CONSOLE_OUTPUT, (! restart)) < 0) {
++		if (system_setup_console (CONSOLE_NONE, FALSE) < 0) {
+ 			NihError *err;
+-
+ 			err = nih_error_get ();
+-
+-			nih_warn ("%s: %s", _("Unable to initialize console, will try /dev/null"),
+-				  err->message);
++			nih_fatal ("%s: %s", _("Unable to initialize console as /dev/null"),
++				   err->message);
+ 			nih_free (err);
+-	
+-			if (system_setup_console (CONSOLE_NONE, FALSE) < 0) {
+-				err = nih_error_get ();
+-				nih_fatal ("%s: %s", _("Unable to initialize console as /dev/null"),
+-					   err->message);
+-				nih_free (err);
+-	
+-				exit (1);
+-			}
++
++			exit (1);
+ 		}
+ 
+ 		/* Set the PATH environment variable */

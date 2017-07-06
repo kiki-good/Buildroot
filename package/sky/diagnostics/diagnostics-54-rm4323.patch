@@ -1,0 +1,630 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_hdmi.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_hdmi.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_hdmi.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_hdmi.c	2016-07-29 13:12:59.092487244 +0100
+@@ -101,6 +101,8 @@
+     pHDMIInfo = getHDMIInfo(pDeviceID);
+     if(NULL == (void*)pHDMIInfo){
+         strncpy(buf, "Disabled", length);
++    }else if((!pHDMIInfo->bStatus)){
++        strncpy(buf, "Disabled", length);
+     }else{
+         strncpy(buf, "Enabled", length);
+     }
+@@ -201,7 +203,7 @@
+         VENDOR_LOG_WARN("%s: Invalid HDMI Data\n", __FUNCTION__ );
+         return EFAIL;
+     }
+-    if(FALSE == vendor_hooks_extractFormattedStringFromData(pHDMIInfo->pFullData, "Preferred Resolution: ", "%[^\n]", buf) ){
++    if(FALSE == vendor_hooks_extractFormattedStringFromData(pHDMIInfo->pFullData, "Resolution Value: ", "%[^\n]", buf) ){
+         return EFAIL;
+     }
+     return EOK;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c	2016-07-25 14:25:29.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c	2016-08-08 14:31:42.748929456 +0100
+@@ -22,6 +22,7 @@
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
+ #include <sys/syslog.h>
++#include <sys/stat.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdint.h>
+@@ -29,84 +30,121 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <unistd.h>
++#include <time.h>
++#include <pthread.h>
++#include <semaphore.h>
+ #include "vendor_hook_hdmi_displaydevice.h"
+ #include "librgw_compat/lib_errno.h"
+ #include "vendor_hooks.h"
+ 
++/*---------------------------------------------------------------------------
++** Defines and Macros
++*/
++#define BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME         "/tr069/cm/hdmi-data.txt"
++#define BSKYB_DISPLAYDEVICE_HDMI_THREAD_DEBUG_FILENAME "/tr069/cm/hdmi-thread-debug.txt"
++#define BSKYB_DISPLAYDEVICE_BASE_OCTAL                 (8)
++#define BSKYB_DISPLAYDEVICE_DISABLED_HDMI_LENGTH       (57)
++#define BSKYB_DISPLAYDEVICE_HDMI_NOT_FULLY_INITIALISED (85)
++#define BSKYB_DISPLAYDEVICE_HDMI_CACHE_TIMEOUT         (12*60*60) /* 12 Hours. */
++
++
++/* TR069 HDMI Specific Logging */
++#undef SKY_UK_TR069_HDMI_DEBUG 
++#ifdef SKY_UK_TR069_HDMI_DEBUG
++#define TR069_HDMI_LOG_INFO( fmt, args...)     syslog(LOG_INFO, fmt, ## args );
++#else
++#define TR069_HDMI_LOG_INFO( fmt, args...)
++#endif
++
++/* Turn on the HDMI Display Device Thread. */
++#define BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD  (1)
++/* Debug HDMI Display Device Thread. */
++#undef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD_FILE_DEBUG
++
++#define BSKYB_HDMI_DISPLAYDEVICE_THREAD_TIMEOUT       (3600) /* wakeup every hour */
++/* STB is not BST, it's 1 hour behind. */
++#define BSKYB_HDMI_DISPLAYDEVICE_TIME_8AM             (7)
++#define BSKYB_HDMI_DISPLAYDEVICE_TIME_9AM             (8)
++#define BSKYB_HDMI_DISPLAYDEVICE_TIME_MIDNIGHT        (23)
++
++
++/*---------------------------------------------------------------------------
++** Data
++*/
+ static vendor_hook_cache_t	*gHDMICache = NULL;
+-static int32_t gHDMICacheRefCount=0;
++
++/*!
++ * Thread params
++ */
++static bool tHDMIDisplayDeviceThreadInitialised = false;
++static pthread_t tHDMIDisplayDeviceThreadID;
++static sem_t tHDMIDisplayDeviceSem;
++static pthread_mutex_t tHDMIDisplayDeviceMutex = PTHREAD_MUTEX_INITIALIZER;
++
++/*---------------------------------------------------------------------------
++** Local function protottypes
++*/
++
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD
++static void *tHDMIDisplayDeviceThread(void *arg);
++#endif
+ 
+ /*!
+ ** ------------------------------------------------------------------------------------------
+-** @brief Get HDMI Up Time
++** @brief Check HDMI Proc Status
+ **
+ ** @param[in] pDeviceID - /proc entry associated with the device
+-** @param[out] pHdmiUpTime - Time since the HDMI has been updated
+ **
+ ** @returns result -VENDOR_STATUS_OK if succesful
+ **
+-** @retval VENDOR_STATUS_INVALID_PARAM - Invalid Input Parameters
+-** @retval VENDOR_STATUS_ERROR	Error in parsing /proc entry
++** @retval VENDOR_STATUS_ERROR  Error in parsing /proc entry
+ ** @retval VENDOR_STATUS_OK Succesful scenario
+ */
+-int32_t getHDMIUpTime(char* pDeviceID, uint32_t * pHdmiUpTime )
++static int32_t checkHDMIProcStatus(char* pDeviceID)
+ {
+-	 FILE * fpDevice = NULL ;
+-	 char * pCurrentHDMIData = NULL ;
+-	 char * resultString ;
+-	 bool bIsMatchFound = FALSE ;
+-	 int32_t result = VENDOR_STATUS_ERROR;
++	uint32_t Value = 0;
+ 
+-	 VENDOR_ASSERT(NULL!= pDeviceID);
++	TR069_HDMI_LOG_INFO("\nHDMI: %s: Enter Function \n",__FUNCTION__);
+ 
+-	 if(NULL == pDeviceID){
+-		return VENDOR_STATUS_INVALID_PARAM;
+-	 }
+-	 if(NULL == (fpDevice = fopen(pDeviceID, "rb"))){
+-		 VENDOR_LOG_ERROR("Invalid params: %s\n", __FUNCTION__);
+-		 return VENDOR_STATUS_INVALID_PARAM;
+-	 }
+-	 pCurrentHDMIData = (char*)calloc(BSKYB_HDMI_PROC_MAX_BUFFER_SIZE, sizeof(char));
+-	 VENDOR_ASSERT(NULL!= pCurrentHDMIData);
+-	 if(NULL == pCurrentHDMIData){
+-		fclose(fpDevice);
++	if( NULL == pDeviceID ){
+ 		return VENDOR_STATUS_ERROR ;
+-	 }
++	}
+ 
+-	 resultString = (char*) calloc(BSKYB_HDMI_PROC_MAX_LINE_SIZE, sizeof(char));
+-	 VENDOR_ASSERT(NULL!= resultString);
+-	 if(NULL == resultString){
+-		 fclose(fpDevice);
+-		 if(NULL != pCurrentHDMIData){
+-			 free(pCurrentHDMIData);
+-			 pCurrentHDMIData = NULL ;
+-		 }
+-		 return VENDOR_STATUS_ERROR;
+-	 }
+-
+-	 while (fgets(resultString, BSKYB_HDMI_PROC_MAX_LINE_SIZE, fpDevice) != NULL) {
+-		if(NULL != strstr(resultString, "HDMI Up Time")){
+-		   strncpy(pCurrentHDMIData, resultString, BSKYB_HDMI_PROC_MAX_LINE_SIZE);
+-		   bIsMatchFound = TRUE;
+-		   break;
+-		}
+-	 }
+-	 pCurrentHDMIData[BSKYB_HDMI_PROC_MAX_LINE_SIZE] = '\0';
+-	 if(TRUE == bIsMatchFound){
+-		result = vendor_hooks_extractUINT32FromData(pCurrentHDMIData, "HDMI Up Time:", pHdmiUpTime);
+-	 }
+-
+-	 free(pCurrentHDMIData);
+-	 pCurrentHDMIData = NULL ;
+-
+-	 free(resultString);
+-	 resultString = NULL ;
+-	 fclose(fpDevice);
++	hdmi_info_t * pHDMIInfo = (hdmi_info_t *) calloc(BSKYB_HDMI_PROC_MAX_BUFFER_SIZE + sizeof(hdmi_info_t), sizeof(char));
++
++	if( NULL == pHDMIInfo ){
++		return VENDOR_STATUS_ERROR ;
++	}
++	
++	pHDMIInfo->pFullData = (char*)pHDMIInfo + sizeof(hdmi_info_t);
+ 
+-	 if(TRUE == result){
++	if(eVENDORHOOK_OK !=
++		vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, pHDMIInfo->pFullData, \
++						BSKYB_HDMI_PROC_MAX_BUFFER_SIZE)){
++		if(pHDMIInfo != NULL){
++			free(pHDMIInfo);
++			pHDMIInfo = NULL ;
++		}
++		return VENDOR_STATUS_ERROR ;
++	}
++	pHDMIInfo->uFullDataSize = strlen(pHDMIInfo->pFullData);
++
++	/* The Video Latency is only used to make sure that the proc format is complete. */
++	/* As it appears near to the bottom of the proc page. */
++	if(TRUE == vendor_hooks_extractFormattedUINT32FromData(pHDMIInfo->pFullData, "Video Latency in ms:", " %lu", &Value)){
++		if(pHDMIInfo != NULL){
++			free(pHDMIInfo);
++			pHDMIInfo = NULL ;
++		}
++		TR069_HDMI_LOG_INFO("\nHDMI: %s: Exit Function OK\n",__FUNCTION__);
+ 		return VENDOR_STATUS_OK;
+-	 }
+-	 return VENDOR_STATUS_ERROR;
++	}
++	if(pHDMIInfo != NULL){
++		free(pHDMIInfo);
++		pHDMIInfo = NULL ;
++	}
++	TR069_HDMI_LOG_INFO("\nHDMI: %s: Exit Function ERROR\n",__FUNCTION__);
++	return VENDOR_STATUS_ERROR;
+ }
+ 
+ /*!
+@@ -123,10 +161,20 @@
+ 
+ hdmi_info_t * getHDMIInfoFromCache(char * pDeviceID)
+ {
++    char mode[] = "0660";
++	int i = 0;
++	vendor_hook_proc_device_status_t retval;
++
++	if( NULL == pDeviceID ){
++		return NULL ;
++	}
++
+ 	hdmi_info_t * pHDMIInfo = (hdmi_info_t *) calloc(BSKYB_HDMI_PROC_MAX_BUFFER_SIZE + sizeof(hdmi_info_t), sizeof(char));
+-	if( (NULL == pHDMIInfo) || (NULL == pDeviceID) ){
++
++	if( NULL == pHDMIInfo ){
+ 		return NULL ;
+ 	}
++
+ 	pHDMIInfo->pFullData = (char*)pHDMIInfo + sizeof(hdmi_info_t);
+ 
+ 	if(eVENDORHOOK_OK !=
+@@ -138,15 +186,56 @@
+ 		}
+ 		return NULL ;
+ 	}
+-	pHDMIInfo->lUpTime = 0;
+-	/*Extract the HDMI Up Time and keep this in Cache*/
+-	if(FALSE == vendor_hooks_extractUINT32FromData(pHDMIInfo->pFullData, "HDMI Up Time:", &pHDMIInfo->lUpTime) ){
+-		pHDMIInfo->lUpTime = 0L;
++	pHDMIInfo->uFullDataSize = strlen(pHDMIInfo->pFullData);
++
++	/* HDMI Disabled  */
++	if (pHDMIInfo->uFullDataSize <= BSKYB_DISPLAYDEVICE_HDMI_NOT_FULLY_INITIALISED){
++		TR069_HDMI_LOG_INFO("HDMI: \n%s: Try Read File 1: %s \n",__FUNCTION__, BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME);
++		pHDMIInfo->bStatus = FALSE;
++		/* Make sure file exists and can read the file. */
++		if (0 == access(BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME, F_OK | R_OK)){
++			TR069_HDMI_LOG_INFO("HDMI: \n%s: Read File 2: %s \n",__FUNCTION__, BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME);
++			if (eVENDORHOOK_OK == vendor_hook_read_text_file(BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME,
++					pHDMIInfo->pFullData ,
++					BSKYB_HDMI_PROC_MAX_BUFFER_SIZE)){
++				pHDMIInfo->uFullDataSize = strlen(pHDMIInfo->pFullData);
++				pHDMIInfo->bCheckProcStatus = TRUE;
++			}else{
++				TR069_HDMI_LOG_INFO("HDMI: \n%s: Read File Failure 3: %s \n",__FUNCTION__, BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME);
++				if(pHDMIInfo != NULL){
++					free(pHDMIInfo);
++					pHDMIInfo = NULL ;
++				}
++				return NULL ;
++			}
++		}else{
++			if(pHDMIInfo != NULL){
++				free(pHDMIInfo);
++				pHDMIInfo = NULL ;
++			}
++			return NULL ;
++		}
++	}else{
++		/* HDMI Enabled. */
++		pHDMIInfo->bStatus = TRUE;
++		pHDMIInfo->bCheckProcStatus = TRUE;
++		TR069_HDMI_LOG_INFO("\nHDMI: %s: Create File: %s Size: %d\n",__FUNCTION__, BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME, pHDMIInfo->uFullDataSize);
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD
++		sem_wait(&tHDMIDisplayDeviceSem);
++#endif
++		retval = vendor_hook_write_proc_device(BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME,
++									pHDMIInfo->pFullData, pHDMIInfo->uFullDataSize);
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD
++		sem_post(&tHDMIDisplayDeviceSem);
++#endif
++		if(eVENDORHOOK_OK == retval){
++			/* Change mode */
++			i = strtol(mode, 0, BSKYB_DISPLAYDEVICE_BASE_OCTAL);
++			chmod (BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME, i);
++		}
+ 	}
+ 
+-	pHDMIInfo->uFullDataSize = strlen(pHDMIInfo->pFullData);
+ 	vendor_hook_addCacheEntry(gHDMICache, pHDMIInfo, pDeviceID);
+-	gHDMICacheRefCount++;
+ 
+ 	return pHDMIInfo;
+ }
+@@ -167,7 +256,6 @@
+ {
+ 	hdmi_info_t *pHDMIInfo = NULL;
+ 	VENDOR_LOG_TRACE("%s\n",__FUNCTION__);
+-	uint32_t hdmiUpTime = 0;
+ 
+ 	VENDOR_ASSERT(NULL!= pDeviceID);
+ 
+@@ -177,8 +265,8 @@
+ 	}
+ 
+ 	if(NULL == gHDMICache){
+-		/*Create a cache with Expiry Time 0 ... 0 means cache doesnt expire at all*/
+-		gHDMICache = vendor_hook_createCache(0);
++		/*Create a cache with Expiry Time. */
++		gHDMICache = vendor_hook_createCache(BSKYB_DISPLAYDEVICE_HDMI_CACHE_TIMEOUT);
+ 	}
+ 
+ 	pHDMIInfo = vendor_hook_getCacheEntry(gHDMICache, pDeviceID);
+@@ -186,59 +274,33 @@
+ 	    return getHDMIInfoFromCache(pDeviceID);
+ 	}else{
+ #ifndef VENDOR_HOOK_HDMI_USE_STATIC_DATA
+-	   /* Always keep checking if there is any update of pHDMIInfo->lUpTime */
+-	   /* An update of hdmiUpTime from its previous value should indicate that there is some
+-		  action on the HDMI device . We Should reload the cache, say when we unplug and plug the HDMI cable
+-		  OR When a different HDMI monitor is connected*/
+-
+-	   if(VENDOR_STATUS_OK != getHDMIUpTime(pDeviceID, &hdmiUpTime)){
+-			return NULL ;
+-	   }
+-
+-	   /* Reload the cache when there is an update in hdmiUpTime */
+-	   if( hdmiUpTime != pHDMIInfo->lUpTime ){
+-			vendor_hook_deleteCacheEntry(gHDMICache, pDeviceID);
+-			/* Delete cache entry would actually free pHDMIInfo as this is the lone entry in the cache*/
+-			/* So, we should not free this pointer again, Double freeing has resulted in crash during CUNIT Test*/
+-			pHDMIInfo = NULL ;
+-			return getHDMIInfoFromCache(pDeviceID);
++	   /* Check if there is any update of the HDMI proc. */
++	   /* Used to check status of the STB for every parameter, but now only check once. */
++	   if (!pHDMIInfo->bCheckProcStatus){
++		    pHDMIInfo->bCheckProcStatus = TRUE;
++			if(VENDOR_STATUS_OK != checkHDMIProcStatus(pDeviceID)){
++				if (pHDMIInfo->bStatus){
++				   TR069_HDMI_LOG_INFO("\nHDMI: %s: Delete Cache Entry - Prev STB Enabled - Now Disabled\n",__FUNCTION__);
++				   vendor_hook_deleteCacheEntry(gHDMICache, pDeviceID);
++				   /* Delete cache entry would actually free pHDMIInfo as this is the lone entry in the cache*/
++				   /* So, we should not free this pointer again, Double freeing has resulted in crash during CUNIT Test*/
++				   pHDMIInfo = NULL ;
++				   return getHDMIInfoFromCache(pDeviceID);
++				}
++		   }else{
++			   if (!pHDMIInfo->bStatus){
++				  TR069_HDMI_LOG_INFO("\nHDMI: %s: Delete Cache Entry - Prev STB Disabled - Now Enabled\n",__FUNCTION__);
++				  vendor_hook_deleteCacheEntry(gHDMICache, pDeviceID);
++				  pHDMIInfo = NULL ;
++				  return getHDMIInfoFromCache(pDeviceID);
++			   }
++		   }
+ 	   }
+ #endif
+-	   gHDMICacheRefCount++;
+ 	   return  pHDMIInfo;
+ 	}
+ }
+ 
+-/*!
+-** ------------------------------------------------------------------------------------------
+-** @brief Cleanup all the allocated resources
+-**
+-** @param[in] pDeviceID - /proc entry associated with the device
+-**
+-** @returns result -VENDOR_STATUS_OK if succesful
+-**
+-** @retval VENDOR_STATUS_INVALID_PARAM	Invalid parameters
+-** @retval VENDOR_STATUS_OK Succesful scenario
+-*/
+-int32_t hdmi_displaydevice_cleanup(char* pDeviceID)
+-{
+-	static hdmi_info_t *pHDMIInfo = NULL;
+-	VENDOR_ASSERT(NULL!= pDeviceID);
+-
+-	pHDMIInfo = getHDMIInfo(pDeviceID);
+-
+-	VENDOR_ASSERT(NULL!= gHDMICache);
+-	VENDOR_ASSERT(NULL!= pHDMIInfo);
+-
+-	if ( (NULL == pHDMIInfo) || (NULL == pDeviceID) || (NULL == gHDMICache) ) {
+-		VENDOR_LOG_WARN("%s: Invalid HDMI Data\n", __FUNCTION__ );
+-		return VENDOR_STATUS_INVALID_PARAM;
+-	}
+-	vendor_hook_deleteCacheEntry(gHDMICache, pDeviceID);
+-	vendor_hook_deleteCache(gHDMICache);
+-	return VENDOR_STATUS_OK ;
+-}
+-
+ 
+ /*!
+ ** ------------------------------------------------------------------------------------------
+@@ -615,9 +677,180 @@
+ 		VENDOR_LOG_WARN("%s: Invalid HDMI Data\n", __FUNCTION__ );
+ 		return EFAIL;
+ 	}
++
++	/* This must be cleared on last paramter accessed by the client */
++	pHDMIInfo->bCheckProcStatus = FALSE;
++
+ 	if(FALSE == vendor_hooks_extractFormattedBOOLFromData(pHDMIInfo->pFullData, "HDMI3DPresent:", " %u", bIs3DSupported)){
+ 	   return EFAIL;
+ 	}
+ 	return EOK;
+ }
+ 
++/*!
++** -------------------------------------------------------------------------------------------
++** @brief Creates a file with a copy of the HDMi proc .
++**
++** @param[in] pDeviceID - /proc entry associated with the device
++**
++** @returns Status of File creation
++**
++** @retval VENDOR_STATUS_ERROR File not created
++** @retval VENDOR_STATUS_OK File Created
++*/
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD
++static int createHDMIDisplayDeviceFile(char * pDeviceID)
++{
++    char mode[] = "0660";
++	int i = 0;
++	vendor_hook_proc_device_status_t retval;
++	uint32_t Value = 0;
++
++	if( NULL == pDeviceID ){
++		return VENDOR_STATUS_ERROR ;
++	}
++
++	hdmi_info_t * pHDMIInfo = (hdmi_info_t *) calloc(BSKYB_HDMI_PROC_MAX_BUFFER_SIZE + sizeof(hdmi_info_t), sizeof(char));
++
++	if( NULL == pHDMIInfo ){
++		return VENDOR_STATUS_ERROR ;
++	}
++	
++	pHDMIInfo->pFullData = (char*)pHDMIInfo + sizeof(hdmi_info_t);
++
++	if(eVENDORHOOK_OK !=
++		vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, pHDMIInfo->pFullData, \
++						BSKYB_HDMI_PROC_MAX_BUFFER_SIZE)){
++		if(pHDMIInfo != NULL){
++			free(pHDMIInfo);
++			pHDMIInfo = NULL ;
++		}
++		return VENDOR_STATUS_ERROR ;
++	}
++	pHDMIInfo->uFullDataSize = strlen(pHDMIInfo->pFullData);
++	/* There are occasions where the HDMI is open but not fully initialised. */
++	if (pHDMIInfo->uFullDataSize > BSKYB_DISPLAYDEVICE_HDMI_NOT_FULLY_INITIALISED){
++		/* The Video Latency is only used now to make sure the proc format is complete. */
++		if(TRUE == vendor_hooks_extractFormattedUINT32FromData(pHDMIInfo->pFullData, "Video Latency in ms:", " %lu", &Value) ){
++			sem_wait(&tHDMIDisplayDeviceSem);
++			retval = vendor_hook_write_proc_device(BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME,
++										pHDMIInfo->pFullData, pHDMIInfo->uFullDataSize);
++			sem_post(&tHDMIDisplayDeviceSem);
++			if(eVENDORHOOK_OK == retval){
++				/* Change mode */
++				i = strtol(mode, 0, BSKYB_DISPLAYDEVICE_BASE_OCTAL);
++				chmod (BSKYB_DISPLAYDEVICE_HDMI_DATA_FILENAME, i);
++				if(pHDMIInfo != NULL){
++					free(pHDMIInfo);
++					pHDMIInfo = NULL ;
++				}
++				return VENDOR_STATUS_OK;
++			}
++		}
++	}
++	if(pHDMIInfo != NULL){
++		free(pHDMIInfo);
++		pHDMIInfo = NULL ;
++	}
++	return VENDOR_STATUS_ERROR;
++}
++#endif
++
++/*!
++** ------------------------------------------------------------------------------------------
++** @brief Initialise HDMI Display Device thread
++**
++** @retval EFAIL  - In case of error
++** @retval EOK - Succesful scenario
++*/
++int init_hdmi_displaydevice_thread()
++{
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD
++	if(!tHDMIDisplayDeviceThreadInitialised) {
++		if(sem_init(&tHDMIDisplayDeviceSem, 0, 1)) {
++			return EFAIL;
++		}
++		if(pthread_create(&tHDMIDisplayDeviceThreadID, NULL, tHDMIDisplayDeviceThread, NULL)) {
++			return EFAIL;
++		}
++		tHDMIDisplayDeviceThreadInitialised = true;
++	}
++#endif
++	return EOK;
++}
++
++/*!
++** ------------------------------------------------------------------------------------------
++** @brief Terminate HDMI Display Device thread
++**
++** @retval EFAIL  - In case of error
++** @retval EOK - Succesful scenario
++*/
++int terminate_hdmi_displaydevice_thread()
++{
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD
++	if (sem_destroy(&tHDMIDisplayDeviceSem)) {
++		return EFAIL;
++	}
++	if (pthread_cancel(tHDMIDisplayDeviceThreadID)) {
++		return EFAIL;
++	}
++
++	if (pthread_mutex_destroy(&tHDMIDisplayDeviceMutex)) {
++		return EFAIL;
++	}
++	tHDMIDisplayDeviceThreadInitialised = false;
++#endif
++	return EOK;
++}
++
++
++/*!
++** ------------------------------------------------------------------------------------------
++** @brief HDMI Display Device thread function - used to create hdmi file when the TV is on, but
++** TR069 client isn't active.
++** The polling interval for the thread is 60 minutes.
++**
++** @retval EFAIL  - In case of error
++** @retval EOK - Succesful scenario
++*/
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD
++static void *tHDMIDisplayDeviceThread(void *arg)
++{
++	time_t t;
++	struct tm tm;
++	bool bFileCreated = false;
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD_FILE_DEBUG
++	FILE *fp;
++#endif
++
++	while(true) {
++		t = time(NULL);
++		tm = *localtime(&t);
++		/* Create HDMI file once per day when Customer is watching the TV. */
++		if ((bFileCreated == false) && (tm.tm_hour >= BSKYB_HDMI_DISPLAYDEVICE_TIME_9AM &&
++										 tm.tm_hour <= BSKYB_HDMI_DISPLAYDEVICE_TIME_MIDNIGHT)){
++			if (VENDOR_STATUS_OK == createHDMIDisplayDeviceFile(BSKYB_HDMI_PROC_ENTRY)){
++				bFileCreated = true;
++			}
++		}else if(tm.tm_hour == BSKYB_HDMI_DISPLAYDEVICE_TIME_8AM){
++			bFileCreated = false;
++		}
++#ifdef BSKYB_TURN_ON_HDMI_DISPLAYDEVICE_THREAD_FILE_DEBUG
++		fp = fopen( BSKYB_DISPLAYDEVICE_HDMI_THREAD_DEBUG_FILENAME, "a" );
++		fprintf(fp, "wakeup: %d-%d-%d %d:%d:%d File: %d\n",
++				 tm.tm_year + 1900,
++				 tm.tm_mon + 1,
++				 tm.tm_mday,
++				 tm.tm_hour,
++				 tm.tm_min,
++				 tm.tm_sec,
++				 bFileCreated ? 1 : 0);
++		fclose(fp);
++#endif
++		sleep(BSKYB_HDMI_DISPLAYDEVICE_THREAD_TIMEOUT);
++	}
++}
++#endif
++
++
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.h	2016-07-25 14:25:29.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.h	2016-08-03 15:56:34.866467852 +0100
+@@ -47,10 +47,10 @@
+ {
+ 	char * pFullData ;
+ 	unsigned int uFullDataSize;
+-	uint32_t lUpTime;
++	bool bStatus;           /* HDMI Enabled / Disabled. */
++	bool bCheckProcStatus;  /* Check Proc only once, when getting Parameters. */
+ }hdmi_info_t;
+ 
+-int32_t hdmi_displaydevice_cleanup(char* pDeviceID);
+ hdmi_info_t * getHDMIInfoFromCache(char * pDeviceID);
+ hdmi_info_t * getHDMIInfo(char* pDeviceID);
+ int32_t get_hdmi_displaydevice_status(char* pDeviceID, char *buf, size_t length, int instance);
+@@ -62,4 +62,8 @@
+ int32_t get_hdmi_displaydevice_cecsupport(char* pDeviceID,	bool *bIsCECSupported,	int instance);
+ int32_t get_hdmi_displaydevice_autolipsyncsupport(char* pDeviceID, bool *bIsAutoLipSyncSupported,  int instance);
+ int32_t get_hdmi_displaydevice_hdmi3dpresent(char* pDeviceID, bool *bIs3DSupported, int instance);
++
++int init_hdmi_displaydevice_thread();
++int terminate_hdmi_displaydevice_thread();
++
+ #endif
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mifd.c diagnostics-1.3_new/apps/mifd/mifd.c
+--- diagnostics-1.3_orig/apps/mifd/mifd.c	2016-07-25 14:25:29.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mifd.c	2016-08-02 11:28:13.132532039 +0100
+@@ -150,6 +150,7 @@
+ #include "mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_fan.h"
+ #include "mgmtif/vendor_hook_x_sky_com_supportmcu_standby.h"
+ #include "mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.h"
++#include "mgmtif/vendor_hook_hdmi_displaydevice.h"
+ 
+ #include "mgmtif/mgmtif_dslf_stubs_status.h"
+ 
+@@ -3673,6 +3674,8 @@
+ 
+ 	/*init tsensor diagnostics*/
+ 	init_temperaturesensor_thread();
++	/* init hdmi display device thread */
++	init_hdmi_displaydevice_thread();
+ 
+     /* init diags */
+ 
+@@ -4125,6 +4128,8 @@
+ 
+ 	/*teminate tsensor diagnostics*/
+ 	terminate_temperaturesensor_thread();
++	/* Terminate hdmi display device thread. */
++	terminate_hdmi_displaydevice_thread();
+ 
+ 	return EIO;
+ }

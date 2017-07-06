@@ -1,0 +1,4 @@
+config BR2_PACKAGE_LIBCOM_ERR
+	bool "libcom_err"
+	help
+	    Common Error display Library.

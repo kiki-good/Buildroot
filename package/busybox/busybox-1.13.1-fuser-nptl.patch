@@ -1,0 +1,71 @@
+Patch to add support for NPTL style proc entries, without
+this only single threaded apps are reported.
+
+However due to the extra processing required this util now
+takes quite a bit longer.
+
+--- busybox-1.13.1/procps/fuser.c	2008-11-09 17:28:20.000000000 +0000
++++ busybox-1.13.1/procps/fuser.c	2010-05-24 11:33:37.000000000 +0100
+@@ -209,6 +209,38 @@
+ 	return plist;
+ }
+ 
++
++/* NB: does chdir internally */
++static pid_list *scan_proc_tids(pid_t pid, inode_list *ilist, pid_list *plist)
++{
++	DIR *d;
++	struct dirent *de;
++	char path[128];
++
++	sprintf(path, "/proc/%d/task", (int)pid);
++
++	xchdir(path);
++	d = opendir(path);
++	if (!d)
++		return NULL;
++
++	while ((de = readdir(d)) != NULL) {
++		if (chdir(de->d_name) < 0)
++			continue;
++
++		plist = scan_link("cwd", pid, ilist, plist);
++		plist = scan_link("exe", pid, ilist, plist);
++		plist = scan_link("root", pid, ilist, plist);
++		plist = scan_dir_links("fd", pid, ilist, plist);
++		plist = scan_dir_links("lib", pid, ilist, plist);
++		plist = scan_dir_links("mmap", pid, ilist, plist);
++		plist = scan_pid_maps("maps", pid, ilist, plist);
++		xchdir(path);
++	}
++	closedir(d);
++	return plist;
++}
++
+ /* NB: does chdir internally */
+ static pid_list *scan_proc_pids(inode_list *ilist)
+ {
+@@ -216,6 +248,7 @@
+ 	struct dirent *de;
+ 	pid_t pid;
+ 	pid_list *plist;
++	struct stat task_stat;
+ 
+ 	xchdir("/proc");
+ 	d = opendir("/proc");
+@@ -236,6 +269,14 @@
+ 		plist = scan_dir_links("lib", pid, ilist, plist);
+ 		plist = scan_dir_links("mmap", pid, ilist, plist);
+ 		plist = scan_pid_maps("maps", pid, ilist, plist);
++
++		/* we need to check if we have a task dir and if it contains more
++		 * than one file we need to scan all the task IDs in those.
++		 */
++		if (stat("task", &task_stat) == 0) {
++			plist = scan_proc_tids(pid, ilist, plist);
++		}
++
+ 		xchdir("/proc");
+ 	}
+ 	closedir(d);
+

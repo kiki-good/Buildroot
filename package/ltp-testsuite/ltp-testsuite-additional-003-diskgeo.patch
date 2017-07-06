@@ -1,0 +1,219 @@
+diff -Naur ltp-full-20070228_org/testcases/additional/diskgeo/diskGeo.c ltp-full-20070228/testcases/additional/diskgeo/diskGeo.c
+--- ltp-full-20070228_org/testcases/additional/diskgeo/diskGeo.c	1970-01-01 01:00:00.000000000 +0100
++++ ltp-full-20070228/testcases/additional/diskgeo/diskGeo.c	2009-08-19 09:37:08.000000000 +0100
+@@ -0,0 +1,180 @@
++/*
++ *
++ *   Copyright (c) bSkyb 2009
++ *
++ */
++
++
++/*
++ * NAME
++ *	diskgeo.c
++ *
++ * CALLS
++ *	-
++ *
++ * ALGORITHM
++ 
++ *      This test is ensures that Disk IOCTL's are operational
++ *
++ * RESTRICTIONS
++ *      -
++ *
++ * CHANGE LOG:
++ * August 1st 2009 : Created by Richard Parsons
++ *
++ */
++
++
++#include <unistd.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
++#include <ctype.h>
++#include <setjmp.h>
++#include <errno.h>
++#include <getopt.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/ioctl.h>
++/* test.h and usctest.h are the two header files that are required by the
++  * quickhit package.  They contain function and macro declarations which you
++  * can use in your test programs
++  */
++#include "test.h"
++#include "usctest.h"
++
++#define BLKRRPART    _IO(0x12,95)    /* re-read partition table */
++#define BLKGETSIZE   _IO(0x12,96)    /* return device size */
++#define BLKFLSBUF    _IO(0x12,97)    /* flush buffer cache */
++#define BLKSSZGET    _IO(0x12,104)   /* get block device sector size */
++#define BLKGETSIZE64 _IOR(0x12,114,size_t)      /* size in bytes */
++
++char *TCID = "diskgeo01";
++int TST_TOTAL = 5;
++extern int Tst_count;
++
++void help();
++void setup ( void );
++
++
++
++/*
++ * cleanup() - performs all ONE TIME cleanup for this test at completion or
++ *	       premature exit.
++ */
++void
++cleanup ( void )
++{
++	/*
++	 * print timing stats if that option was specified.
++	 * print errno log if that option was specified.
++	 */
++	TEST_CLEANUP;
++	/* exit with return code appropriate for results */
++	tst_exit();
++}
++
++
++/*
++ * setup() - performs all ONE TIME setup for this test
++ */
++void setup ( void )
++{
++	TEST_PAUSE;
++}
++
++/***************************************************************
++ * help
++ ***************************************************************/
++/* The custom help() function is really simple.  Just write your help message to
++ * standard out.  Your help function will be called after the standard options
++ * have been printed
++ */
++void help()
++{
++	
++}
++
++int 
++main(int argc, char **argv) {
++        int fd = 0, error = 0;
++        int i;
++	char name[] ="/dev/sda";
++
++	
++	if ((fd = open(name, O_RDWR)) < 0) {
++		if ((fd = open(name, O_RDONLY)) < 0) {
++			printf("Failed to open %s, error[%d]: %s\n",
++				name, error, strerror(error));
++			tst_resm ( TFAIL, "Could not get /dev/sda" );
++			exit(1);
++		}
++	}
++
++
++        printf("Calling ioctl() to re-read partition table.\n");
++        sync();
++        sleep(2);
++        if ((i = ioctl(fd, BLKRRPART)) != 0) {
++                error = errno;
++        } else {
++                /* give it another chance */
++                sync();
++                sleep(2);
++                if ((i = ioctl(fd, BLKRRPART)) != 0)
++                        error = errno;
++        }
++
++        if (i) {
++                printf("Re-reading the partition table failed with error %d: %s.\n",
++                        error, strerror(error));
++        }
++
++	unsigned int sz;
++	i = ioctl(fd, BLKGETSIZE,&sz);
++	if (i < 0)
++	{
++	   tst_resm ( TFAIL, "BLKGETSIZE Failed" );
++	} else
++	   tst_resm ( TPASS, "BLKGETSIZE Suceeded" );
++
++ 
++
++
++	i = ioctl(fd, BLKSSZGET,&sz);
++	if (i < 0)
++	{
++	   tst_resm ( TFAIL, "BLKSSZGET Failed" );
++	} else
++	   tst_resm ( TPASS, "BLKSSZGET Suceeded" );
++
++
++	unsigned long s64z;
++	i = ioctl(fd, BLKGETSIZE64,&s64z);
++	if (i < 0)
++	{
++	   tst_resm ( TFAIL, " BLKGETSIZE64 Failed" );
++	} else
++	   tst_resm ( TPASS, " BLKGETSIZE64 Suceeded" );
++
++ 
++	i = ioctl(fd, BLKFLSBUF);
++	if (i < 0)
++	{
++	   tst_resm ( TFAIL, "BLKFLSBUF Failed" );
++	} else
++	   tst_resm ( TPASS, "BLKFLSBUF Suceeded" );	
++
++
++        if (fsync(fd) || close(fd)) {
++                printf("Error closing %s\n", name);
++                exit(1);
++        }
++	cleanup();
++	exit(0);
++}
++
++
++
++
+diff -Naur ltp-full-20070228_org/testcases/additional/diskgeo/Makefile ltp-full-20070228/testcases/additional/diskgeo/Makefile
+--- ltp-full-20070228_org/testcases/additional/diskgeo/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ ltp-full-20070228/testcases/additional/diskgeo/Makefile	2009-08-19 09:33:54.000000000 +0100
+@@ -0,0 +1,31 @@
++#
++#  Copyright (c) International Business Machines  Corp., 2001
++#
++#  This program is free software;  you can redistribute it and/or modify
++#  it under the terms of the GNU General Public License as published by
++#  the Free Software Foundation; either version 2 of the License, or
++#  (at your option) any later version.
++#
++#  This program is distributed in the hope that it will be useful,
++#  but WITHOUT ANY WARRANTY;  without even the implied warranty of
++#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
++#  the GNU General Public License for more details.
++#
++#  You should have received a copy of the GNU General Public License
++#  along with this program;  if not, write to the Free Software
++#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++#
++
++CFLAGS += -I../../../include -Wall
++LDLIBS += -L../../../lib -lltp -lpthread
++
++SRCS    = $(wildcard *.c)
++TARGETS = $(patsubst %.c,%,$(SRCS))
++
++all: $(TARGETS)
++
++install:
++	@set -e; for i in $(TARGETS); do ln -f $$i ../../bin/$$i ; done
++
++clean:
++	rm -f $(TARGETS)

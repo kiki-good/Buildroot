@@ -1,0 +1,6 @@
+config BR2_PACKAGE_EVTEST
+	bool "evtest"
+	help
+	  Event test tool mainly for Bluetooth remote
+	  http://pkgs.fedoraproject.org/repo/pkgs/evtest/
+comment "evtest requires bluetooth to be enabled with uhid device"

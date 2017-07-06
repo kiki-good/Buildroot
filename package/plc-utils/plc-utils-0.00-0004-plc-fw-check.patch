@@ -1,0 +1,29 @@
+diff --git a/plc/BootDevice2.c b/plc/BootDevice2.c
+index 524ef12..2679d48 100644
+--- a/plc/BootDevice2.c
++++ b/plc/BootDevice2.c
+@@ -65,9 +65,12 @@
+ 
+ #include "../plc/plc.h"
+ 
+-signed BootDevice2 (struct plc * plc)
++#define CONFIG_ROOTFS_WRITABLE_DIRECTORY	"/airties"
++#define PLC_UP_FILE				CONFIG_ROOTFS_WRITABLE_DIRECTORY"/plc_up"
+ 
++signed BootDevice2 (struct plc * plc)
+ {
++	FILE *fp = NULL;
+ 	char string [PLC_VERSION_STRING];
+ 	if (BootParameters2 (plc))
+ 	{
+@@ -82,6 +85,10 @@ signed BootDevice2 (struct plc * plc)
+ 		return (-1);
+ 	}
+ 	Confirm (plc, "%s is running", string);
++
++	fp = fopen(PLC_UP_FILE, "a+");
++	fclose(fp);
++
+ 	return (0);
+ }
+ 

@@ -1,0 +1,15 @@
+diff -Naur upstart-1.13.2/extra/conf/upstart-dbus-bridge.conf upstart-1.13.2_mod/extra/conf/upstart-dbus-bridge.conf
+--- upstart-1.13.2/extra/conf/upstart-dbus-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf/upstart-dbus-bridge.conf	2015-03-25 10:31:00.641664363 +0000
+@@ -7,9 +7,9 @@
+ 
+ emits dbus
+ 
+-start on startup
++start on stopped rc-sysinit
+ 
+-stop on runlevel [!2345]
++stop on runlevel [06]
+ 
+ expect daemon
+ respawn

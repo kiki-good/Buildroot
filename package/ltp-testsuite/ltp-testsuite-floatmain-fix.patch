@@ -1,0 +1,10 @@
+--- ltp-full-20070228/testcases/misc/math/float/main.c	2007-03-01 04:40:32.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/misc/math/float/main.c	2013-05-23 18:35:41.304145742 +0100
+@@ -31,6 +31,7 @@
+ char *TCID;	 		/* Test program identifier.    */
+ int TST_TOTAL=1;    		/* Total number of test cases. */
+ extern int Tst_count;		/* Test Case counter for tst_* routines */
++#define NB_FUNC 1 //Pavankn
+ 
+ /* To avoid extensive modifications to the code, use this bodge */
+ #define exit(x) myexit(x)

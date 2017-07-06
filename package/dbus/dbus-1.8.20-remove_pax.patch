@@ -1,0 +1,23 @@
+--- a/configure	2015-08-04 14:47:18.598229412 +0100
++++ b/configure	2015-08-04 14:47:47.038230142 +0100
+@@ -3489,7 +3489,7 @@
+ 
+ 
+ # We'll loop over all known methods to create a tar archive until one works.
+-_am_tools='gnutar plaintar pax cpio none'
++_am_tools='gnutar plaintar cpio none'
+ 
+ # The POSIX 1988 'ustar' format is defined with fixed-size fields.
+       # There is notably a 21 bits limit for the UID and the GID.  In fact,
+@@ -3553,11 +3553,6 @@
+       am__tar_='tar chf - "$tardir"'
+       am__untar='tar xf -'
+       ;;
+-    pax)
+-      am__tar='pax -L -x ustar -w "$$tardir"'
+-      am__tar_='pax -L -x ustar -w "$tardir"'
+-      am__untar='pax -r'
+-      ;;
+     cpio)
+       am__tar='find "$$tardir" -print | cpio -o -H ustar -L'
+       am__tar_='find "$tardir" -print | cpio -o -H ustar -L'

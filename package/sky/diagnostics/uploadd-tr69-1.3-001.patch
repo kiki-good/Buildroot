@@ -1,0 +1,19 @@
+diff -Naurr tr69-data-model_orig/apps/cmd/tr069.sh tr69-data-model_new/apps/cmd/tr069.sh
+--- tr69-data-model_orig/apps/cmd/tr069.sh	2015-04-15 13:56:07.631131865 +0100
++++ tr69-data-model_new/apps/cmd/tr069.sh	2015-04-15 14:00:10.185165690 +0100
+@@ -45,15 +45,6 @@
+ EOF
+ 		fi
+ 	sleep 1
+-	cmc -c add cmlegacy.upload.0 >/dev/null 2>&1
+-		if test $? -eq 0 ; then
+-			cmc -i <<EOF
+-start transaction
+-set cmlegacy.upload.0.upload_supported "1";
+-commit transaction
+-EOF
+-		fi
+-	sleep 1
+ 	cmc -c add cmlegacy.epgasdiags.0 >/dev/null 2>&1
+ 		if test $? -eq 0 ; then
+         	cmc -i <<EOF

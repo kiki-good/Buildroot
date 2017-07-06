@@ -1,0 +1,27 @@
+config BR2_PACKAGE_DIAGNOSTICS
+	bool "diagnostics"
+	select BR2_PACKAGE_LIBCOM_ERR
+	select BR2_PACKAGE_LIBEVENT
+	select BR2_PACKAGE_LIBXML2
+	select BR2_PACKAGE_LIBGPG_ERROR
+	select BR2_PACKAGE_LIBGCRYPT
+	select BR2_PACKAGE_ARPCGEN
+	select BR2_PACKAGE_PLY
+	select BR2_PACKAGE_IKSEMEL
+	select BR2_PACKAGE_OPENSSL
+	help
+	  This is the Pace TR-069 client package
+
+
+config BR2_PACKAGE_DIAGNOSTICS_ENABLE_UPLOADD
+	bool "Enable Diagnostics Daemon Uploadd?"
+	depends on BR2_PACKAGE_DIAGNOSTICS
+	help
+	  Enable Diagnostics Daemon Uploadd
+
+
+config BR2_PACKAGE_DIAGNOSTICS_ENABLE_XMPPD
+	bool "Enable Diagnostics Daemon Xmppd?"
+	depends on BR2_PACKAGE_DIAGNOSTICS
+	help
+	  Enable Diagnostics Daemon Xmppd

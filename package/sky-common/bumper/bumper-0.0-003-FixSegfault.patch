@@ -1,0 +1,14 @@
+diff -Naur bumper-0.0/src/bumper.c bumper-0.0_mod/src/bumper.c
+--- bumper-0.0/src/bumper.c	2015-04-20 12:05:26.099383591 +0100
++++ bumper-0.0_mod/src/bumper.c	2015-04-20 12:06:36.451385395 +0100
+@@ -268,6 +268,10 @@
+ 			strcat ( dir_name, dir_entry_p->d_name );
+ 			strcat ( dir_name, "/task/" );
+ 			dir_t = opendir ( dir_name );
++			if (NULL == dir_t)
++			{
++			        continue;
++			}
+ 			/* a process may contain several threads, who details are held in the /proc/<pid>/task directory */
+ 			while ( NULL != ( dir_entry_t = readdir ( dir_t ) ) )
+ 			{

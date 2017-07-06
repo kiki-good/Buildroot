@@ -1,0 +1,493 @@
+diff -Naur ltp-full-20070228/runtest/houndspk ltp-full-20070228_New/runtest/houndspk
+--- ltp-full-20070228/runtest/houndspk	1970-01-01 01:00:00.000000000 +0100
++++ ltp-full-20070228_New/runtest/houndspk	2013-07-02 11:15:15.200659613 +0100
+@@ -0,0 +1,489 @@
++#DESCRIPTION:Math library tests - CPU tests
++
++cve-2008-5029 cve-2008-5029
++cve-2007-2480 cve-2007-2480
++
++abs01 abs01
++
++atof01 atof01
++
++#DESCRIPTION:fsx filesystem stress tests
++fsx-linux export TCbin=$LTPROOT/testcases/kernel/fs/fsx-linux;fsxtest02 10000
++
++fsx-ext2 export SCRATCHDEV=/dev/sda1;fsxtest $SCRATCHDEV ext2 10000
++#fsx-ext3 export SCRATCHDEV=/dev/sda1;fsxtest $SCRATCHDEV ext3 10000
++
++#fsx-jfs export SCRATCHDEV=/dev/sda1;fsxtest $SCRATCHDEV jfs 10000
++#fsx-xfs export SCRATCHDEV=/dev/sda1;fsxtest $SCRATCHDEV xfs 10000
++#fsx-reiserfs export SCRATCHDEV=/dev/sda1;fsxtest $SCRATCHDEV reiserfs 10000
++
++chdir01 chdir01
++chdir01A symlink01 -T chdir01
++chdir02 chdir02
++chdir03 chdir03
++chdir04 chdir04
++
++chmod01 chmod01
++chmod01A symlink01 -T chmod01
++chmod02 chmod02
++chmod03 chmod03
++chmod04 chmod04
++chmod05 cp -p $LTPROOT/testcases/bin/change_owner $TMP;chmod05 
++chmod06 cp -p $LTPROOT/testcases/bin/change_owner $TMP;chmod06
++chmod07 chmod07
++
++chown01 chown01
++chown02 chown02
++chown03 export change_owner=$LTPROOT/testcases/bin/change_owner;chown03
++chown04 cp -p $LTPROOT/testcases/bin/change_owner $TMP;chown04
++chown05 chown05
++
++chroot01 chroot01
++chroot02 chroot02
++chroot03 chroot03
++chroot04 chroot04
++
++#
++
++
++close01 close01
++close02 close02
++close08 close08
++
++confstr01 confstr01
++
++connect01 connect01
++
++creat01 creat01
++creat03 creat03
++creat04 creat04
++creat05 creat05
++creat06 creat06
++#creat07 creat07 -F $LTPROOT/testcases/bin/test1
++creat08 creat08
++creat09 creat09
++
++dup01 dup01
++dup02 dup02
++dup03 dup03
++dup04 dup04
++dup05 dup05
++dup06 dup06
++dup07 dup07
++
++dup201 dup201
++dup202 dup202
++dup203 dup203
++dup204 dup204
++dup205 dup205
++
++
++
++fchdir01 fchdir01
++fchdir02 fchdir02
++fchdir03 fchdir03
++
++fchmod01 fchmod01
++fchmod02 fchmod02
++fchmod03 fchmod03
++fchmod04 fchmod04
++fchmod05 cp -p $LTPROOT/testcases/bin/change_owner $TMP;fchmod05 
++fchmod06 cp -p $LTPROOT/testcases/bin/change_owner $TMP;fchmod06
++fchmod07 fchmod07
++
++fchown01 fchown01
++fchown02 fchown02
++fchown03 cp -p $LTPROOT/testcases/bin/change_owner $TMP;fchown03
++fchown04 export change_owner=$LTPROOT/testcases/bin/change_owner;fchown04
++fchown05 fchown05
++
++fcntl01 fcntl01
++fcntl02 fcntl02
++fcntl03 fcntl03
++fcntl04 fcntl04
++fcntl05 fcntl05
++fcntl06 fcntl06
++fcntl07 fcntl07
++fcntl07B fcntl07B
++fcntl08 fcntl08
++fcntl09 fcntl09
++fcntl10 fcntl10
++fcntl11 fcntl11
++fcntl12 fcntl12
++fcntl13 fcntl13
++fcntl14 fcntl14
++fcntl15 fcntl15
++#fcntl16 fcntl16 #Contains errors.
++fcntl17 fcntl17
++fcntl18 fcntl18
++fcntl19 fcntl19
++fcntl20 fcntl20
++fcntl21 fcntl21
++fcntl22 fcntl22
++fcntl23 fcntl23
++fcntl24 fcntl24
++fcntl25 fcntl25
++fcntl26 fcntl26 
++# The tests for these system calls  fcntl27 and fcntl28 are temporarily being disabled 
++# fcntl27 fcntl27
++# fcntl28 fcntl28
++
++fdatasync01 fdatasync01
++fdatasync02 fdatasync02
++
++flock01 flock01
++flock02 flock02
++flock03 flock03
++flock04 flock04
++flock05 flock05
++flock06 flock06
++
++fpathconf01 fpathconf01
++
++fstat01 fstat01
++fstat02 fstat02
++fstat03 fstat03
++fstat04 fstat04
++fstat05 fstat05
++
++fstatfs01 fstatfs01
++fstatfs02 fstatfs02
++
++fsync01 fsync01
++fsync02 fsync02
++fsync03 fsync03
++
++ftruncate01 ftruncate01
++ftruncate02 ftruncate02
++ftruncate03 ftruncate03
++ftruncate04 ftruncate04
++#ftruncate05 ftruncate05
++getcontext01 getcontext01
++
++getcwd01 getcwd01
++getcwd02 getcwd02
++getcwd03 getcwd03
++
++getdents01 getdents01
++getdents02 getdents02
++getdents03 getdents03
++getdents04 getdents04
++
++llseek01 llseek01
++llseek02 llseek02
++
++lseek01 lseek01
++lseek02 lseek02
++lseek04 lseek04
++lseek05 lseek05
++lseek06 lseek06
++lseek07 lseek07
++lseek08 lseek08
++lseek09 lseek09
++lseek10 lseek10
++
++lstat01A symlink01 -T lstat01
++lstat01 lstat01
++lstat02 lstat02
++lstat03 lstat03
++
++diskGeo diskGeo
++mkdir01 mkdir01
++mkdir02 mkdir02
++mkdir03 mkdir03
++mkdir04 mkdir04
++mkdir05 mkdir05
++mkdir05A symlink01 -T mkdir05
++mkdir08 mkdir08
++mkdir09 mkdir09
++
++mknod01 mknod01
++mknod02 mknod02
++mknod03 mknod03
++mknod04 mknod04
++mknod05 mknod05
++mknod06 mknod06
++mknod07 mknod07
++mknod08 mknod08
++mknod09 mknod09
++
++mlock01 mlock01
++mlock02 mlock02
++
++modify_ldt01 modify_ldt01
++modify_ldt02 modify_ldt02
++
++#
++# These tests require an unmounted block device
++# to run correctly. Please see individual test
++# code for more information.
++#
++mount01 mount01 -D /dev/sda1
++mount02 mount02 -D /dev/sda1
++mount03 mount03 -D /dev/sda1
++mount04 mount04 -D /dev/sda1
++
++open01 open01
++open01A symlink01 -T open01
++open02 open02
++open03 open03
++open04 open04
++open05 open05
++open06 open06
++open07 open07
++open08 open08
++open09 open09
++open10 open10
++
++madvise01 madvise01
++madvise02 madvise02
++
++pathconf01 pathconf01
++
++
++#  The personality() system call is poorly documented 
++#  and difficult to figure out how to use by looking 
++#  at the different architecture specific kernel files.
++#personality01 personality01
++#personality02 personality02
++
++read01 read01
++read02 read02
++read03 read03
++read04 read04
++
++readdir01 readdir01
++readdir02 readdir02
++
++readlink01A symlink01 -T readlink01
++readlink01 readlink01
++readlink02 readlink02
++readlink03 readlink03
++readlink04 cp -f $LTPROOT/testcases/bin/creat_slink $TMP; readlink04
++
++readv01 readv01
++readv02 readv02
++readv03 readv03
++
++recv01 recv01
++
++recvfrom01 recvfrom01
++
++recvmsg01 recvmsg01
++
++rename01 rename01
++rename01A symlink01 -T rename01
++rename02 rename02
++rename03 rename03
++rename04 rename04
++rename05 rename05
++rename06 rename06
++rename07 rename07
++rename08 rename08
++rename09 rename09
++rename10 rename10
++rename12 rename12
++rename13 rename13
++rename14 rename14
++
++rmdir01 rmdir01
++rmdir02 rmdir02
++rmdir03 rmdir03
++rmdir03A symlink01 -T rmdir03
++rmdir04 rmdir04
++rmdir05 rmdir05
++
++setfsgid01 setfsgid01
++setfsgid02 setfsgid02
++setfsgid03 setfsgid03
++
++setfsuid01 setfsuid01
++setfsuid02 setfsuid02
++setfsuid03 setfsuid03
++
++setgid01 setgid01
++setgid02 setgid02
++setgid03 setgid03
++
++setegid01 setegid01
++
++setgroups01 setgroups01
++setgroups02 setgroups02
++setgroups03 setgroups03
++#setgroups04 setgroups04
++
++setpgid01 setpgid01
++setpgid02 setpgid02
++setpgid03 setpgid03
++
++setpgrp01 setpgrp01
++setpgrp02 setpgrp02
++
++setsid01 setsid01
++
++setuid01 setuid01
++setuid02 setuid02
++setuid03 setuid03
++
++stat01 stat01
++stat02 stat02
++stat03 stat03
++stat04 symlink01 -T stat04
++stat05 stat05
++stat06 stat06
++
++statfs01 statfs01
++statfs02 statfs02
++statfs03 statfs03
++
++statvfs01 statvfs01
++
++# This syscall is obsoleted by settimeofday.
++#stime01 stime01
++#stime02 stime02
++
++string01 string01
++
++#Hound kernel does not have swap
++#swapoff01 swapoff01
++#swapoff02 swapoff02
++
++#swapon01 swapon01
++#swapon02 swapon02
++
++symlink01 symlink01
++symlink02 symlink02
++symlink03 symlink03
++symlink04 symlink04
++symlink05 symlink05
++
++sync01 sync01
++sync02 sync02
++
++sysfs01 sysfs01
++sysfs02 sysfs02
++sysfs03 sysfs03
++sysfs04 sysfs04
++sysfs05 sysfs05
++sysfs06 sysfs06
++
++
++truncate01 truncate01
++truncate02 truncate02
++truncate03 truncate03
++truncate04 truncate04
++
++# This syscall is obsolete.  The latest glibc does not even
++# include the ulimit.h file anymore.  The test will fail
++# because the error handling has been simplified.
++# 
++# ulimit01 ulimit01
++
++umask01 umask01
++umask02 umask02
++umask03 umask03
++
++uname01 uname01
++uname02 uname02
++uname03 uname03
++
++unlink01 symlink01 -T unlink01
++unlink05 unlink05
++unlink06 unlink06
++unlink07 unlink07
++unlink08 unlink08
++
++#
++# These tests require an unmounted block device
++# to run correctly. Please see individual test
++# code for more information.
++#
++#umount01 umount01 -D /dev/...
++#umount02 umount02 -D /dev/...
++#umount03 umount03 -D /dev/...
++
++#DESCRIPTION:Memory Mgmt tests
++mm01 mmap001 -m 10000
++# 40 Mb mmap() test.
++# Creates a 10000 page mmap, touches all of the map, sync's it, and
++# munmap()s it.
++mm02 mmap001
++# simple mmap() test.
++#mm03 mmap001 -i 0 -I 1 -m 100
++# repetitive mmapping test.
++# Creates a one page map repetitively for one minute.
++
++mtest01 mtest01 -p80
++mtest01w mtest01 -p80 -w
++
++#test for race conditions
++
++
++
++
++
++
++#DESCRIPTION:Filesystem stress tests
++gf01 umount /dev/sda1;mkdir /testdir; mount /dev/sda1 /testdir;growfiles -W gf01 -d /testdir -b -e 1 -u -i 0 -L 20 -w -C 1 -l -I r -T 1 glseek20 glseek20.2
++gf02 growfiles -W gf02 -d /testdir -b -e 1 -L 10 -i 100 -I p -S 2 -u -f gf03_
++gf03 growfiles -W gf03 -d /testdir -b -e 1 -g 1 -i 1 -S 150 -u -f gf05_
++#gf04 growfiles -W gf04 -d /testdir -b -e 1 -g 4090 -i 500 -t 39000 -u -f gf06_
++#gf05 growfiles -W gf05 -d /testdir -b -e 1 -g 5000 -i 500 -t 49900 -T10 -c9 -I p -u -f gf07_
++gf06 growfiles -W gf06 -d /testdir -b -e 1 -u -r 1-5000 -R 0--1 -i 0 -L 30 -C 1 g_rand10 g_rand10.2
++gf07 growfiles -W gf07 -d /testdir -b -e 1 -u -r 1-5000 -R 0--2 -i 0 -L 30 -C 1 -I p g_rand13 g_rand13.2
++gf08 growfiles -W gf08 -d /testdir -b -e 1 -u -r 1-5000 -R 0--2 -i 0 -L 30 -C 1 g_rand11 g_rand11.2
++gf09 growfiles -W gf09 -d /testdir -b -e 1 -u -r 1-5000 -R 0--1 -i 0 -L 30 -C 1 -I p g_rand12 g_rand12.2
++gf10 growfiles -W gf10 -d /testdir -f /testdir/aff -b -e 1 -u -r 1-5000 -i 100 -L 10 -C 1 -I l g_lio14 g_lio14.2
++gf11 growfiles -W gf11 -d /testdir -b -e 1 -u -r 1-5000 -i 0 -L 10 -C 1 -I L g_lio15 g_lio15.2
++
++
++#mkfifo is missing.... need to add it  
++#gf12 mkfifo gffifo17; growfiles -b -W gf12 -e 1 -u -i 0 -L 30 gffifo17
++#gf13 mkfifo gffifo18; growfiles -b -W gf13 -e 1 -u -i 0 -L 30 -I r -r 1-4096 gffifo18
++#=====================
++
++gf14 growfiles -W gf14 -b -d /testdir -f /testdir/aff -e 1 -u -i 100 -L 10 -w -l -C 1 -T 5 glseek19 glseek19.2
++gf15 growfiles -W gf15 -b -d /testdir -f /testdir/aff -e 1 -u -r 1-49600 -I r -u -i 100 -L 10 Lgfile1
++gf16 growfiles -W gf16 -b -d /testdir -e 1 -i 0 -L 120 -u -g 4090 -T 100 -t 408990 -l -C 10 -c 1000 -S 10 -f Lgf02_
++gf17 growfiles -W gf17 -b -d /testdir -e 1 -i 0 -L 120 -u -g 5000 -T 100 -t 499990 -l -C 10 -c 1000 -S 10 -f Lgf03_
++gf18 growfiles -W gf18 -b -d /testdir -e 1 -i 0 -L 120 -w -u -r 10-5000 -I r -l -S 2 -f Lgf04_
++gf19 growfiles -W gf19 -b -d /testdir -e 1 -g 5000 -i 500 -t 49900 -T10 -c9 -I p -o O_RDWR,O_CREAT,O_TRUNC -u -f gf08i_
++gf20 growfiles -W gf20 -D 0 -d /testdir -b -i 0 -L 60 -u -B 1000b -e 1 -r 1-256000:512 -R 512-256000 -T 4 gfbigio-$$
++gf21 growfiles -W gf21 -D 0 -d /testdir -b -i 0 -L 60 -u -B 1000b -e 1 -g 20480 -T 10 -t 20480 gf-bld-$$
++gf22 growfiles -W gf22 -D 0 -d /testdir -b -i 0 -L 60 -u -B 1000b -e 1 -g 20480 -T 10 -t 20480 gf-bldf-$$
++gf23 growfiles -W gf23 -D 0 -d /testdir -b -i 0 -L 60 -u -B 1000b -e 1 -r 512-64000:1024 -R 1-384000 -T 4 gf-inf-$$
++gf24 growfiles -W gf24 -D 0 -d /testdir -b -i 0 -L 60 -u -B 1000b -e 1 -g 20480 gf-jbld-$$
++gf25 growfiles -W gf25 -D 0 -d /testdir -b -i 0 -L 60 -u -B 1000b -e 1 -r 1024000-2048000:2048 -R 4095-2048000 -T 1 gf-large-gs-$$
++gf26 growfiles -W gf26 -D 0 -d /testdir -b -i 0 -L 60 -u -B 1000b -e 1 -r 128-32768:128 -R 512-64000 -T 4 gfsmallio-$$
++gf27 growfiles -W gf27 -b -d /testdir -D 0 -w -g 8b -C 1 -b -i 1000 -u gfsparse-1-$$
++gf28 growfiles -W gf28 -b -d /testdir -D 0 -w -g 16b -C 1 -b -i 1000 -u gfsparse-2-$$
++gf29 growfiles -W gf29 -b -d /testdir -D 0 -r 1-4096 -R 0-33554432 -i 0 -L 60 -C 1 -u gfsparse-3-$$
++gf30 growfiles -W gf30 -D 0 -d /testdir -b -i 0 -L 60 -u -B 1000b -e 1 -o O_RDWR,O_CREAT,O_SYNC -g 20480 -T 10 -t 20480 gf-sync-$$
++
++rwtest01 export LTPROOT; rwtest -N rwtest01 -c -q -i 60s  -f sync 131072:/testdir/rw-sync-$$
++rwtest02 export LTPROOT; rwtest -N rwtest02 -c -q -i 60s  -f buffered 131072:/testdir/rw-buffered-$$
++rwtest03 export LTPROOT; rwtest -N rwtest03 -c -q -i 60s -n 2  -f buffered -s mmread,mmwrite -m random -Dv 131072:/tmp/mm-buff-$$
++rwtest04 export LTPROOT; rwtest -N rwtest04 -c -q -i 60s -n 2  -f sync -s mmread,mmwrite -m random -Dv 131072:/tmp/mm-sync-$$
++rwtest05 export LTPROOT; rwtest -N rwtest05 -c -q -i 50 -T 64b 500b:/testdir/rwtest01%f
++
++#must be run as root
++#iogen01 iogen -i 120s -s read,write 500b:doio.f1.$$ 1000b:doio.f2.$$ | doio -akv -n 2
++iogen01 export LTPROOT; rwtest -N iogen01 -i 30s -s read,write -Da -Dv -n 2 500b:doio.f1.$$ 1000b:doio.f2.$$
++
++fs_inod01 fs_inod $TMP 10 10 1
++openfile01 openfile -f10 -t10
++inode01 inode01
++inode02 inode02 2 2 10 5
++stream01 stream01
++stream02 stream02
++stream03 stream03
++stream04 stream04
++stream05 stream05
++ftest01 ftest01
++ftest02 ftest02
++ftest03 ftest03
++ftest04 ftest04
++ftest05 ftest05
++ftest06 ftest06
++ftest07 ftest07
++ftest08 ftest08

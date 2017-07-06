@@ -1,0 +1,60 @@
+From 0b3cf5a97b7a919bc3fc808eeee8adf5a219d70c Mon Sep 17 00:00:00 2001
+From: Can Ilhan <can.ilhan@airties.com>
+Date: Tue, 22 Jul 2014 18:08:48 +0300
+Subject: [PATCH 24/26] Make macros in sync with wpa supplicant/wireless
+ driver. When we have time, we should force wireless_tools to use driver's
+ wireless.h file and remove undefs from wireless driver
+
+Issue:AIR4920-454
+---
+ wireless.21.h | 4 ++--
+ wireless.h    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/wireless.21.h b/wireless.21.h
+index b273380..d85530a 100644
+--- a/wireless.21.h
++++ b/wireless.21.h
+@@ -439,7 +439,7 @@
+ 
+ /* Maximum of address that you may get in the
+    list of access points in range */
+-#define IW_MAX_AP		64
++#define IW_MAX_AP		128
+ 
+ /* Maximum size of the ESSID and NICKN strings */
+ #define IW_ESSID_MAX_SIZE	32
+@@ -539,7 +539,7 @@
+ /* Maximum size of returned data */
+ /* AIRTIES_PATCH */
+ // We need to support up to 128 results
+-#define IW_SCAN_MAX_DATA	64*1024	/* In bytes */
++#define IW_SCAN_MAX_DATA	65535	/* In bytes */
+ /* AIRTIES_PATCH */
+ /* Max number of char in custom event - use multiple of them if needed */
+ #define IW_CUSTOM_MAX		256	/* In bytes */
+diff --git a/wireless.h b/wireless.h
+index b273380..d85530a 100644
+--- a/wireless.h
++++ b/wireless.h
+@@ -439,7 +439,7 @@
+ 
+ /* Maximum of address that you may get in the
+    list of access points in range */
+-#define IW_MAX_AP		64
++#define IW_MAX_AP		128
+ 
+ /* Maximum size of the ESSID and NICKN strings */
+ #define IW_ESSID_MAX_SIZE	32
+@@ -539,7 +539,7 @@
+ /* Maximum size of returned data */
+ /* AIRTIES_PATCH */
+ // We need to support up to 128 results
+-#define IW_SCAN_MAX_DATA	64*1024	/* In bytes */
++#define IW_SCAN_MAX_DATA	65535	/* In bytes */
+ /* AIRTIES_PATCH */
+ /* Max number of char in custom event - use multiple of them if needed */
+ #define IW_CUSTOM_MAX		256	/* In bytes */
+-- 
+1.9.1
+

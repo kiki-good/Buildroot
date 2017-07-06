@@ -1,0 +1,5 @@
+config BR2_PACKAGE_SKY_UPSTART_USER
+	bool "upstart-user"
+	default N
+	help
+	  Enables the new upstart-user.

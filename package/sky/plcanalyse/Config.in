@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PLCANALYSE_DATA
+	bool "PLCANALYSE DATA"
+	default n
+	help
+    This tool will analyse the PLC network, as seen by the local 
+	device, and determine whether its peer devices are in adjacent 
+	sockets, are in distant sockets and whether there is sufficient 
+	noise,  within the PLC network, to cast doubt on the traffic 
+	through-put rates which could be achieved.	

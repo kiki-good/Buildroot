@@ -1,0 +1,19 @@
+#!/bin/sh
+test -e /usr/bin/maid || exit 0
+RETVAL=0
+case "$1" in
+	start)
+		/usr/bin/maid -d
+		RETVAL=$?
+	;;
+	stop)
+		maid -k
+        ;;
+	status)
+        	status $processname
+	        RETVAL=$?
+        ;;
+	*)
+      	;;
+esac
+exit $RETVAL

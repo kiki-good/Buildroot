@@ -1,0 +1,258 @@
+From 722c20aa41db2fa0387052a66464d110b17872ad Mon Sep 17 00:00:00 2001
+From: Bayram Kurumahmut <bayram.kurumahmut@airties.com>
+Date: Thu, 14 Aug 2014 21:13:53 +0300
+Subject: [PATCH 25/26] [all] started to use l_airc_user_init()
+
+Issue:SHR-662
+---
+ Makefile   |  12 ++++++
+ iwconfig.c |   5 +++
+ iwevent.c  |   5 +++
+ iwlib.c    | 130 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ iwlib.h    |   5 +++
+ iwlist.c   |   5 +++
+ iwpriv.c   |   5 +++
+ 7 files changed, 167 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 68ee2be..1e7d23d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -119,6 +119,18 @@ CFLAGS += -I. -Wall ${INCS}
+ XCFLAGS=$(CFLAGS) $(DEPFLAGS) $(WARN) $(HEADERS) $(WELIB_FLAG) $(WEDEF_FLAG)
+ PICFLAG=-fPIC
+ 
++ifeq (${CONFIG_USER_HAS_ROOT_PRIVILEGES}, y)
++CFLAGS += -DCONFIG_USER_HAS_ROOT_PRIVILEGES
++endif
++
++ifneq (${CONFIG_USER_ID},)
++CFLAGS += -DCONFIG_USER_ID=${CONFIG_USER_ID}
++endif
++
++ifneq (${CONFIG_GROUP_ID},)
++CFLAGS += -DCONFIG_GROUP_ID=${CONFIG_GROUP_ID}
++endif
++
+ # Standard compilation targets
+ all:: $(IWLIB) $(PROGS)
+ 
+diff --git a/iwconfig.c b/iwconfig.c
+index acf1f07..feed815 100644
+--- a/iwconfig.c
++++ b/iwconfig.c
+@@ -1913,6 +1913,11 @@ main(int	argc,
+   int skfd;		/* generic raw socket desc.	*/
+   int goterr = 0;
+ 
++	if (l_airc_user_init(0) < 0) {
++		printf("Failed to init user\n");
++		return -1;
++	}
++
+   /* Create a channel to the NET kernel. */
+   if((skfd = iw_sockets_open()) < 0)
+     {
+diff --git a/iwevent.c b/iwevent.c
+index 388f6d2..5477b02 100644
+--- a/iwevent.c
++++ b/iwevent.c
+@@ -895,6 +895,11 @@ main(int	argc,
+       iw_usage(1);
+     }
+ 
++	if (l_airc_user_init(0) < 0) {
++		printf("Failed to init user\n");
++		return -1;
++	}
++
+   /* Open netlink channel */
+   if(rtnl_open(&rth, RTMGRP_LINK) < 0)
+     {
+diff --git a/iwlib.c b/iwlib.c
+index a94fa58..4a013b5 100644
+--- a/iwlib.c
++++ b/iwlib.c
+@@ -3213,3 +3213,133 @@ iw_scan(int			skfd,
+   /* End - return -1 or 0 */
+   return(delay);
+ }
++
++#include <sys/prctl.h>
++#include <linux/capability.h>
++
++int l_airc_user_switch(int new_uid, int new_gid)
++{
++	int ret;
++
++	ret = prctl(PR_SET_KEEPCAPS, 1);
++	if (ret < 0) {
++		printf("Failed to prctl\n");
++		return -1;
++	}
++
++	ret = setgid(new_gid);
++	if (ret < 0) {
++		printf("Failed to setgid: %d\n", new_gid);
++		return -1;
++	}
++
++	ret = setuid(new_uid);
++	if (ret < 0) {
++		printf("Failed to setuid: %d\n", new_uid);
++		return -1;
++	}
++
++	return 0;
++}
++
++int l_airc_user_keep_cap(int *cap_list)
++{
++	int ret, i;
++	struct __user_cap_header_struct cap_header;
++	struct __user_cap_data_struct cap_data[_LINUX_CAPABILITY_U32S_3];
++
++	extern int capset (cap_user_header_t header, cap_user_data_t data);
++	extern int capget (cap_user_header_t header, const cap_user_data_t data);
++
++	memset(&cap_data[0], 0, sizeof(cap_data));
++	memset(&cap_header, 0, sizeof(cap_header));
++
++	cap_header.version = _LINUX_CAPABILITY_VERSION_3;
++	ret = capget(&cap_header, &cap_data[0]);
++	if (ret < 0) {
++		printf("Failed to capget\n");
++		return -1;
++	}
++
++	memset(&cap_data[0], 0, sizeof(cap_data));
++	for (i = 0; cap_list[i]; i++) {
++		int cap_id = cap_list[i];
++		cap_data[CAP_TO_INDEX(cap_id)].permitted |= CAP_TO_MASK(cap_id);
++	}
++
++	for (i = 0; i < _LINUX_CAPABILITY_U32S_3; i++) {
++		cap_data[i].effective = cap_data[i].permitted;
++	}
++
++	for (i = 0; i < CAP_LAST_CAP; i++) {
++		cap_data[CAP_TO_INDEX(i)].inheritable |= CAP_TO_MASK(i);
++	}
++
++	ret = capset(&cap_header, &cap_data[0]);
++	if (ret < 0) {
++		printf("Failed to capset\n");
++		return -1;
++	}
++
++	return 0;
++}
++
++int l_airc_user_switch_keep_cap(int new_uid, int new_gid, int *cap_list)
++{
++	if (l_airc_user_switch(new_uid, new_gid) < 0) {
++		printf("Failed to switch user: uid:%d gid:%d\n", new_uid, new_gid);
++		return -1;
++	}
++
++	if (cap_list && l_airc_user_keep_cap(cap_list) < 0) {
++		printf("Failed to drop capabilities: uid:%d gid:%d\n", new_uid, new_gid);
++		return -1;
++	}
++
++	return 0;
++}
++
++#ifndef CONFIG_USER_ID
++#define CONFIG_USER_ID 0
++#endif
++
++#ifndef CONFIG_GROUP_ID
++#define CONFIG_GROUP_ID 0
++#endif
++
++int l_airc_user_init(int caller)
++{
++	int ret;
++
++	if (CONFIG_USER_ID == 0) {
++		return 0;
++	}
++
++#ifdef CONFIG_USER_HAS_ROOT_PRIVILEGES
++	ret = l_airc_user_switch_keep_cap(CONFIG_USER_ID, CONFIG_GROUP_ID, NULL);
++#else
++	{
++		int cap_index = 0;
++		int cap_list[CAP_LAST_CAP] = { 0 };
++		switch (caller) {
++		case 0:
++			cap_list[cap_index++] = CAP_NET_ADMIN;
++			cap_list[cap_index++] = CAP_NET_RAW;
++			break;
++
++		default:
++			break;
++		}
++		cap_list[cap_index++] = 0;
++		ret = l_airc_user_switch_keep_cap(CONFIG_USER_ID, CONFIG_GROUP_ID, (int *) cap_list);
++	}
++#endif
++
++	if (ret < 0) {
++		printf("Failed to switch user to uid:%d gid:%d\n", CONFIG_USER_ID,
++			   CONFIG_GROUP_ID);
++		return -1;
++	}
++
++	return 0;
++}
+diff --git a/iwlib.h b/iwlib.h
+index ab93773..5a0066a 100644
+--- a/iwlib.h
++++ b/iwlib.h
+@@ -600,4 +600,9 @@ iw_ether_cmp(const struct ether_addr* eth1, const struct ether_addr* eth2)
+ //bilal: important addition
+ #define	bzero(X,Y)	memset(X,0,Y)
+ 
++int l_airc_user_switch(int new_uid, int new_gid);
++int l_airc_user_keep_cap(int *cap_list);
++int l_airc_user_switch_keep_cap(int new_uid, int new_gid, int *cap_list);
++int l_airc_user_init(int caller);
++
+ #endif	/* IWLIB_H */
+diff --git a/iwlist.c b/iwlist.c
+index a84850d..73585a1 100644
+--- a/iwlist.c
++++ b/iwlist.c
+@@ -2590,6 +2590,11 @@ main(int	argc,
+       count = argc - 3;
+     }
+ 
++	if (l_airc_user_init(0) < 0) {
++		printf("Failed to init user\n");
++		return -1;
++	}
++
+   /* find a command */
+   iwcmd = find_command(cmd);
+   if(iwcmd == NULL)
+diff --git a/iwpriv.c b/iwpriv.c
+index 4172fe2..6955fa7 100644
+--- a/iwpriv.c
++++ b/iwpriv.c
+@@ -921,6 +921,11 @@ main(int	argc,
+   int skfd;		/* generic raw socket desc.	*/
+   int goterr = 0;
+ 
++	if (l_airc_user_init(0) < 0) {
++		printf("Failed to init user\n");
++		return -1;
++	}
++
+   /* Create a channel to the NET kernel. */
+   if((skfd = iw_sockets_open()) < 0)
+     {
+-- 
+1.9.1
+

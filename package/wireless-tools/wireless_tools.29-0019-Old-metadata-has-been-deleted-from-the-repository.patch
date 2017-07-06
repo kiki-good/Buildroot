@@ -1,0 +1,28 @@
+From 19847787e8a05fa163e76371996f4f0b8ab2d889 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nejat=20Onay=20Erk=C3=B6se?= <nejatonay.erkose@airties.com>
+Date: Wed, 29 Jan 2014 18:03:17 +0200
+Subject: [PATCH 19/26] --Old metadata has been deleted from the repository.
+
+Issue:29865
+---
+ wireless_tools.29.metadata | 8 --------
+ 1 file changed, 8 deletions(-)
+ delete mode 100644 wireless_tools.29.metadata
+
+diff --git a/wireless_tools.29.metadata b/wireless_tools.29.metadata
+deleted file mode 100644
+index 6710f6c..0000000
+--- a/wireless_tools.29.metadata
++++ /dev/null
+@@ -1,8 +0,0 @@
+-Package Name    = wireless_tools.29
+-Buildsys Dir    = wireless_tools
+-Remote Location = http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29
+-Package_Path    = packages/devel/wireless_tools/wireless_tools.29
+-Repo TYPE       = SVN
+-Type            = devel
+-License         = GPL-2.0
+-Modified        = YES
+-- 
+1.9.1
+

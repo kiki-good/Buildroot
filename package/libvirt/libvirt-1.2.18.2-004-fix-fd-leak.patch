@@ -1,0 +1,41 @@
+Bug 1159766 - File descriptor leak when calling virDomainCreateXMLWithFiles
+              or virDomainCreateWithFiles.
+
+   https://bugzilla.redhat.com/show_bug.cgi?id=1159766
+
+Description of problem:
+When passing file descriptors into either virDomainCreateXMLWithFiles or
+virDomainCreateWithFiles, they are dup'ed but never closed after they're sent
+to libvirtd.
+
+The virNetClientProgramCall function dup's the file descriptors and adds
+them to a virNetMessagePtr, however when the file descriptors are eventually
+sent in the virNetClientIOWriteMessage function they are removed from the
+msg but not closed.
+
+How reproducible:
+Using libvirt client to connect to libvirtd with lxc driver, 100% reproducible.
+
+Steps to Reproduce:
+ 1. fd = open("/dev/null", O_RDWR);
+ 2. virDomainCreateXMLWithFiles(domain, xml, 1, &fd, 0);
+ 3. close(fd);
+
+Actual results:
+lsof will show that /dev/null still has an open file descriptor.
+
+Expected results:
+lsof should show that /dev/null is closed.
+
+
+--- a/src/rpc/virnetclient.c	2015-12-23 23:12:40.000000000 +0000
++++ b/src/rpc/virnetclient.c	2016-03-29 20:10:07.676929735 +0100
+@@ -1175,6 +1175,8 @@
+                 return -1;
+             if (rv == 0) /* Blocking */
+                 return 0;
++            VIR_FORCE_CLOSE(thecall->msg->fds[i]);
++            thecall->msg->fds[i] = -1;
+             thecall->msg->donefds++;
+         }
+         thecall->msg->donefds = 0;

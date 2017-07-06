@@ -1,0 +1,12 @@
+config BR2_PACKAGE_RHAD
+	bool "R.H.A.D."
+	select BR2_PACKAGE_BLUEZ
+	default n
+	help
+	  The Remote Hardaware Abstraction Daemon (R.H.A.D) 
+	  provides an interface to the AS Layer to perfom the Sky 
+	  specific bluetooth operations like diagnostics, FindMe, 
+	  TV Code configuration, Remote Upgrade etc.
+	  The R.H.A.D receives messages from the AS Layer, 
+	  understands the message and routes it to the appropriate
+	  entity ie, the BlueZ daemon or the corresponding vendor daemon.

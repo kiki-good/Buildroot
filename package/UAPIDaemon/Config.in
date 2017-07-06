@@ -1,0 +1,6 @@
+config BR2_PACKAGE_UAPI
+	bool "uapi"
+	select BR2_PACKAGE_PKGCONFIG 
+	select BR2_PACKAGE_BLUEZ
+	help
+		Daemon used to communicate with the UEI remote

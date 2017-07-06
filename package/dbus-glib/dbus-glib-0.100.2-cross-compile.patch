@@ -1,0 +1,44 @@
+--- a/configure.ac   2013-07-18 12:58:40.644305806 +0100
++++ b/configure.ac   2013-07-18 12:58:58.076306254 +0100
+@@ -442,8 +442,6 @@
+ doc/reference/Makefile
+ doc/reference/version.xml
+ dbus/Makefile
+-dbus/examples/Makefile
+-dbus/examples/statemachine/Makefile
+ test/Makefile
+ test/core/Makefile
+ test/interfaces/Makefile
+
+--- a/dbus/Makefile.am	2013-07-18 12:49:00.376290911 +0100
++++ b/dbus/Makefile.am	2013-07-18 12:49:10.812291179 +0100
+@@ -1,4 +1,4 @@
+-SUBDIRS = . examples
++SUBDIRS = .
+ 
+ INCLUDES = \
+ 	-I$(top_srcdir)						\
+
+--- a/dbus/Makefile.in  2013-07-18 13:02:38.236311906 +0100
++++ b/dbus/Makefile.in    2013-07-18 13:03:29.672313226 +0100
+@@ -382,7 +382,7 @@
+ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-SUBDIRS = . examples
++SUBDIRS = .
+ INCLUDES = \
+        -I$(top_srcdir)                                         \
+        -I$(top_builddir)
+
+--- a/Makefile.in 2013-07-18 13:08:35.864321087 +0100
++++ b/Makefile.in 2013-07-18 13:08:53.968321551 +0100
+@@ -352,7 +352,7 @@
+ top_srcdir = @top_srcdir@
+ ACLOCAL_AMFLAGS = -I m4
+ GLIB_PC = dbus-glib-1.pc
+-SUBDIRS = dbus tools test doc
++SUBDIRS = dbus
+ DIST_SUBDIRS = dbus tools test doc m4
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = $(GLIB_PC)

@@ -1,0 +1,5 @@
+config BR2_PACKAGE_TERMCAP
+	bool "termcap"
+	help
+	   Library termcap Package
+	  

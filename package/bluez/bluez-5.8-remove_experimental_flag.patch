@@ -1,0 +1,60 @@
+--- a/profiles/audio/player.c	2013-04-11 03:19:33.000000000 +0100
++++ b/profiles/audio/player.c	2014-11-11 15:08:23.888325914 +0000
+@@ -564,17 +564,10 @@
+ 	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
+ }
+ 
++
+ static const GDBusMethodTable media_player_methods[] = {
+-	{ GDBUS_EXPERIMENTAL_METHOD("Play", NULL, NULL, media_player_play) },
+-	{ GDBUS_EXPERIMENTAL_METHOD("Pause", NULL, NULL, media_player_pause) },
+-	{ GDBUS_EXPERIMENTAL_METHOD("Stop", NULL, NULL, media_player_stop) },
++	{ GDBUS_METHOD("Play", NULL, NULL, media_player_play) },
++	{ GDBUS_METHOD("Stop", NULL, NULL, media_player_stop) },
+-	{ GDBUS_EXPERIMENTAL_METHOD("Next", NULL, NULL, media_player_next) },
+-	{ GDBUS_EXPERIMENTAL_METHOD("Previous", NULL, NULL,
+-						media_player_previous) },
+-	{ GDBUS_EXPERIMENTAL_METHOD("FastForward", NULL, NULL,
+-						media_player_fast_forward) },
+-	{ GDBUS_EXPERIMENTAL_METHOD("Rewind", NULL, NULL,
+-						media_player_rewind) },
+ 	{ }
+ };
+ 
+@@ -583,34 +574,9 @@
+ };
+ 
+ static const GDBusPropertyTable media_player_properties[] = {
+-	{ "Name", "s", get_name, NULL, name_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Type", "s", get_type, NULL, type_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Subtype", "s", get_subtype, NULL, subtype_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Position", "u", get_position, NULL, NULL,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Status", "s", get_status, NULL, status_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Equalizer", "s", get_setting, set_setting, setting_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Repeat", "s", get_setting, set_setting, setting_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Shuffle", "s", get_setting, set_setting, setting_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Scan", "s", get_setting, set_setting, setting_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Track", "a{sv}", get_track, NULL, track_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Device", "o", get_device, NULL, NULL,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Browsable", "b", get_browsable, NULL, browsable_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Searchable", "b", get_searchable, NULL, searchable_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
+-	{ "Playlist", "o", get_playlist, NULL, playlist_exists,
+-					G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
++	{ "Position", "u", get_position, NULL, NULL},
++	{ "Status", "s", get_status, NULL, status_exists},
++	{ "Track", "a{sv}", get_track, NULL, track_exists},
+ 	{ }
+ };

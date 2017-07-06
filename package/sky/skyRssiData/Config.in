@@ -1,0 +1,8 @@
+config BR2_PACKAGE_SKY_RSSI_DATA
+	bool "R.S.S.I."
+	default n
+	help
+	rssi data daemon that retrieves rssi metrics, tx metrics 
+	for all the clients from the wireless driver 
+	and save into a /tmp/sky_rssi_data.txt file 
+	

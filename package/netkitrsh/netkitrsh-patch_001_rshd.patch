@@ -1,0 +1,12 @@
+--- netkit-rsh-0.17/rshd/rshd.c	2012-11-26 17:44:40.000000000 +0000
++++ netkit-rsh-0.17/rshd/rshd_new.c	2012-11-26 17:52:48.000000000 +0000
+@@ -80,6 +80,9 @@
+ #include <ctype.h>
+ #include <assert.h>
+ 
++
++#define ARG_MAX sysconf (_SC_ARG_MAX)
++
+ #if 0 /* disabled for uclibc */
+ #if defined(__GLIBC__) && (__GLIBC__ >= 2)
+ #define _check_rhosts_file  __check_rhosts_file

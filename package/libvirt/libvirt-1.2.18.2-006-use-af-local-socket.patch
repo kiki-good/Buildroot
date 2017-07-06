@@ -1,0 +1,24 @@
+NGDEV-42261
+===========
+
+Found during performance testing that libvirt takes an additional ~450ms
+to setup the container when network namespacing is enabled. The problem
+was tracked down to the their use of AF_PACKET sockets for the bridge ioctls.
+
+The fix is to switch from AF_PACKET to AF_LOCAL socket types, this is
+fine since all the libvirt ioctls work on all socket types, so the use of
+AF_PACKET is not needed.
+
+[ref https://www.redhat.com/archives/libvir-list/2015-July/msg01172.html]
+
+--- a/src/util/virnetdev.c	2015-12-23 22:54:18.000000000 +0000
++++ b/src/util/virnetdev.c	2016-03-29 20:15:19.965006925 +0100
+@@ -44,7 +44,7 @@
+ #ifdef __linux__
+ # include <linux/sockios.h>
+ # include <linux/if_vlan.h>
+-# define VIR_NETDEV_FAMILY AF_PACKET
++# define VIR_NETDEV_FAMILY AF_LOCAL
+ #elif defined(HAVE_STRUCT_IFREQ) && defined(AF_LOCAL)
+ # define VIR_NETDEV_FAMILY AF_LOCAL
+ #else

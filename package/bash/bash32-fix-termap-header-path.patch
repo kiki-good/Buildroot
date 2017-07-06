@@ -1,0 +1,13 @@
+Index: bash-3.2/lib/readline/Makefile.in
+===================================================================
+--- bash-3.2.orig/lib/readline/Makefile.in
++++ bash-3.2/lib/readline/Makefile.in
+@@ -59,7 +59,7 @@ LDFLAGS = @LDFLAGS@
+ DEFS = @DEFS@
+ LOCAL_DEFS = @LOCAL_DEFS@
+ 
+-INCLUDES = -I. -I$(BUILD_DIR) -I$(topdir) -I$(topdir)/lib
++INCLUDES = -I. -I$(BUILD_DIR) -I$(topdir) -I$(topdir)/lib -I$(topdir)/lib/termcap
+ 
+ CCFLAGS = $(DEFS) $(LOCAL_DEFS) $(APP_CFLAGS) $(CPPFLAGS) ${INCLUDES} $(LOCAL_CFLAGS) $(CFLAGS)
+ 

@@ -1,0 +1,10 @@
+diff -Naur upstart-1.13.2/conf/rc-sysinit.conf upstart-1.13.2_mod/conf/rc-sysinit.conf
+--- upstart-1.13.2/conf/rc-sysinit.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/conf/rc-sysinit.conf	2015-03-23 11:50:13.741350515 +0000
+@@ -56,5 +56,5 @@
+     [ -n "${FROM_SINGLE_USER_MODE}" ] || /etc/init.d/rcS
+ 
+     # Switch into the default runlevel
+-    telinit "${DEFAULT_RUNLEVEL}"
++    #telinit "${DEFAULT_RUNLEVEL}"
+ end script

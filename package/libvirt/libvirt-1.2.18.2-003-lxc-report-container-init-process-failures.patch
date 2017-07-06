@@ -1,0 +1,80 @@
+--- a/src/lxc/lxc_controller.c	2015-12-23 22:54:18.000000000 +0000
++++ b/src/lxc/lxc_controller.c	2016-03-29 19:59:22.125046980 +0100
+@@ -1000,7 +1000,7 @@
+ 
+ static bool wantReboot;
+ static virMutex lock = VIR_MUTEX_INITIALIZER;
+-
++static int initProcessExitCode = 0;
+ 
+ static void virLXCControllerSignalChildIO(virNetDaemonPtr dmn,
+                                           siginfo_t *info ATTRIBUTE_UNUSED,
+@@ -1013,6 +1013,11 @@
+     ret = waitpid(-1, &status, WNOHANG);
+     VIR_DEBUG("Got sig child %d vs %lld", ret, (unsigned long long)ctrl->initpid);
+     if (ret == ctrl->initpid) {
++        VIR_DEBUG("Init process waitpid status 0x%x", status);
++        if (WIFEXITED(status)) {
++             initProcessExitCode = WEXITSTATUS(status);
++             VIR_INFO("Init process exited. Exit code = %d", initProcessExitCode);
++        }
+         virNetDaemonQuit(dmn);
+         virMutexLock(&lock);
+         if (WIFSIGNALED(status) &&
+@@ -1020,6 +1025,10 @@
+             VIR_DEBUG("Status indicates reboot");
+             wantReboot = true;
+         }
++        else if (WIFSIGNALED(status)) {
++            initProcessExitCode = 0x80 + WTERMSIG(status);
++            VIR_INFO("Init process received a signal %d. Exit code = %d", WTERMSIG(status), initProcessExitCode);
++        }
+         virMutexUnlock(&lock);
+     }
+ }
+@@ -2285,7 +2294,10 @@
+     memset(&msg, 0, sizeof(msg));
+     switch (exitstatus) {
+     case 0:
+-        msg.status = VIR_LXC_MONITOR_EXIT_STATUS_SHUTDOWN;
++        if (initProcessExitCode == 0)
++            msg.status = VIR_LXC_MONITOR_EXIT_STATUS_SHUTDOWN;
++        else
++            msg.status = VIR_LXC_MONITOR_EXIT_STATUS_INIT_PROCESS_ERROR;
+         break;
+     case 1:
+         msg.status = VIR_LXC_MONITOR_EXIT_STATUS_REBOOT;
+--- a/src/lxc/lxc_monitor_protocol.x	2015-09-22 00:17:24.000000000 +0100
++++ b/src/lxc/lxc_monitor_protocol.x	2016-03-29 19:59:22.125046980 +0100
+@@ -26,7 +26,8 @@
+ enum virLXCMonitorExitStatus {
+     VIR_LXC_MONITOR_EXIT_STATUS_ERROR,
+     VIR_LXC_MONITOR_EXIT_STATUS_SHUTDOWN,
+-    VIR_LXC_MONITOR_EXIT_STATUS_REBOOT
++    VIR_LXC_MONITOR_EXIT_STATUS_REBOOT,
++    VIR_LXC_MONITOR_EXIT_STATUS_INIT_PROCESS_ERROR
+ };
+ 
+ struct virLXCMonitorExitEventMsg {
+--- a/src/lxc/lxc_process.c	2015-12-23 22:54:18.000000000 +0000
++++ b/src/lxc/lxc_process.c	2016-03-29 19:59:22.125046980 +0100
+@@ -557,6 +557,9 @@
+     case VIR_LXC_MONITOR_EXIT_STATUS_SHUTDOWN:
+         priv->stopReason = VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN;
+         break;
++    case VIR_LXC_MONITOR_EXIT_STATUS_INIT_PROCESS_ERROR:
++        priv->stopReason = VIR_DOMAIN_EVENT_STOPPED_CRASHED;
++        break;
+     case VIR_LXC_MONITOR_EXIT_STATUS_ERROR:
+         priv->stopReason = VIR_DOMAIN_EVENT_STOPPED_FAILED;
+         break;
+--- a/src/lxc_monitor_protocol-structs	2015-09-22 00:17:24.000000000 +0100
++++ b/src/lxc_monitor_protocol-structs	2016-03-29 19:59:22.125046980 +0100
+@@ -3,6 +3,7 @@
+         VIR_LXC_MONITOR_EXIT_STATUS_ERROR = 0,
+         VIR_LXC_MONITOR_EXIT_STATUS_SHUTDOWN = 1,
+         VIR_LXC_MONITOR_EXIT_STATUS_REBOOT = 2,
++        VIR_LXC_MONITOR_EXIT_STATUS_INIT_PROCESS_ERROR = 3,
+ };
+ struct virLXCMonitorExitEventMsg {
+         virLXCMonitorExitStatus    status;

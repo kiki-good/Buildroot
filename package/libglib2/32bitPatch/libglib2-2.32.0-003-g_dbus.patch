@@ -1,0 +1,82 @@
+diff --git a/docs/reference/gio/gio-sections.txt b/docs/reference/gio/gio-sections.txt
+index 5e25b5d..79b5dfc 100644
+--- a/docs/reference/gio/gio-sections.txt
++++ b/docs/reference/gio/gio-sections.txt
+@@ -3652,6 +3652,7 @@ g_dbus_object_manager_server_get_connection
+ g_dbus_object_manager_server_set_connection
+ g_dbus_object_manager_server_export
+ g_dbus_object_manager_server_export_uniquely
++g_dbus_object_manager_server_is_exported
+ g_dbus_object_manager_server_unexport
+ <SUBSECTION Standard>
+ G_DBUS_OBJECT_MANAGER_SERVER
+diff --git a/gio/gdbusobjectmanagerserver.c b/gio/gdbusobjectmanagerserver.c
+index cc436f8..4802c65 100644
+--- a/gio/gdbusobjectmanagerserver.c
++++ b/gio/gdbusobjectmanagerserver.c
+@@ -598,6 +598,40 @@ g_dbus_object_manager_server_export_uniquely (GDBusObjectManagerServer *manager,
+ 
+ }
+ 
++/**
++ * g_dbus_object_manager_server_is_exported:
++ * @manager: A #GDBusObjectManagerServer.
++ * @object: An object.
++ *
++ * Returns whether @object is currently exported on @manager.
++ *
++ * Returns: %TRUE if @object is exported
++ *
++ * Since: 2.34
++ **/
++gboolean
++g_dbus_object_manager_server_is_exported (GDBusObjectManagerServer *manager,
++                                          GDBusObjectSkeleton      *object)
++{
++  RegistrationData *data = NULL;
++  const gchar *object_path;
++  gboolean object_is_exported;
++
++  g_return_val_if_fail (G_IS_DBUS_OBJECT_MANAGER_SERVER (manager), FALSE);
++  g_return_val_if_fail (G_IS_DBUS_OBJECT (object), FALSE);
++
++  g_mutex_lock (&manager->priv->lock);
++
++  object_path = g_dbus_object_get_object_path (G_DBUS_OBJECT (object));
++  if (object_path != NULL)
++    data = g_hash_table_lookup (manager->priv->map_object_path_to_data, object_path);
++  object_is_exported = (data != NULL);
++
++  g_mutex_unlock (&manager->priv->lock);
++
++  return object_is_exported;
++}
++
+ /* ---------------------------------------------------------------------------------------------------- */
+ 
+ static gboolean
+diff --git a/gio/gdbusobjectmanagerserver.h b/gio/gdbusobjectmanagerserver.h
+index 5abe00f..90668dd 100644
+--- a/gio/gdbusobjectmanagerserver.h
++++ b/gio/gdbusobjectmanagerserver.h
+@@ -77,6 +77,8 @@ void                      g_dbus_object_manager_server_export              (GDBu
+                                                                             GDBusObjectSkeleton       *object);
+ void                      g_dbus_object_manager_server_export_uniquely     (GDBusObjectManagerServer  *manager,
+                                                                             GDBusObjectSkeleton       *object);
++gboolean                  g_dbus_object_manager_server_is_exported         (GDBusObjectManagerServer  *manager,
++                                                                            GDBusObjectSkeleton       *object);
+ gboolean                  g_dbus_object_manager_server_unexport            (GDBusObjectManagerServer  *manager,
+                                                                             const gchar               *object_path);
+ 
+diff --git a/gio/gio.symbols b/gio/gio.symbols
+index c30c8d1..fcba6a3 100644
+--- a/gio/gio.symbols
++++ b/gio/gio.symbols
+@@ -1644,6 +1644,7 @@ g_dbus_object_manager_client_new_for_bus_sync
+ g_dbus_object_manager_client_new_sync
+ g_dbus_object_manager_server_export
+ g_dbus_object_manager_server_export_uniquely
++g_dbus_object_manager_server_is_exported
+ g_dbus_object_manager_server_get_connection
+ g_dbus_object_manager_server_set_connection
+ g_dbus_object_manager_server_get_type

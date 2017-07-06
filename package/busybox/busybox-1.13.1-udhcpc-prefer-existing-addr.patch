@@ -1,0 +1,26 @@
+Index: busybox-1.13.1/networking/udhcp/dhcpc.c
+===================================================================
+--- busybox-1.13.1.orig/networking/udhcp/dhcpc.c
++++ busybox-1.13.1/networking/udhcp/dhcpc.c
+@@ -145,6 +145,7 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 	struct timeval tv;
+ 	struct dhcpMessage packet;
+ 	fd_set rfds;
++	uint32_t addr = 0;
+ 
+ #if ENABLE_GETOPT_LONG
+ 	static const char udhcpc_longopts[] ALIGN1 =
+@@ -270,6 +271,13 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 	if (udhcp_read_interface(client_config.interface, &client_config.ifindex,
+ 			   NULL, client_config.arp))
+ 		return 1;
++
++	if (udhcp_read_interface(client_config.interface, NULL,
++			   &addr, NULL) == 0)
++		/* If interface already has an IP, try to request that IP */
++		if (addr && (requested_ip == 0))
++			requested_ip = addr;
++
+ #if !BB_MMU
+ 	/* on NOMMU reexec (i.e., background) early */
+ 	if (!(opt & OPT_f)) {

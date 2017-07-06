@@ -1,0 +1,10 @@
+--- a/extensions/libxt_pkttype.c	2015-03-13 12:03:38.950818875 +0000
++++ b/extensions/libxt_pkttype.c	2015-03-13 12:03:57.215020318 +0000
+@@ -15,6 +15,7 @@
+ #include <linux/if_ether.h>
+ #endif
+ #include <xtables.h>
++#define __aligned_u64 __u64 __attribute__((aligned(8)))
+ #include <linux/if_packet.h>
+ #include <linux/netfilter/xt_pkttype.h>
+ 

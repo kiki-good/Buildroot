@@ -1,0 +1,10 @@
+--- netkit-rsh-0.17/rexecd/rexecd.c	2000-07-23 05:16:22.000000000 +0100
++++ netkit-rsh-0.17/rexecd/rexecd_new.c	2012-11-26 17:51:45.000000000 +0000
+@@ -91,6 +91,7 @@
+ #include <security/pam_appl.h>
+ #endif
+ 
++#define ARG_MAX sysconf (_SC_ARG_MAX)
+ #define _PATH_FTPUSERS	      "/etc/ftpusers"
+ 
+ #ifdef TCP_WRAPPER

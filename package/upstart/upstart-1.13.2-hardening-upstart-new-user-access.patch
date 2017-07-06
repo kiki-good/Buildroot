@@ -1,0 +1,100 @@
+diff -Naur upstart-1.13.2/dbus/Upstart.conf upstart-1.13.2_mod/dbus/Upstart.conf
+--- upstart-1.13.2/dbus/Upstart.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/dbus/Upstart.conf	2015-12-16 15:29:41.713878022 +0000
+@@ -23,35 +23,9 @@
+ 	   send_interface="com.ubuntu.Upstart0_6.Instance" />
+   </policy>
+ 
+-  <!-- Allow any user to introspect Upstart's interfaces, to obtain the
+-       values of properties (but not set them) and to invoke selected
+-       methods on Upstart and its jobs that are used to walk information. -->
+-  <policy context="default">
+-    <allow send_destination="com.ubuntu.Upstart"
+-	   send_interface="org.freedesktop.DBus.Introspectable" />
+-
+-    <allow send_destination="com.ubuntu.Upstart"
+-	   send_interface="org.freedesktop.DBus.Properties"
+-	   send_type="method_call" send_member="Get" />
+-    <allow send_destination="com.ubuntu.Upstart"
+-	   send_interface="org.freedesktop.DBus.Properties"
+-	   send_type="method_call" send_member="GetAll" />
+-
+-    <allow send_destination="com.ubuntu.Upstart"
+-	   send_interface="com.ubuntu.Upstart0_6"
+-	   send_type="method_call" send_member="GetJobByName" />
+-    <allow send_destination="com.ubuntu.Upstart"
+-	   send_interface="com.ubuntu.Upstart0_6"
+-	   send_type="method_call" send_member="GetAllJobs" />
+-
+-    <allow send_destination="com.ubuntu.Upstart"
+-	   send_interface="com.ubuntu.Upstart0_6.Job"
+-	   send_type="method_call" send_member="GetInstance" />
+-    <allow send_destination="com.ubuntu.Upstart"
+-	   send_interface="com.ubuntu.Upstart0_6.Job"
+-	   send_type="method_call" send_member="GetInstanceByName" />
+-    <allow send_destination="com.ubuntu.Upstart"
+-	   send_interface="com.ubuntu.Upstart0_6.Job"
+-	   send_type="method_call" send_member="GetAllInstances" />
++  <policy user="NDS_U2">
++    <allow send_destination="com.ubuntu.Upstart" />
++    <allow send_interface="com.ubuntu.Upstart0_6" />
+   </policy>
++
+ </busconfig>
+diff -Naur upstart-1.13.2/init/control.c upstart-1.13.2_mod/init/control.c
+--- upstart-1.13.2/init/control.c	2014-08-28 10:22:32.000000000 +0100
++++ upstart-1.13.2_mod/init/control.c	2015-12-16 15:36:11.009888014 +0000
+@@ -617,6 +617,25 @@
+ 	return control_emit_event_with_file (data, message, name, env, wait, -1);
+ }
+ 
++
++int 
++get_upstart_new_user()
++{
++	char upstart_new_user[10];
++	FILE *fptr = NULL;
++	int upstart_new_user_id = 0;
++	fptr = fopen("/etc/upstart-user","r");
++	if ( fptr == NULL ){
++		/* If the file is not present, we need to return the uid of root */
++		return 0;
++	}
++   	if( fgets (upstart_new_user, 6, fptr) != NULL )
++		upstart_new_user_id = atoi(upstart_new_user);
++	fclose(fptr);
++	return upstart_new_user_id;
++}
++
++
+ /**
+  * control_emit_event_with_file:
+  * @data: not used,
+@@ -653,16 +672,23 @@
+ {
+ 	Event    *event;
+ 	Blocked  *blocked;
++	int    ret;
++	uid_t  origin_uid = 0;
++	uid_t  upstart_user_id = 0;
++	upstart_user_id = get_upstart_new_user();
+ 
+ 	nih_assert (message != NULL);
+ 	nih_assert (name != NULL);
+ 	nih_assert (env != NULL);
++	ret = control_get_origin_uid (message, &origin_uid);
+ 
+ 	if (! control_check_permission (message)) {
+-		nih_dbus_error_raise_printf (
+-			DBUS_INTERFACE_UPSTART ".Error.PermissionDenied",
+-			_("You do not have permission to emit an event"));
+-		return -1;
++		if (origin_uid != upstart_user_id){
++			nih_dbus_error_raise_printf (
++				DBUS_INTERFACE_UPSTART ".Error.PermissionDenied",
++				_("You do not have permission to emit an event"));
++			return -1;
++		}
+ 	}
+ 
+ 	/* Verify that the name is valid */

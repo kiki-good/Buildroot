@@ -1,0 +1,4 @@
+config BR2_PACKAGE_SKY_PROCPROXY
+        bool "procproxy"
+        help
+		Allow non-root users to access /proc and /sys.

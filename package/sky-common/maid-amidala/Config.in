@@ -1,0 +1,11 @@
+config BR2_PACKAGE_MAID_AMIDALA
+	bool "M.A.I.D."
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_DBUS
+	default n
+	help
+	  maid-amidala is equivalent of maid used in other platforms.
+	  Mesh(Network) API Interface Daemon (M.A.I.D) provides an 
+	  interface to the AS Layer as well as the NGI to perfom Mesh specific 
+	  tasks. It also exposes a library with the LAN sub-system uses.
+	

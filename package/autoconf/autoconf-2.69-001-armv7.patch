@@ -1,0 +1,12 @@
+diff -Naur autoconf-2.69_org/build-aux/config.sub autoconf-2.69/build-aux/config.sub
+--- autoconf-2.69_org/build-aux/config.sub	2012-04-25 03:37:26.000000000 +0100
++++ autoconf-2.69/build-aux/config.sub	2014-07-02 09:55:52.690736294 +0100
+@@ -259,7 +259,7 @@
+ 	| alpha | alphaev[4-8] | alphaev56 | alphaev6[78] | alphapca5[67] \
+ 	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
+ 	| am33_2.0 \
+-	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | avr32 \
++	| arc | armv7 | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | avr32 \
+         | be32 | be64 \
+ 	| bfin \
+ 	| c4x | clipper \

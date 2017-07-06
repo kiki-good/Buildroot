@@ -1,0 +1,185 @@
+Sky : NGDEV-27825
+
+When enabling user namespaces you loose the ability to mount
+'real' filesystems like ext3/4 (due to missing FS_USERNS_MOUNT
+bits).
+
+Since we need both ext3/4 mounts and user namespaces this patch
+provides a solution by pre-mounting the fs before switching user
+and then once the user is switched we use a bind mount to get
+it into the container.
+
+
+--- a/src/lxc/lxc_controller.c	2016-03-29 19:59:22.125046980 +0100
++++ b/src/lxc/lxc_controller.c	2016-03-29 20:29:34.030250177 +0100
+@@ -708,6 +708,156 @@
+ }
+ 
+ 
++/* [Sky : NGDEV-27825]
++ *
++ * Copy of the lxcContainerMountFSBlockAuto function, except it only looks
++ * at /proc/filesystem which is all we need on sky platforms.
++ *
++ *     "This function attempts to do automatic detection of filesystem
++ *      type following the same rules as the util-linux 'mount' binary.
++ *
++ *      The main difference is that we don't (currently) try to use
++ *      libblkid to detect the format first. We go straight to using
++ *      /proc/filesystems"
++ */
++static int virLXCControllerMountFSBlockAuto(const char *src,
++                                            const char *dst,
++                                            int mnt_flags,
++                                            const char *mnt_opts)
++{
++    FILE *fp = NULL;
++    int ret = -1;
++    char *fslist = NULL;
++    char *line = NULL;
++    const char *type;
++
++    VIR_DEBUG("src=%s dst=%s", src, dst);
++
++    if (virAsprintf(&fslist, "%s", "/proc/filesystems") < 0)
++        goto cleanup;
++
++    VIR_DEBUG("Open fslist %s", fslist);
++    if (!(fp = fopen(fslist, "r"))) {
++        virReportSystemError(errno,
++                             _("Unable to read %s"),
++                             fslist);
++        goto cleanup;
++    }
++
++    while (!feof(fp)) {
++        size_t n;
++        VIR_FREE(line);
++        if (getline(&line, &n, fp) <= 0) {
++            if (feof(fp))
++                break;
++
++            goto cleanup;
++        }
++
++        if (strstr(line, "nodev"))
++            continue;
++
++        type = strchr(line, '\n');
++        if (type)
++            line[type-line] = '\0';
++
++        type = line;
++        virSkipSpaces(&type);
++
++        VIR_DEBUG("Trying mount '%s' on '%s' with '%s' opts '%s'",
++                  src, dst, type, mnt_opts);
++        if (mount(src, dst, type, mnt_flags, mnt_opts) < 0) {
++            /* These errnos indicate a bogus filesystem type for
++             * the image we have, so skip to the next type
++             */
++            if (errno == EINVAL || errno == ENODEV)
++                continue;
++
++            virReportSystemError(errno,
++                                 _("Failed to mount device %s to %s"),
++                                 src, dst);
++            goto cleanup;
++        }
++
++        ret = 0;
++        break;
++    }
++
++    if (ret != 0) {
++        virReportSystemError(ENODEV,
++                             _("Failed to mount device %s to %s, unable to detect filesystem"),
++                             src, dst);
++    }
++
++    VIR_DEBUG("Done mounting filesystem ret=%d", ret);
++
++cleanup:
++    VIR_FREE(line);
++    VIR_FREE(fslist);
++    VIR_FORCE_FCLOSE(fp);
++    return ret;
++}
++
++
++/* [Sky : NGDEV-27825] 
++ *
++ * Mount the loopback devices / file system images to a temporary location
++ * and then change the mount type to bind with the source being the temporary
++ * mount point.
++ */
++static int virLXCControllerMountLoopDevices(virLXCControllerPtr ctrl)
++{
++    int ret = -1;
++    size_t i;
++    char *dst = NULL;
++    int fsflags = MS_NOSUID|MS_NODEV;
++
++    for (i = 0; i < ctrl->def->nfss; i++) {
++        virDomainFSDefPtr fs = ctrl->def->fss[i];
++
++        if (!((fs->type == VIR_DOMAIN_FS_TYPE_BLOCK) &&
++              (fs->fsdriver = VIR_DOMAIN_FS_DRIVER_TYPE_LOOP)))
++            continue;
++
++        if (!STRPREFIX(fs->src, "/dev/loop"))
++            continue;
++
++        if (virAsprintf(&dst, "/%s/%s.%s",
++                        LXC_STATE_DIR, ctrl->def->name, (fs->src + 5)) < 0)
++            goto cleanup;
++
++        if (virFileMakePath(dst) < 0) {
++            virReportSystemError(errno,
++                                 _("Failed to make path %s"),
++                                 dst);
++            goto cleanup;
++        }
++
++        if (fs->readonly)
++            fsflags |= MS_RDONLY;
++
++        if (virLXCControllerMountFSBlockAuto(fs->src, dst, fsflags, NULL) < 0)
++            goto cleanup;
++
++        if (lxcContainerChown(ctrl->def, dst) < 0) {
++            umount(dst);
++            goto cleanup;
++        }
++
++        VIR_FREE(fs->src);
++        fs->src = dst;
++        dst = NULL;
++
++        fs->type = VIR_DOMAIN_FS_TYPE_MOUNT; // VIR_DOMAIN_FS_TYPE_BIND;
++    }
++
++    ret = 0;
++cleanup:
++    VIR_FREE(dst);
++    return ret;
++}
++
++
+ /*
+  * To be run while still single threaded
+  */
+@@ -2371,6 +2521,13 @@
+     if (virLXCControllerSetupLoopDevices(ctrl) < 0)
+         goto cleanup;
+ 
++    /* [Sky : NGDEV-27825] When userns is enabled you can't mount loopback
++     * filesystems as we're not running as root.  The solution is to pre-mount
++     * the loopback images while root then bind mount it within the container.
++     */
++    if (virLXCControllerMountLoopDevices(ctrl) < 0)
++        goto cleanup;
++
+     if (virLXCControllerSetupResourceLimits(ctrl) < 0)
+         goto cleanup;
+ 

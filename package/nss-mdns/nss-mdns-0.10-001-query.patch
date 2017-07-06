@@ -1,0 +1,28 @@
+diff -Naur nss-mdns-0.10/src/query.c nss-mdns-0.10_mod/src/query.c
+--- nss-mdns-0.10/src/query.c	2007-02-08 16:42:23.000000000 +0000
++++ nss-mdns-0.10_mod/src/query.c	2016-05-18 10:57:22.286636029 +0100
+@@ -71,7 +71,7 @@
+ 
+ int mdns_open_socket(void) {
+     struct sockaddr_in sa;
+-    int fd = -1, ttl, yes;
++    int fd = -1, ttl, yes, reuse_addr;
+ 
+     if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+         goto fail;
+@@ -80,9 +80,13 @@
+     if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)) < 0)
+         goto fail;
+ 
++    reuse_addr = 1;
++    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &reuse_addr, sizeof(reuse_addr)) < 0)
++        goto fail;
++
+     sa.sin_family = AF_INET;
+-    sa.sin_port = 0;
+-    sa.sin_addr.s_addr = INADDR_ANY;
++    sa.sin_port = htons(5353);
++    sa.sin_addr.s_addr = inet_addr("224.0.0.251");
+     
+     if (bind(fd, (struct sockaddr*) &sa, sizeof(sa)) < 0)
+         goto fail;

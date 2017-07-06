@@ -1,0 +1,21 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_stubs_status.h diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_stubs_status.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_stubs_status.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_stubs_status.h	2015-08-17 12:19:57.446287440 +0100
+@@ -54,7 +54,7 @@
+ #define MGMTIF_DSLF_H_RM304_TEMPERATURE
+ 	
+ /* Turn Off HomePlug Stubs */
+-#define MGMTIF_DSLF_H_RM254_HOMEPLUG
++#undef MGMTIF_DSLF_H_RM254_HOMEPLUG
+ 	
+ /* Turn Off IP Stubs */
+ #undef MGMTIF_DSLF_H_RM256_IP
+@@ -91,7 +91,7 @@
+ #undef MGMTIF_DSLF_H_RM257_QOS
+ 	
+ /* Turn Off Wifi Stubs */
+-#define MGMTIF_DSLF_H_RM255_WIFI
++#undef MGMTIF_DSLF_H_RM255_WIFI
+ 
+ /* Turn Off Wifi Endpoint Stubs */
+ #undef MGMTIF_DSLF_H_RM1407_WIFI_ENDPOINT

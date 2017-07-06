@@ -1,0 +1,208 @@
+diff -Naur glib-2.32.0/configure glib-2.32.0_moded/configure
+--- glib2-2.32.0/configure		2012-03-24 03:02:40.000000000 +0000
++++ glib-2.32.0_moded/configure	2013-09-10 11:18:26.114651011 +0100
+@@ -22073,7 +22073,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+ 
+-        if test "$cross_compiling" = yes; then :
++        if test "$cross_compiling" != yes; then :
+   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "cannot run test program while cross compiling
+@@ -25312,7 +25312,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+ 
+-		if test "$cross_compiling" = yes; then :
++		if test "$cross_compiling" != yes; then :
+   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "cannot run test program while cross compiling
+@@ -26443,7 +26443,7 @@
+ if ${ac_cv_func_posix_getpwuid_r+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+-  if test "$cross_compiling" = yes; then :
++  if test "$cross_compiling" != yes; then :
+   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "cannot run test program while cross compiling
+@@ -26532,7 +26532,7 @@
+ if ${ac_cv_func_posix_getgrgid_r+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+-  if test "$cross_compiling" = yes; then :
++  if test "$cross_compiling" != yes; then :
+   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "cannot run test program while cross compiling
+@@ -27374,9 +27374,6 @@
+ fi
+ 
+ 
+-  if test x$GLIB_GENMARSHAL = xno; then
+-    as_fn_error $? "Could not find a glib-genmarshal in your PATH" "$LINENO" 5
+-  fi
+ 
+   # Extract the first word of "glib-compile-schemas", so it can be a program name with args.
+ set dummy glib-compile-schemas; ac_word=$2
+@@ -27419,9 +27416,6 @@
+ fi
+ 
+ 
+-  if test x$GLIB_COMPILE_SCHEMAS = xno; then
+-    as_fn_error $? "Could not find a glib-compile-schemas in your PATH" "$LINENO" 5
+-  fi
+ 
+   # Extract the first word of "glib-compile-resources", so it can be a program name with args.
+ set dummy glib-compile-resources; ac_word=$2
+@@ -27464,9 +27458,6 @@
+ fi
+ 
+ 
+-  if test x$GLIB_COMPILE_RESOURCES = xno; then
+-    as_fn_error $? "Could not find a glib-compile-resources in your PATH" "$LINENO" 5
+-  fi
+ fi
+
+
+diff -Naur glib-2.32.0/gio/Makefile.am glib-2.32.0_moded/gio/Makefile.am
+--- glib-2.32.0/gio/Makefile.am	2012-03-18 02:36:48.000000000 +0000
++++ glib-2.32.0_moded/gio/Makefile.am	2013-09-10 11:02:40.536274921 +0100
+@@ -304,7 +304,7 @@
+ 
+ endif
+ 
+-SUBDIRS += tests
++#SUBDIRS += tests
+ 
+ libgio_2_0_la_SOURCES =		\
+ 	gappinfo.c 		\
+diff -Naur glib-2.32.0/glib/Makefile.am glib-2.32.0_moded/glib/Makefile.am
+--- glib-2.32.0/glib/Makefile.am	2012-03-19 19:23:42.000000000 +0000
++++ glib-2.32.0_moded/glib/Makefile.am	2013-09-10 11:03:10.296275684 +0100
+@@ -35,7 +35,8 @@
+ MAYBE_PCRE = pcre 
+ endif
+ 
+-SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre . tests
++#SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre . tests
++SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre .
+ 
+ DIST_SUBDIRS = libcharset gnulib pcre update-pcre tests
+ 
+diff -Naur glib-2.32.0/gobject/Makefile.am glib-2.32.0_moded/gobject/Makefile.am
+--- glib-2.32.0/gobject/Makefile.am		2012-03-19 19:23:52.000000000 +0000
++++ glib-2.32.0_moded/gobject/Makefile.am	2013-09-10 11:03:41.872276496 +0100
+@@ -4,7 +4,8 @@
+ ## Process this file with automake to produce Makefile.in
+ include $(top_srcdir)/Makefile.decl
+ 
+-SUBDIRS = . tests
++#SUBDIRS = . tests
++SUBDIRS = .
+ 
+ BUILT_SOURCES=
+ CLEANFILES=
+diff -Naur glib-2.32.0/Makefile.am glib-2.32.0_moded/Makefile.am
+--- glib-2.32.0/Makefile.am		2012-03-12 00:42:39.000000000 +0000
++++ glib-2.32.0_moded/Makefile.am	2013-09-10 11:02:12.176274193 +0100
+@@ -6,7 +6,8 @@
+ 
+ ACLOCAL_AMFLAGS = -I m4macros ${ACLOCAL_FLAGS}
+ 
+-SUBDIRS = . m4macros glib gmodule gthread gobject gio tests po docs
++#SUBDIRS = . m4macros glib gmodule gthread gobject gio tests po docs
++SUBDIRS = . m4macros glib gmodule gthread gobject gio po
+ DIST_SUBDIRS = $(SUBDIRS) build
+ 
+ bin_SCRIPTS = glib-gettextize
+
+diff -Naur glib-2.32.0/gio/Makefile.in glib-2.32.0_moded/gio/Makefile.in
+--- glib-2.32.0/gio/Makefile.in		2012-03-24 03:02:43.000000000 +0000
++++ glib-2.32.0_moded/gio/Makefile.in	2013-09-10 11:13:24.466651545 +0100
+@@ -479,7 +479,7 @@
+ CTAGS = ctags
+ am__tty_colors = \
+ red=; grn=; lgn=; blu=; std=
+-DIST_SUBDIRS = gdbus-2.0/codegen xdgmime inotify fen win32 . fam tests
++DIST_SUBDIRS = gdbus-2.0/codegen xdgmime inotify fen win32 . fam
+ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+ am__relativize = \
+   dir0=`pwd`; \
+@@ -755,7 +755,7 @@
+ TEST_PROGS = 
+ NULL = 
+ SUBDIRS = gdbus-2.0/codegen $(am__append_1) $(am__append_5) \
+-	$(am__append_9) $(am__append_12) . $(am__append_15) tests
++	$(am__append_9) $(am__append_12) . $(am__append_15)
+ @MS_LIB_AVAILABLE_TRUE@@OS_WIN32_AND_DLL_COMPILATION_TRUE@noinst_DATA = gio-2.0.lib
+ @MS_LIB_AVAILABLE_TRUE@@OS_WIN32_AND_DLL_COMPILATION_TRUE@install_ms_lib_cmd = $(INSTALL) gio-2.0.lib $(DESTDIR)$(libdir)
+ @MS_LIB_AVAILABLE_TRUE@@OS_WIN32_AND_DLL_COMPILATION_TRUE@uninstall_ms_lib_cmd = -rm $(DESTDIR)$(libdir)/gio-2.0.lib
+@@ -3472,7 +3472,7 @@
+ ### testing rules
+ 
+ # test: run all tests in cwd and subdirs
+-test: test-nonrecursive
++test:
+ @OS_UNIX_TRUE@	@ for subdir in $(SUBDIRS) . ; do \
+ @OS_UNIX_TRUE@	    test "$$subdir" = "." -o "$$subdir" = "po" || \
+ @OS_UNIX_TRUE@	    ( cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $@ ) || exit $? ; \
+
+diff -Naur glib-2.32.0/glib/Makefile.in glib-2.32.0_moded/glib/Makefile.in
+--- glib-2.32.0/glib/Makefile.in	2012-03-24 03:02:44.000000000 +0000
++++ glib-2.32.0_moded/glib/Makefile.in	2013-09-10 11:14:35.054651420 +0100
+@@ -554,8 +554,8 @@
+ @HAVE_GOOD_PRINTF_FALSE@PRINTF_SUBDIR = gnulib
+ @HAVE_GOOD_PRINTF_FALSE@printf_la = gnulib/libgnulib.la
+ @USE_SYSTEM_PCRE_FALSE@MAYBE_PCRE = pcre 
+-SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre . tests
+-DIST_SUBDIRS = libcharset gnulib pcre update-pcre tests
++SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre .
++DIST_SUBDIRS = libcharset gnulib pcre update-pcre
+ AM_CPPFLAGS = \
+ 	$(glib_INCLUDES) 		\
+ 	$(pcre_inc) 			\
+@@ -1655,7 +1655,7 @@
+ ### testing rules
+ 
+ # test: run all tests in cwd and subdirs
+-test: test-nonrecursive
++test: 
+ @OS_UNIX_TRUE@	@ for subdir in $(SUBDIRS) . ; do \
+ @OS_UNIX_TRUE@	    test "$$subdir" = "." -o "$$subdir" = "po" || \
+ @OS_UNIX_TRUE@	    ( cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $@ ) || exit $? ; \
+
+diff -Naur glib-2.32.0/gobject/Makefile.in glib-2.32.0_moded/gobject/Makefile.in 
+--- glib-2.32.0/gobject/Makefile.in		2012-03-24 03:02:45.000000000 +0000
++++ glib-2.32.0_moded/gobject/Makefile.in	2013-09-10 11:15:02.818651371 +0100
+@@ -464,7 +464,7 @@
+ # GObject - GLib Type, Object, Parameter and Signal Library
+ # Copyright (C) 1997,98,99,2000 Tim Janik and Red Hat, Inc.
+ #
+-SUBDIRS = . tests
++SUBDIRS = . 
+ BUILT_SOURCES = $(am__append_1)
+ CLEANFILES = $(am__append_2) gobject-public-headers.txt $(gen_sources) \
+ 	libgobject-gdb.py
+@@ -1465,7 +1465,7 @@
+ ### testing rules
+ 
+ # test: run all tests in cwd and subdirs
+-test: test-nonrecursive
++test: 
+ @OS_UNIX_TRUE@	@ for subdir in $(SUBDIRS) . ; do \
+ @OS_UNIX_TRUE@	    test "$$subdir" = "." -o "$$subdir" = "po" || \
+ @OS_UNIX_TRUE@	    ( cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $@ ) || exit $? ; \
+--- glib-2.32.0/Makefile.in     2012-03-24 03:02:46.000000000 +0000
++++ glib-2.32.0_moded/Makefile.in  2013-09-11 11:21:36.582522014 +0100
+@@ -425,7 +425,7 @@
+        gio-windows-2.0.pc.in
+ TEST_PROGS =
+ ACLOCAL_AMFLAGS = -I m4macros ${ACLOCAL_FLAGS}
+-SUBDIRS = . m4macros glib gmodule gthread gobject gio tests po docs
++SUBDIRS = . m4macros glib gmodule gthread gobject gio po
+ DIST_SUBDIRS = $(SUBDIRS) build
+ bin_SCRIPTS = glib-gettextize
+ AM_CPPFLAGS = \

@@ -1,0 +1,41 @@
+From d6d3c067dd999b256e31ac20c351bb7ac9e41559 Mon Sep 17 00:00:00 2001
+From: Can <can.ilhan@airties.com>
+Date: Fri, 28 Feb 2014 18:27:45 +0200
+Subject: [PATCH 22/26] Hidden ssid event support is added for old awf
+
+Issue:SB601-164
+---
+ awf_event.h | 1 +
+ iwevent.c   | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/awf_event.h b/awf_event.h
+index e70ca7f..7b05bce 100644
+--- a/awf_event.h
++++ b/awf_event.h
+@@ -25,6 +25,7 @@ enum conn_status_e {
+ 	WPA_HANDSHAKE_FAIL,
+ 	AUTH_FAILED,
+ 	CONFIG_MISMATCH,
++	HIDDEN_SSID,
+ };
+ 
+ struct awf_event_s
+diff --git a/iwevent.c b/iwevent.c
+index bdb80b2..388f6d2 100644
+--- a/iwevent.c
++++ b/iwevent.c
+@@ -488,6 +488,10 @@ print_event_token(struct iw_event *	event,		/* Extracted token */
+ 	{
+ 		AWF_PRINT_STATUS(AUTH_FAILED);
+ 	}
++	else if (strncmp(custom, "SSID HIDDEN", 11) == 0)
++	{
++		AWF_PRINT_STATUS(HIDDEN_SSID);
++	}
+ 	else	
+ 	{
+ 		fprintf(stderr, "Custom driver event: %s\n", custom);
+-- 
+1.9.1
+

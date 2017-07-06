@@ -1,0 +1,21 @@
+--- a/profiles/input/hog.c	2015-03-03 11:00:18.958805711 +0000
++++ b/profiles/input/hog.c	2015-03-03 11:03:10.818810122 +0000
+@@ -599,12 +599,12 @@
+ 	if (hogdev->attrib == NULL)
+ 		return;
+ 
+-	if (report->decl->properties & ATT_CHAR_PROPER_WRITE)
+-		gatt_write_char(hogdev->attrib, report->decl->value_handle,
+-				data, size, output_written_cb, hogdev);
+-	else if (report->decl->properties & ATT_CHAR_PROPER_WRITE_WITHOUT_RESP)
+-		gatt_write_cmd(hogdev->attrib, report->decl->value_handle,
+-						data, size, NULL, NULL);
++       if (report->decl->properties & ATT_CHAR_PROPER_WRITE_WITHOUT_RESP)
++                gatt_write_cmd(hogdev->attrib, report->decl->value_handle,
++                                                data, size, NULL, NULL);
++       else if (report->decl->properties & ATT_CHAR_PROPER_WRITE)
++               gatt_write_char(hogdev->attrib, report->decl->value_handle,
++                               data, size, output_written_cb, hogdev);
+ }
+ 
+ static gboolean uhid_event_cb(GIOChannel *io, GIOCondition cond,

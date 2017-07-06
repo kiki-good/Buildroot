@@ -1,0 +1,50 @@
+Only in netcf-0.2.3/build-aux: .applied_patches_list
+diff -ur netcf-0.2.3.orig/src/drv_debian.c netcf-0.2.3/src/drv_debian.c
+--- netcf-0.2.3.orig/src/drv_debian.c	2014-09-24 16:41:24.763787256 +0100
++++ netcf-0.2.3/src/drv_debian.c	2014-09-24 16:33:01.283788147 +0100
+@@ -160,7 +160,7 @@
+         do {
+             const char *skip;
+             tmp = realloc(*slaves, sizeof(char *) * (nslaves+1));
+-            ERR_COND_BAIL(!tmp, ncf, ENOMEM);
++            ERR_NOMEM(!tmp, ncf);
+             *slaves = tmp;
+             nslaves++;
+ 
+@@ -209,7 +209,7 @@
+     ERR_BAIL(ncf);
+ 
+     *slaves = malloc(sizeof(char *) * (nbridge_ports + nbond_slaves));
+-    ERR_COND_BAIL(*slaves == NULL, ncf, ENOMEM);
++    ERR_NOMEM(*slaves == NULL, ncf);
+ 
+     for (int i = 0 ; i < nbridge_ports ; i++) {
+         (*slaves)[i] = abridge_ports[i];
+@@ -473,7 +473,7 @@
+             break;
+         }
+     }
+-    ERR_COND_BAIL(found == 0, ncf, ENOENT);
++    ERR_NOENT(found == 0, ncf);
+ 
+     name_dup = strdup(name);
+     ERR_NOMEM(name_dup == NULL, ncf);
+diff -ur netcf-0.2.3.orig/src/internal.h netcf-0.2.3/src/internal.h
+--- netcf-0.2.3.orig/src/internal.h	2014-09-24 16:41:24.763787256 +0100
++++ netcf-0.2.3/src/internal.h	2014-09-24 16:32:49.055788168 +0100
+@@ -125,6 +125,15 @@
+         goto error;                                  \
+     }
+ 
++/* Special version of ERR_COND_BAIL(cond, ncf, ENOENT) to avoid
++ * problems since ENOENT is defined in errno.h
++ */
++#define ERR_NOENT(cond, ncf)                         \
++    if (cond) {                                      \
++        (ncf)->errcode = NETCF_ENOENT;               \
++        goto error;                                  \
++    }
++
+ #define ERR_THROW(cond, ncf, err, fmt ...)           \
+     do {                                             \
+         if (cond) {                                  \

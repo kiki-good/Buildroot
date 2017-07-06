@@ -1,0 +1,4 @@
+// Disabling Deep-sleep mode on the chip
+&0229 = 0
+// Setting scheduling priority of BR/EDR inquiry and BLE scanning to low
+&22c0 = 1

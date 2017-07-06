@@ -1,0 +1,29 @@
+config BR2_PACKAGE_SKY_PICASSO
+	bool "Sky Picasso EPG"
+	default N
+	help
+	  Include the Sky Picasso EPG in the rootfs.
+
+if BR2_PACKAGE_SKY_PICASSO
+
+# When adding new versions, make sure that a corresponding entry is
+# added to the default values of BR2_PACKAGE_PICASSO_VERSION below.
+
+choice
+	prompt "Picasso VM version"
+	depends on BR2_PACKAGE_SKY_PICASSO
+	default BR2_PACKAGE_SKY_PICASSO_0_1
+
+config BR2_PACKAGE_SKY_PICASSO_0_1
+	bool "Use Picasso VM 0.1"
+	depends on BR2_PACKAGE_SKY_PICASSO
+
+endchoice
+
+config BR2_PACKAGE_SKY_PICASSO_VERSION
+	string
+	default "0.1"		if BR2_PACKAGE_SKY_PICASSO_0_1
+
+endif
+
+

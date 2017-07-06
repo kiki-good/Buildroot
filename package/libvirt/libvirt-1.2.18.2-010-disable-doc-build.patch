@@ -1,0 +1,22 @@
+--- a/Makefile.am	2015-12-23 22:54:18.000000000 +0000
++++ b/Makefile.am	2016-03-29 20:49:58.362870285 +0100
+@@ -19,7 +19,7 @@
+ LCOV = lcov
+ GENHTML = genhtml
+ 
+-SUBDIRS = . gnulib/lib include src daemon tools docs gnulib/tests \
++SUBDIRS = . gnulib/lib include src daemon tools gnulib/tests \
+   tests po examples/object-events examples/hellolibvirt \
+   examples/dominfo examples/domsuspend examples/apparmor \
+   examples/xml/nwfilter examples/openauth examples/systemtap \
+--- a/Makefile.in	2015-12-24 00:18:30.000000000 +0000
++++ b/Makefile.in	2016-03-29 20:49:58.362870285 +0100
+@@ -1856,7 +1856,7 @@
+ ws_plugindir = @ws_plugindir@
+ LCOV = lcov
+ GENHTML = genhtml
+-SUBDIRS = . gnulib/lib include src daemon tools docs gnulib/tests \
++SUBDIRS = . gnulib/lib include src daemon tools gnulib/tests \
+   tests po examples/object-events examples/hellolibvirt \
+   examples/dominfo examples/domsuspend examples/apparmor \
+   examples/xml/nwfilter examples/openauth examples/systemtap \

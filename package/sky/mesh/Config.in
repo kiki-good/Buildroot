@@ -1,0 +1,6 @@
+config BR2_PACKAGE_MESH_DRIVERS
+	bool "Mesh drivers"
+	default N
+	help
+	  Include the Mesh Drivers and executables in the rootfs. If
+	  enabled, the drivers will be loaded and configured at boot.

@@ -1,0 +1,23 @@
+config BR2_PACKAGE_SKY_COMMON
+        bool "Select packages for Sky/Humax platforms"
+	depends on BR2_TARGET_SKY || BR2_TARGET_HUMAX
+        help
+          Packages for Sky common platforms
+
+menu "Sky common shared packages"
+source "package/sky-common/firewall/Config.in"
+source "package/sky-common/cdi/Config.in"
+source "package/sky-common/nds/Config.in"
+source "package/sky-common/bumper/Config.in"
+source "package/sky-common/httpsend/Config.in"
+source "package/sky-common/mali/Config.in"
+source "package/sky-common/wpa_supplicant/Config.in"
+source "package/sky-common/maid-amidala/Config.in"
+source "package/sky-common/rhad/Config.in"
+source "package/sky-common/upstart-user/Config.in"
+source "package/sky-common/false/Config.in"
+source "package/sky-common/writefile/Config.in"
+if !BR2_PACKAGE_BUSYBOX_HIDE_OTHERS
+source "package/sky-common/echo/Config.in"
+endif
+endmenu

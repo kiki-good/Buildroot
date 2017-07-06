@@ -1,0 +1,74 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videooutput.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videooutput.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videooutput.c	2015-07-21 13:56:54.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videooutput.c	2015-07-21 14:02:36.914106928 +0100
+@@ -187,34 +187,43 @@
+ 
+ int get_components_videooutput_aspectratiobehaviour(char* pDeviceID, char *buf, size_t length, int instance)
+ {
+-	int sts = EFAIL ;
+-	 int videoDecoderInstance = 0;
++    int sts = EFAIL ;
++    int videoDecoderInstance = 0;
++	int count = 0;
+ 	
+-	 if(NULL == pDeviceID){
+-		 return EFAIL ;
+-	 }
+-	
+-	 for(videoDecoderInstance = 0; ; videoDecoderInstance++){
+-		 sts = get_components_videodecoder_status(pDeviceID, buf, length, videoDecoderInstance);
+-		 if(EOK != sts){
+-			 return EFAIL;
+-		 }
+-		 if(0 == strncmp(buf, "Decoding", strlen("Decoding"))){
+-			 break;
+-		 }
+-	 }
+-	 sts = get_components_videodecoder_contentaspectratio(pDeviceID, buf, length, videoDecoderInstance);
+-	 if(EOK != sts){
+-		 return EFAIL;
+-	 }
+-	 if(0 == strncmp(buf, "16:9", strlen("16:9"))){
+-		 strncpy(buf, "16:9 LetterBox", length);
+-	 }else if(0 == strncmp(buf, "4:3", strlen("4:3"))){
+-		 strncpy(buf, "4:3 Standard", length);
+-	 }else{
+-		 strncpy(buf, "ERROR", length);
+-	 }
+-	 return EOK;
++    if(NULL == pDeviceID){
++        return EFAIL ;
++    }
++
++    sts = get_videodecoder_components_numentries(VIDEO_DECODER_PROC_ENTRY, &count);
++    if (sts != EOK) {
++        return EFAIL;
++    }
++    for(videoDecoderInstance = 0; videoDecoderInstance < count ; videoDecoderInstance++){
++        sts = get_components_videodecoder_status(pDeviceID, buf, length, videoDecoderInstance);
++        if(EOK != sts){
++            return EFAIL;
++        }
++        if(0 == strncmp(buf, "Decoding", strlen("Decoding"))){
++            break;
++        }
++    }
++	/* If this is True , no Video Decoder is Decoding */
++	if (videoDecoderInstance == count){
++        return EFAIL;
++	}
++    sts = get_components_videodecoder_contentaspectratio(pDeviceID, buf, length, videoDecoderInstance);
++    if(EOK != sts){
++        return EFAIL;
++    }
++    if(0 == strncmp(buf, "16:9", strlen("16:9"))){
++        strncpy(buf, "16:9 LetterBox", length);
++    }else if(0 == strncmp(buf, "4:3", strlen("4:3"))){
++        strncpy(buf, "4:3 Standard", length);
++    }else{
++        strncpy(buf, "ERROR", length);
++    }
++    return EOK;
+ }
+ 
+ 

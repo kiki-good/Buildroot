@@ -1,0 +1,33 @@
+diff -rupaN tr69-data-model/libs/libmap/arraymap.c tr69-data-model_Patched/libs/libmap/arraymap.c
+--- tr69-data-model/libs/libmap/arraymap.c	2014-09-30 11:47:27.971992006 +0100
++++ tr69-data-model_Patched/libs/libmap/arraymap.c	2014-10-01 13:09:43.022336620 +0100
+@@ -1372,7 +1372,6 @@ arraymap_dump(const arraymap_t *map, FIL
+ 	arraymap_value_t *amv;
+ 
+ 	if (!map || (map->am_numkeys == 0)) {
+-		fprintf(fp, "map is empty\n");
+ 		return;
+ 	}
+ 
+diff -rupaN tr69-data-model/libs/libmap/map.c tr69-data-model_Patched/libs/libmap/map.c
+--- tr69-data-model/libs/libmap/map.c	2014-09-30 11:47:27.971992006 +0100
++++ tr69-data-model_Patched/libs/libmap/map.c	2014-10-01 13:12:50.046341425 +0100
+@@ -1014,7 +1014,6 @@ map_dump(const map_t *map, FILE *fp)
+ 	map_entry_t *me;
+ 
+ 	if (!map || (map->m_numkeys == 0)) {
+-		fprintf(fp, "map is empty\n");
+ 		return;
+ 	}
+ 
+diff -rupaN tr69-data-model/libs/libmap/multimap.c tr69-data-model_Patched/libs/libmap/multimap.c
+--- tr69-data-model/libs/libmap/multimap.c	2014-09-30 11:47:27.971992006 +0100
++++ tr69-data-model_Patched/libs/libmap/multimap.c	2014-10-01 13:10:58.346338554 +0100
+@@ -1320,7 +1320,6 @@ multimap_dump(const multimap_t *map, FIL
+ 	multimap_value_t *mmv;
+ 
+ 	if (!map || (map->mm_numkeys == 0)) {
+-		fprintf(fp, "map is empty\n");
+ 		return;
+ 	}
+ 

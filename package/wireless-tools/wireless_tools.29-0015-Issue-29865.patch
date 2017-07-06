@@ -1,0 +1,30 @@
+From d60cf4e227af758f543c5a227f74154af4d1fc8b Mon Sep 17 00:00:00 2001
+From: "nejatonay.erkose" <nejatonay.erkose@airties.com>
+Date: Mon, 4 Mar 2013 17:41:20 +0200
+Subject: [PATCH 15/26] Issue #29865
+
+--Metadata has been added to the repository.
+
+git-svn-id: http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29@40642
+---
+ wireless_tools.29.metadata | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+ create mode 100644 wireless_tools.29.metadata
+
+diff --git a/wireless_tools.29.metadata b/wireless_tools.29.metadata
+new file mode 100644
+index 0000000..6710f6c
+--- /dev/null
++++ b/wireless_tools.29.metadata
+@@ -0,0 +1,8 @@
++Package Name    = wireless_tools.29
++Buildsys Dir    = wireless_tools
++Remote Location = http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29
++Package_Path    = packages/devel/wireless_tools/wireless_tools.29
++Repo TYPE       = SVN
++Type            = devel
++License         = GPL-2.0
++Modified        = YES
+-- 
+1.9.1
+

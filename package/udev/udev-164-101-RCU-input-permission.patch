@@ -1,0 +1,22 @@
+--- udev-164/rules/rules.d/50-udev-default.rules	2015-06-25 14:55:55.106029622 +0100
++++ udev-164_mod/rules/rules.d/50-udev-default.rules	2015-06-25 14:57:13.442031633 +0100
+@@ -5,12 +5,16 @@
+ 
+ # mem
+ KERNEL=="zero|full|random", MODE="0666"
+-KERNEL=="null|urandom", MODE="0660",  GROUP="system"
++KERNEL=="null|urandom", MODE="0666",  GROUP="system"
+ KERNEL=="mem|kmem|port|nvram",	GROUP="root", MODE="0640"
+ 
++# mali device 
++KERNEL=="mali", MODE="0660",  GROUP="NDS_MW"
++
+ # input
+-KERNEL=="mouse*|mice|event*",	MODE="0640"
+-KERNEL=="ts[0-9]*|uinput",	MODE="0640"
++KERNEL=="event*",	NAME="input/udev.NO.use.event"
++KERNEL=="mouse*|mice",	MODE="0666"
++KERNEL=="ts[0-9]*|uinput",	MODE="0660", GROUP="NDS_MW"
+ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="RCU_DRI"
+ 
+ # libusb device nodes

@@ -1,0 +1,20 @@
+--- libatasmart-0.19/build-aux/config.sub	2012-02-03 11:02:58.000000000 +0000
++++ libatasmart-0.19-new/build-aux/config.sub	2017-06-28 17:31:27.178894559 +0100
+@@ -250,7 +250,7 @@
+ 	| alpha | alphaev[4-8] | alphaev56 | alphaev6[78] | alphapca5[67] \
+ 	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
+ 	| am33_2.0 \
+-	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | avr32 \
++	| arc | arm | aarch64 | aarch64_be | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | avr32 \
+         | be32 | be64 \
+ 	| bfin \
+ 	| c4x | clipper \
+@@ -358,7 +358,7 @@
+ 	| alpha-* | alphaev[4-8]-* | alphaev56-* | alphaev6[78]-* \
+ 	| alpha64-* | alpha64ev[4-8]-* | alpha64ev56-* | alpha64ev6[78]-* \
+ 	| alphapca5[67]-* | alpha64pca5[67]-* | arc-* \
+-	| arm-*  | armbe-* | armle-* | armeb-* | armv*-* \
++	| arm-*  | aarch64-* | aarch64_be-* |armbe-* | armle-* | armeb-* | armv*-* \
+ 	| avr-* | avr32-* \
+ 	| be32-* | be64-* \
+ 	| bfin-* | bs2000-* \

@@ -1,0 +1,33 @@
+From f317911b6a878f4e80131aeb6e759ae56466f2bf Mon Sep 17 00:00:00 2001
+From: bilal <bilal@airties.com>
+Date: Tue, 4 Sep 2012 18:15:56 +0300
+Subject: [PATCH 14/26] Issue #26804
+
+passive scan support to wireless_tools.
+
+git-svn-id: http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29@36407
+---
+ iwlist.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/iwlist.c b/iwlist.c
+index 6fc007f..a84850d 100644
+--- a/iwlist.c
++++ b/iwlist.c
+@@ -1091,6 +1091,13 @@ print_scanning_info(int		skfd,
+ 	    scanflags |= IW_SCAN_HACK;
+ 	  }
+ 	else
++		/* Check for passive scan */
++		if(!strncmp(args[0], "passive", 7))
++		{
++			scanopt.scan_type = IW_SCAN_TYPE_PASSIVE;
++			scanflags |= IW_SCAN_ALL_ESSID;
++		}
++	else
+ 	  {
+ 	    fprintf(stderr, "Invalid scanning option [%s]\n", args[0]);
+ 	    return(-1);
+-- 
+1.9.1
+

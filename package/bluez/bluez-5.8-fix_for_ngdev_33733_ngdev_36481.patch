@@ -1,0 +1,42 @@
+--- a/src/device.c	2015-05-18 17:21:13.313972044 +0100
++++ b/src/device.c	2015-05-18 17:26:18.969979890 +0100
+@@ -3302,7 +3302,14 @@
+ 	struct btd_device *device = attcb->user_data;
+ 
+ 	if (g_error_matches(gerr, BT_IO_ERROR, ECONNABORTED))
++#if 1 //Added to fix NGDEV-33733
++	{
++		trigger_passive_scanning(device->adapter);
+ 		return;
++	}
++#else
++		return;
++#endif
+ 
+ 	if (device_get_auto_connect(device)) {
+ 		DBG("Enabling automatic connections");
+--- a/src/adapter.c	2015-05-18 17:21:20.729972234 +0100
++++ b/src/adapter.c	2015-05-18 17:25:09.513978107 +0100
+@@ -1110,7 +1110,11 @@
+ 	return FALSE;
+ }
+ 
++#if 1 //For NGDEV-33733
++void trigger_passive_scanning(struct btd_adapter *adapter)
++#else
+ static void trigger_passive_scanning(struct btd_adapter *adapter)
++#endif
+ {
+ 	if (!(adapter->current_settings & MGMT_SETTING_LE))
+ 		return;
+@@ -4260,6 +4264,10 @@
+ 	/* check pending requests */
+ 	reply_pending_requests(adapter);
+ 
++#if 1 //Added to fix NGDEV-36481
++	adapter->discovery_enable = 0x00;
++	stop_passive_scanning(adapter);
++#endif
+ 	cancel_passive_scanning(adapter);
+ 
+ 	while (adapter->discovery_list) {

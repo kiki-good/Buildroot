@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CARES
+	bool "cares"
+	help
+	  c-ares is a C library that performs DNS requests
+	   and name resolves asynchronously.

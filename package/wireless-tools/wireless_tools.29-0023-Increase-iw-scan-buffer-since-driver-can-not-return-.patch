@@ -1,0 +1,49 @@
+From 2d6ff5830bed61d3c187e6cdbca9e30f3167e13c Mon Sep 17 00:00:00 2001
+From: Can Ilhan <can.ilhan@airties.com>
+Date: Mon, 21 Jul 2014 17:45:10 +0300
+Subject: [PATCH 23/26] Increase iw scan buffer since driver can not return up
+ to 128 bss
+
+Issue:AIR4920-454
+---
+ wireless.21.h | 6 ++++--
+ wireless.h    | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/wireless.21.h b/wireless.21.h
+index 03ac7bb..b273380 100644
+--- a/wireless.21.h
++++ b/wireless.21.h
+@@ -537,8 +537,10 @@
+ #define IW_SCAN_TYPE_ACTIVE 0
+ #define IW_SCAN_TYPE_PASSIVE 1
+ /* Maximum size of returned data */
+-#define IW_SCAN_MAX_DATA	16*1024	/* In bytes */
+-
++/* AIRTIES_PATCH */
++// We need to support up to 128 results
++#define IW_SCAN_MAX_DATA	64*1024	/* In bytes */
++/* AIRTIES_PATCH */
+ /* Max number of char in custom event - use multiple of them if needed */
+ #define IW_CUSTOM_MAX		256	/* In bytes */
+ 
+diff --git a/wireless.h b/wireless.h
+index 03ac7bb..b273380 100644
+--- a/wireless.h
++++ b/wireless.h
+@@ -537,8 +537,10 @@
+ #define IW_SCAN_TYPE_ACTIVE 0
+ #define IW_SCAN_TYPE_PASSIVE 1
+ /* Maximum size of returned data */
+-#define IW_SCAN_MAX_DATA	16*1024	/* In bytes */
+-
++/* AIRTIES_PATCH */
++// We need to support up to 128 results
++#define IW_SCAN_MAX_DATA	64*1024	/* In bytes */
++/* AIRTIES_PATCH */
+ /* Max number of char in custom event - use multiple of them if needed */
+ #define IW_CUSTOM_MAX		256	/* In bytes */
+ 
+-- 
+1.9.1
+

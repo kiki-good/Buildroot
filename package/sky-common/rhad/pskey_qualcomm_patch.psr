@@ -1,0 +1,29 @@
+// Documentation for patch taken from pb-120_Sky_only.pb
+// -------------------------------------
+
+// Documentation from coex_shutdown.xap
+// ------------------------------------
+// 
+// Issues patched: B-208638
+// 
+// If the WLAN_DENY signal is asserted during the initial phase of
+// an AFH scan, the Bluecore device fails to deassert its
+// BT_ACTIVE signal.
+
+// patch_hardware_14, PSKEY_PATCH64 (0x213a, 8506), 18 words
+&213a = 0000 4ef4 09f4 0218 ff2b ff0e 0c00 4818 009e 0314 fc0f 0018 ff2b ff0e 4f00 1218 00e2 159e
+
+// Documentation from patch_usb_resume.xap
+// ---------------------------------------
+// 
+// Issues patched: B-216991
+// 
+// Wakeup PIO is asserted when USB gets resume event.
+// This causes Host to wakeup even when there is no data is scheduled for transmission.
+
+// patch_hardware_1, PSKEY_PATCH51 (0x212d, 8493), 27 words
+&212d = 0000 8e70 fb25 081b 0300 e888 04f0 0018 ea00 d729 0684 03f4 0884 04f0 0118 ea00 d729 0014 ff27 ff0e 8e00 7314 ff27 fb19 0914 ffe3 02c4
+
+// patch_hardware_2, PSKEY_PATCH52 (0x212e, 8494), 19 words
+&212e = 0000 846c ea00 d799 05f4 0014 ea00 d725 f70f df00 1d15 0584 0018 ff2b ff0e 8400 6f18 00e2 2aca
+

@@ -1,0 +1,66 @@
+From 46b8b59b3061c6cb9d43b48e19b3dd202ba30943 Mon Sep 17 00:00:00 2001
+From: bilal <bilal@airties.com>
+Date: Wed, 16 Nov 2011 15:02:51 +0200
+Subject: [PATCH 06/26] Issue #20528
+
+awf_ng dependency for wireless_tools.
+
+git-svn-id: http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29@28523
+---
+ iwevent.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/iwevent.c b/iwevent.c
+index 583b2a4..f71fef3 100644
+--- a/iwevent.c
++++ b/iwevent.c
+@@ -34,6 +34,7 @@
+ #endif /* IFLA_WIRELESS */
+ 
+ int awf_mode = 0;
++int awf_ng_mode = 0;
+ int awf_debug_mode = 0;
+ 
+ #define fputs(_a, _b) \
+@@ -439,6 +440,9 @@ print_event_token(struct iw_event *	event,		/* Extracted token */
+ 	if (awf_debug_mode)
+ 		fprintf(stderr, "Custom driver event: %s\n", custom);
+ 
++	if (awf_ng_mode)
++		fprintf(stdout, "Custom driver event: %s\n", custom);
++
+ 	if (strncmp(custom, "Conn Success", 12) == 0)
+ 	{
+ 		AWF_PRINT_STATUS(AUTHENTICATED);
+@@ -846,7 +850,7 @@ main(int	argc,
+   int opt;
+ 
+   /* Check command line options */
+-  while((opt = getopt_long(argc, argv, "hvbd", long_opts, NULL)) > 0)
++  while((opt = getopt_long(argc, argv, "hvbdc", long_opts, NULL)) > 0)
+     {
+       switch(opt)
+ 	{
+@@ -863,6 +867,10 @@ main(int	argc,
+ 	  awf_mode = 1;
+ 	  break;
+ 
++	case 'c':
++	  awf_ng_mode = 1;
++	  break;
++
+ 	case 'd':
+ 	  awf_debug_mode = 1;
+ 	  break;
+@@ -887,7 +895,7 @@ main(int	argc,
+ 
+   fprintf(stderr, "Waiting for Wireless Events from interfaces...\n");
+ 
+-	if (awf_mode)
++	if (awf_mode || awf_ng_mode)
+ 	{
+ 		// bilal: add signal handler to prevent ^C to kill process
+ 		signal(SIGINT, SigTermHnd);
+-- 
+1.9.1
+

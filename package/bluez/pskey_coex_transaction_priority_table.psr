@@ -1,0 +1,5 @@
+// PSKEY_COEX_TRANSACTION_PRIORITY_TABLE
+// Changed setting 11 (first uint16 = 0) to 0100 from 0000 to give ACL bulk transfers priority
+//        0   1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
+&2488 = 0001 0001 0001 0001 0001 0001 0001 0001 0001 0001 0001 0001 0001 0000 0000 0000 0001
+//      Setting 11 sets ACL Bulk transfers to high priority --> ^^ <-- default is low priority (0000)

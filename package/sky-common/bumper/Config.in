@@ -1,0 +1,7 @@
+config BR2_PACKAGE_BUMPER
+	bool "bumper"
+	help
+	  bumper is a simple, small, portable, fast app
+	  for batch elevating application priority
+
+

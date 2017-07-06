@@ -1,0 +1,11 @@
+diff -Naur dropbear-2014.65/includes.h dropbear-2014.65-mod/includes.h
+--- dropbear-2014.65/includes.h	2014-08-08 14:40:46.000000000 +0100
++++ dropbear-2014.65-mod/includes.h	2014-11-18 19:03:05.852247621 +0000
+@@ -40,6 +40,7 @@
+ #include <sys/wait.h>
+ #include <sys/resource.h>
+ 
++#define _GNU_SOURCE
+ #include <stdio.h>
+ #include <errno.h>
+ #include <fcntl.h>

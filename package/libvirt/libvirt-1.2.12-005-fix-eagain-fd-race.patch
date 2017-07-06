@@ -1,0 +1,133 @@
+Occasionally when trying to start LXC containers with fds I get the following error:
+
+    virNetMessageDupFD:562 : Unable to duplicate FD -1: Bad file descriptor
+
+I tracked it down to the code that handles EAGAIN errors from recvfd.  In such cases the
+virNetMessageDecodeNumFDs function may be called multiple times from virNetServerClientDispatchRead
+and each time it overwrites the msg->fds array.  In the best case (when msg->donefds == 0)
+this results in a memory leak, in the worse case it will leak any fd's already in msg->fds
+and cause subsequent failures when dup is called.
+
+A very similar problem is mention here:
+https://www.redhat.com/archives/libvir-list/2012-December/msg01306.html
+
+
+--- a/src/rpc/virnetclient.c	2015-01-23 11:46:24.000000000 +0000
++++ b/src/rpc/virnetclient.c	2016-02-11 10:19:58.320640234 +0000
+@@ -1281,8 +1281,7 @@
+                 if (client->msg.header.type == VIR_NET_REPLY_WITH_FDS) {
+                     size_t i;
+ 
+-                    if (client->msg.nfds == 0 &&
+-                        virNetMessageDecodeNumFDs(&client->msg) < 0)
++                    if (virNetMessageDecodeNumFDs(&client->msg) < 0)
+                         return -1;
+ 
+                     for (i = client->msg.donefds; i < client->msg.nfds; i++) {
+--- a/src/rpc/virnetmessage.c	2015-01-23 11:46:24.000000000 +0000
++++ b/src/rpc/virnetmessage.c	2016-02-11 10:18:13.855163685 +0000
+@@ -317,11 +317,25 @@
+         goto cleanup;
+     }
+ 
+-    msg->nfds = numFDs;
+-    if (VIR_ALLOC_N(msg->fds, msg->nfds) < 0)
+-        goto cleanup;
+-    for (i = 0; i < msg->nfds; i++)
+-        msg->fds[i] = -1;
++    /* [Sky] there is a bug in libvirt that means this function can be called
++     * multiple times with the same msg, this results in a memory leak in the
++     * best case in the worse case it will leak any fd's in msg->fds and
++     * cause subsequent failues when dup if called on the msg->fds.
++     */
++    if (msg->fds) {
++        if (msg->nfds != numFDs) {
++            virReportError(VIR_ERR_RPC,
++                           _("Previously decoded fd count %d, doesn't match %d"),
++                           msg->nfds, numFDs);
++            goto cleanup;
++        }
++    } else {
++        msg->nfds = numFDs;
++        if (VIR_ALLOC_N(msg->fds, msg->nfds) < 0)
++            goto cleanup;
++        for (i = 0; i < msg->nfds; i++)
++            msg->fds[i] = -1;
++    }
+ 
+     VIR_DEBUG("Got %zu FDs from peer", msg->nfds);
+ 
+--- a/src/rpc/virnetserverclient.c	2015-01-23 11:46:24.000000000 +0000
++++ b/src/rpc/virnetserverclient.c	2016-02-11 10:34:33.257018534 +0000
+@@ -1095,7 +1095,6 @@
+         virNetMessagePtr msg = client->rx;
+         virNetMessagePtr response = NULL;
+         virNetServerClientFilterPtr filter;
+-        size_t i;
+ 
+         /* Decode the header so we can use it for routing decisions */
+         if (virNetMessageDecodeHeader(msg) < 0) {
+@@ -1107,36 +1106,39 @@
+ 
+         /* Now figure out if we need to read more data to get some
+          * file descriptors */
+-        if (msg->header.type == VIR_NET_CALL_WITH_FDS &&
+-            virNetMessageDecodeNumFDs(msg) < 0) {
+-            virNetMessageQueueServe(&client->rx);
+-            virNetMessageFree(msg);
+-            client->wantClose = true;
+-            return; /* Error */
+-        }
++        if (msg->header.type == VIR_NET_CALL_WITH_FDS) {
++            size_t i;
+ 
+-        /* Try getting the file descriptors (may fail if blocking) */
+-        for (i = msg->donefds; i < msg->nfds; i++) {
+-            int rv;
+-            if ((rv = virNetSocketRecvFD(client->sock, &(msg->fds[i]))) < 0) {
++            if (virNetMessageDecodeNumFDs(msg) < 0) {
+                 virNetMessageQueueServe(&client->rx);
+                 virNetMessageFree(msg);
+                 client->wantClose = true;
+-                return;
++                return; /* Error */
+             }
+-            if (rv == 0) /* Blocking */
+-                break;
+-            msg->donefds++;
+-        }
+ 
+-        /* Need to poll() until FDs arrive */
+-        if (msg->donefds < msg->nfds) {
+-            /* Because DecodeHeader/NumFDs reset bufferOffset, we
+-             * put it back to what it was, so everything works
+-             * again next time we run this method
+-             */
+-            client->rx->bufferOffset = client->rx->bufferLength;
+-            return;
++            /* Try getting the file descriptors (may fail if blocking) */
++            for (i = msg->donefds; i < msg->nfds; i++) {
++                int rv;
++                if ((rv = virNetSocketRecvFD(client->sock, &(msg->fds[i]))) < 0) {
++                    virNetMessageQueueServe(&client->rx);
++                    virNetMessageFree(msg);
++                    client->wantClose = true;
++                    return;
++                }
++                if (rv == 0) /* Blocking */
++                    break;
++                msg->donefds++;
++            }
++
++            /* Need to poll() until FDs arrive */
++            if (msg->donefds < msg->nfds) {
++                /* Because DecodeHeader/NumFDs reset bufferOffset, we
++                 * put it back to what it was, so everything works
++                 * again next time we run this method
++                 */
++                client->rx->bufferOffset = client->rx->bufferLength;
++                return;
++            }
+         }
+ 
+         /* Definitely finished reading, so remove from queue */

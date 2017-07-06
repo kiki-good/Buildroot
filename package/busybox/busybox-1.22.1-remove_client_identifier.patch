@@ -1,0 +1,26 @@
+diff -Naur busybox-1.22.1/networking/udhcp/dhcpc.c busybox-1.22.1-mod/networking/udhcp/dhcpc.c
+--- busybox-1.22.1/networking/udhcp/dhcpc.c	2014-10-09 12:33:17.070386130 +0100
++++ busybox-1.22.1-mod/networking/udhcp/dhcpc.c	2014-10-09 12:34:32.830386746 +0100
+@@ -1339,22 +1339,6 @@
+ 	}
+ 
+ 	clientid_mac_ptr = NULL;
+-	if (!(opt & OPT_C) && !udhcp_find_option(client_config.options, DHCP_CLIENT_ID)) {
+-		/* not suppressed and not set, set the default client ID */
+-		client_config.clientid = alloc_dhcp_option(DHCP_CLIENT_ID, "", 7);
+-		client_config.clientid[OPT_DATA] = 1; /* type: ethernet */
+-		clientid_mac_ptr = client_config.clientid + OPT_DATA+1;
+-		memcpy(clientid_mac_ptr, client_config.client_mac, 6);
+-	}
+-	if (str_V[0] != '\0') {
+-		// can drop -V, str_V, client_config.vendorclass,
+-		// but need to add "vendor" to the list of recognized
+-		// string opts for this to work;
+-		// and need to tweak add_client_options() too...
+-		// ...so the question is, should we?
+-		//bb_error_msg("option -V VENDOR is deprecated, use -x vendor:VENDOR");
+-		client_config.vendorclass = alloc_dhcp_option(DHCP_VENDOR, str_V, 0);
+-	}
+ 
+ #if !BB_MMU
+ 	/* on NOMMU reexec (i.e., background) early */

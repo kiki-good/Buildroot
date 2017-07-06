@@ -1,0 +1,13 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-07-18 17:57:56.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-07-18 19:37:26.395282576 +0100
+@@ -106,7 +106,8 @@
+ /*---------------------------------------------------------------------------
+ ** Data
+ */
+-/* NONE */
++char *TR069DataModelVersion = "TR069: Data Model Version: 6.4-20160620\n"; 
++char *TR069SoftwareVersion =  "TR069: Software   Version: 5.4-20160912\n"; 
+ 
+ /*---------------------------------------------------------------------------
+ ** Functions

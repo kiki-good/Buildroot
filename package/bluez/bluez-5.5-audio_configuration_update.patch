@@ -1,0 +1,7 @@
+--- a/profiles/audio/audio.conf	2014-11-05 12:10:19.959965156 +0000
++++ b/profiles/audio/audio.conf	2014-11-05 12:21:53.559982961 +0000
+@@ -6,3 +6,4 @@
+ 
+ # Switch to master role for incoming connections (defaults to true)
+ #Master=true
++Enable=Source,Sink,Media,Socket

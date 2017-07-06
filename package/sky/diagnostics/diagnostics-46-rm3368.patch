@@ -1,0 +1,30 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-09-18 10:05:23.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-09-18 12:10:00.747853384 +0100
+@@ -295,7 +295,6 @@
+ 	char *pInputStr = "Serial Number: ";
+ 	char serialNumber[VENDOR_HOOKS_MAX_RESPONSE_SIZE];
+ 	char hwVersion[BSKYB_DEVICEINFO_HW_VER_SIZE_MAX];
+-	int foundSerialNumber = 0;
+ 	
+ 	result = get_deviceinfo_string_variable(pDeviceID, pInputStr, serialNumber, sizeof(serialNumber));
+ 	if (EOK == result) {
+@@ -307,7 +306,6 @@
+ 		/*When the box is serialized, we get serial number as a HEX number
+ 		which has to be converted to a string with decimal value*/
+ 		snprintf(serialNumber, sizeof(serialNumber), "%010ld", val);
+-		foundSerialNumber = 1;
+ 	} else {
+ 		/* when the Box is not serialized , we get a value of all FF's .. For ex: FFFFFF*/
+ 		/* In this case, Obtain Serial Number as  MAC Address*/
+@@ -317,8 +315,8 @@
+ #if defined (SKY_TURN_OFF_DEVICEINFO_PARAMETERS)
+ 	if (EOK == getHWVersion(pDeviceID, hwVersion, sizeof(hwVersion))) {
+ 		snprintf(buf, length, "%s%s", hwVersion, serialNumber);
+-		/* Only save real serial number and only save once. */
+-		if (foundSerialNumber && (EOK != access(BSKYB_DEVICEINFO_SERIAL_NUMBER_FILENAME, F_OK))){
++		/* Only save serial number once. */
++		if (EOK != access(BSKYB_DEVICEINFO_SERIAL_NUMBER_FILENAME, F_OK)){
+ 			vendor_hook_write_proc_device(BSKYB_DEVICEINFO_SERIAL_NUMBER_FILENAME,
+ 										buf, strlen(buf));
+ 		}

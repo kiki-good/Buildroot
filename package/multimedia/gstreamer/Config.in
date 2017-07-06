@@ -1,0 +1,14 @@
+config BR2_PACKAGE_GSTREAMER
+	bool "gstreamer"
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBXML2
+	help
+	  GStreamer is an open source multimedia framework.
+
+	  http://gstreamer.freedesktop.org/
+
+if BR2_PACKAGE_GSTREAMER
+source "package/multimedia/gstreamer/gst-plugins-base/Config.in"
+source "package/multimedia/gstreamer/gst-plugins-good/Config.in"
+source "package/multimedia/gstreamer/gst-plugins-ugly/Config.in"
+endif

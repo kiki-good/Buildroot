@@ -1,0 +1,19 @@
+--- bash-3.2-old/Makefile.in	2009-04-03 09:28:05.000000000 +0100
++++ bash-3.2/Makefile.in	2009-04-03 09:29:50.000000000 +0100
+@@ -681,12 +681,12 @@
+ stamp-h:	config.status $(srcdir)/config.h.in $(srcdir)/config-top.h $(srcdir)/config-bot.h
+ 	CONFIG_FILES= CONFIG_HEADERS=config.h $(SHELL) ./config.status
+ 
+-config.status:	$(srcdir)/configure
+-	$(SHELL) ./config.status --recheck
++#config.status:	$(srcdir)/configure
++#	$(SHELL) ./config.status --recheck
+ 
+ # comment out for distribution
+-$(srcdir)/configure:	$(srcdir)/configure.in $(srcdir)/aclocal.m4 $(srcdir)/config.h.in
+-	cd $(srcdir) && autoconf
++#$(srcdir)/configure:	$(srcdir)/configure.in $(srcdir)/aclocal.m4 $(srcdir)/config.h.in
++#	cd $(srcdir) && autoconf
+ 
+ # for chet
+ reconfig: force

@@ -1,0 +1,24 @@
+--- a/jsoncpp.cpp	2016-04-27 11:02:02.000000000 +0100
++++ b/jsoncpp.cpp	2016-04-27 17:40:25.912291939 +0100
+@@ -216,10 +216,6 @@
+ #endif
+ #elif defined(__ANDROID__) || defined(__QNXNTO__)
+ #define snprintf snprintf
+-#elif __cplusplus >= 201103L
+-#if !defined(__MINGW32__) && !defined(__CYGWIN__)
+-#define snprintf std::snprintf
+-#endif
+ #endif
+ 
+ #if defined(__QNXNTO__)
+@@ -4078,10 +4074,6 @@
+ #endif
+ #elif defined(__ANDROID__) || defined(__QNXNTO__)
+ #define snprintf snprintf
+-#elif __cplusplus >= 201103L
+-#if !defined(__MINGW32__) && !defined(__CYGWIN__)
+-#define snprintf std::snprintf
+-#endif
+ #endif
+ 
+ #if defined(__BORLANDC__)  

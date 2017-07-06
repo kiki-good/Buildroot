@@ -1,0 +1,76 @@
+--- ./runhoundltp.sh	2007-03-01 04:40:41.000000000 +0000
++++ patched/runhoundltp.sh	2009-03-25 15:19:01.000000000 +0000
+ ################################################################################
+ ##                                                                            ##
+ ## Copyright (c) International Business Machines  Corp., 2001,2005            ##
+@@ -18,17 +18,19 @@
+ ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    ##
+ ##                                                                            ##
+ ################################################################################
+-# File: runltplite
++# File: runhoundltp.sh
+ #
+-# Description:  This script can be used to run a subset the tests in the LTP test suite
+-#               This script is typically used as a quick test to check an install base.
++# Description:  This script runs a subset the tests in the LTP that constitute 
++#               the Hound SPK kernel regression tests.
+ #
++#               This script is a modified version of runltplite.sh by#
++# Modified by:  Leon Opit, Red Embedded 
+ # Authors:      Manoj Iyer - manoji@us.ibm.com
+ #               Robbie Williamson - robbiew@us.ibm.com
+ #               Marty Ridgeway - mridge@us.ibm.com
+ #               
+ # History:      Created runltplite script to run a subset of the LTP testsuite
+-#               
++#         	Created runhoundltp script to run the SPK kernel regression testsuite      
+ #               
+ #               
+ #                
+@@ -70,11 +72,12 @@
+ {
+     cat <<-EOF >&2
+ 
+-    usage: ./${0##*/} -c [-d TMPDIR] [-i # (in Mb)] 
++    usage: ./${0##*/} -C PROFILE -c [-d TMPDIR] [-i # (in Mb)] 
+     [ -l LOGFILE ] [ -o OUTPUTFILE ] [ -m # (in Mb)] -N -q 
+     [ -r LTPROOT ] -v 
+                 
+     -c NUM_PROCS    Run LTP under additional background CPU load.
++    -C PROFILE      Use PROFILE file instead of default houndspk profile.
+     -d TMPDIR       Directory where temporary files will be created.
+     -h              Help. Prints all available options.
+     -i # (in Mb)    Run LTP with a _min_ IO load of # Mb in background.
+@@ -97,7 +100,7 @@
+ 
+ main()
+ {
+-    local CMDFILE="ltplite"
++    local CMDFILE="houndspk"
+     local PRETTY_PRT=""
+     local ALT_DIR=0
+     local RUN_NETEST=0
+@@ -114,13 +117,21 @@
+     local TAG_RESTRICT_STRING=""
+     local PAN_COMMAND=""
+ 
+-    while getopts c:d:hi:l:m:No:pqr:v arg
++    while getopts c:C:d:hi:l:m:No:pqr:v arg
+     do  case $arg in
+         c)       
+ 	    NUM_PROCS=$(($OPTARG))
+             $LTPROOT/testcases/bin/genload --cpu $NUM_PROCS >/dev/null 2>&1 &
+             GENLOAD=1 ;;
+                    
++        C)  
++	    CMDFILE=$OPTARG
++	    if [ ! -f $LTPROOT/runtest/$CMDFILE ]; then 
++               echo "ERROR: could not find profile $CMDFILE in runtest dir"
++		exit 1
++	    fi    
++	    ;;
++
+         d)  # append $$ to TMP, as it is recursively 
+             # removed at end of script.
+             TMPBASE=$OPTARG
+

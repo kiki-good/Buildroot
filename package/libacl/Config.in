@@ -1,0 +1,9 @@
+config BR2_PACKAGE_LIBACL
+	bool "libacl"
+	default N
+	select BR2_PACKAGE_ATTR
+	help
+	  Dynamic library which contains utilities to 
+	  administer Access Control Lists, which are 
+	  used to define more fine-grained discretionary 
+	  access rights for files and directories

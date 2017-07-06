@@ -1,0 +1,14 @@
+--- libusb-0.1.12/config.sub	2004-04-12 03:01:57.000000000 +0100
++++ libusb-0.1.12-new/config.sub	2017-06-28 16:16:34.970401119 +0100
+@@ -226,9 +226,10 @@
+ 	# Some are omitted here because they have special meanings below.
+ 	1750a | 580 \
+ 	| a29k \
++	| aarch64-* | aarch64_be-* \
+ 	| alpha | alphaev[4-8] | alphaev56 | alphaev6[78] | alphapca5[67] \
+ 	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
+-	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr \
++	| arc | arm | aarch64 | aarch64_be | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr \
+ 	| c4x | clipper \
+ 	| d10v | d30v | dlx | dsp16xx \
+ 	| fr30 | frv \

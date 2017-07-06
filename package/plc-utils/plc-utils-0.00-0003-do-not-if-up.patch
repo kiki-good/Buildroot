@@ -1,0 +1,36 @@
+commit 75dec35e2f4dd2a961062be65ff1fc422bd6f02a
+Author: Yasam Bingol <yasam.bingol@airties.com>
+Date:   Mon May 12 17:46:19 2014 +0300
+
+    Don't IFF_UP on open-plc-utils commands. It breaks disabled state of PLC.
+    Qualcomm's PLC module wakes up on each ethernet frame and that breaks disabled state.
+    When IFF_UP happens, it cause leak on plc0.
+    
+    Issue:SHR-614
+
+diff --git a/ether/openchannel.c b/ether/openchannel.c
+index 8ab4074..c84556a 100644
+--- a/ether/openchannel.c
++++ b/ether/openchannel.c
+@@ -156,7 +156,7 @@ signed openchannel (struct channel * channel)
+ 		error (1, errno, "%s", ifreq.ifr_name);
+ 	}
+ 	channel->ifstate = ifreq.ifr_flags;
+-	_setbits (ifreq.ifr_flags, (IFF_UP | IFF_BROADCAST | IFF_MULTICAST));
++	_setbits (ifreq.ifr_flags, (IFF_BROADCAST | IFF_MULTICAST));
+ 	_clrbits (ifreq.ifr_flags, (IFF_ALLMULTI | IFF_PROMISC));
+ 	if (ioctl (channel->fd, SIOCSIFFLAGS, &ifreq) == -1)
+ 	{
+diff --git a/mme/hpavd.c b/mme/hpavd.c
+index 1527415..4a7fea0 100644
+--- a/mme/hpavd.c
++++ b/mme/hpavd.c
+@@ -264,7 +264,7 @@ int main (int argc, char const * argv [])
+ 		error (1, errno, "Can't read %s device state", ifreq.ifr_name);
+ 	}
+ 	state = ifreq.ifr_flags;
+-	_setbits (ifreq.ifr_flags, (IFF_UP | IFF_BROADCAST));
++	_setbits (ifreq.ifr_flags, (IFF_BROADCAST));
+ 	_clrbits (ifreq.ifr_flags, (IFF_MULTICAST | IFF_ALLMULTI | IFF_PROMISC));
+ 	if (ioctl (fd, SIOCSIFFLAGS, &ifreq) < 0)
+ 	{

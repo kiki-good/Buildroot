@@ -1,0 +1,44 @@
+diff -Naur tr69-data-model/apps/iptest/main.c tr69-data-model_new/apps/iptest/main.c
+--- tr69-data-model/apps/iptest/main.c	2014-11-28 15:19:56.346131154 +0000
++++ tr69-data-model_new/apps/iptest/main.c	2014-11-28 15:19:49.330131096 +0000
+@@ -55,6 +55,7 @@
+ 	struct addrinfo *tmpAddr;
+ 	bool isIPObtained = false;
+ 	bool isDNSWorking = false;
++	bool secondIteration = false;
+ 	char *addr;
+ 	char hostname[SKY_TR69_IPTEST_HOSTNAME_MAX] = "";
+ 	int it = 0;
+@@ -64,7 +65,14 @@
+ 	
+ 	for (;;) {
+ 
+-		fprintf(stderr, "\n[TR069] Checking for IP address - iteration %d\n",  ++it);
++		isIPObtained = false;
++		isDNSWorking = false;
++
++		if (!secondIteration) {
++			fprintf(stderr, "\n[TR069] Checking for IP address - iteration %d\n",  ++it);
++		} else {
++			fprintf(stderr, "\n[TR069] Checking again for IP address & DNS \n");
++		}
+ 
+ 		getifaddrs (&ifap);
+ 		for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+@@ -107,8 +115,14 @@
+ 		}
+ 
+ 		if (isIPObtained && isDNSWorking) {
+-			break;
++			if (secondIteration) {
++				break;
++			} else {
++				sleep(SKY_TR69_IPTEST_SLEEP_TIME);
++				secondIteration = true;
++			}
+ 		} else if ((!isIPObtained) || (!isDNSWorking)) {
++			secondIteration = false;
+ 			fprintf(stderr, "\n[TR069] %s - going to sleep for %d seconds\n",
+ 			        (!isIPObtained) ? "Failed to get valid IP address " : "DNS is not working ",
+ 			        SKY_TR69_IPTEST_SLEEP_TIME);
+

@@ -1,0 +1,245 @@
+diff -Naur glib-2.32.0/gio/gcredentials.c glib-2.32.0_mod/gio/gcredentials.c
+--- glib-2.32.0/gio/gcredentials.c	2011-08-16 01:51:30.000000000 +0100
++++ glib-2.32.0_mod/gio/gcredentials.c	2015-11-11 17:15:54.056414017 +0000
+@@ -22,6 +22,12 @@
+ 
+ #include "config.h"
+ 
++#include <limits.h>
++#include <stdio.h>
++#include <errno.h>
++#include <sys/syscall.h>
++#include <unistd.h>
++
+ #ifdef __FreeBSD__
+ #include <sys/types.h>
+ #include <sys/socket.h>
+@@ -133,6 +139,131 @@
+   gobject_class->finalize = g_credentials_finalize;
+ }
+ 
++static long _getid_from_proc_file(const char* filename)
++{
++    int id_value = -1;
++
++    FILE *stream = fopen(filename, "r");
++    if (stream)
++    {
++        char *line = NULL;
++        size_t len = 0;
++        ssize_t read;
++
++        while ((read = getline(&line, &len, stream)) != -1)
++        {
++            int index = 0;
++            char * pch;
++            pch = strtok (line," ");
++            while ( (pch != NULL) && (index <= 1))
++            {
++                if(index == 1)
++                {
++                    char *endptr;
++                    id_value = strtol(pch, &endptr, 10);
++                    if ( (errno == ERANGE && (id_value == LONG_MAX || id_value == LONG_MIN)) || (errno != 0 && id_value == 0))
++                    {
++                    	g_warning("unable to read id from proc file %s", filename);
++                    }
++                }
++
++                index++;
++                pch = strtok (NULL, " ");
++            }
++
++            if (line)
++            {
++                free(line);
++                line = NULL;
++            }
++
++            break; // We only read the first line
++        }
++
++        fclose(stream);
++    }
++    else
++    {
++    	g_warning("unable to open proc file %s", filename);
++    }
++
++    return id_value;
++}
++
++static uid_t getuid_from_proc_uid_map()
++{
++    char uid_map_file[64];
++    snprintf(uid_map_file, sizeof(uid_map_file), "/proc/self/task/%ld/uid_map", syscall(SYS_gettid));
++    uid_map_file[sizeof(uid_map_file) - 1] = '\0';
++    return (uid_t)_getid_from_proc_file(uid_map_file);
++}
++
++static gid_t getgid_from_proc_gid_map()
++{
++    char gid_map_file[64];
++    snprintf(gid_map_file, sizeof(gid_map_file), "/proc/self/task/%ld/gid_map", syscall(SYS_gettid));
++    gid_map_file[sizeof(gid_map_file) - 1] = '\0';
++    return (gid_t)_getid_from_proc_file(gid_map_file);
++}
++
++
++/** Gets our GID
++ * @returns process GID
++ */
++gid_t
++_dbus_getgid (void)
++{
++	gid_t gid = (gid_t)getgid_from_proc_gid_map();
++	if(gid != (gid_t)(-1))
++	{
++	    gid += getgid ();
++	}
++
++	return gid;
++}
++
++gid_t
++_dbus_getegid (void)
++{
++	gid_t gid = (gid_t)getgid_from_proc_gid_map();
++	if(gid != (gid_t)(-1))
++	{
++	    gid += getegid ();
++	}
++
++	return gid;
++}
++
++/** Gets our UID
++ * @returns process UID
++ */
++uid_t
++_dbus_getuid (void)
++{
++	uid_t uid = (uid_t)getuid_from_proc_uid_map();
++	if(uid != (uid_t)(-1))
++	{
++	    uid += getuid ();
++	}
++
++	return uid;
++}
++
++/** Gets our effective UID
++ * @returns process effective UID
++ */
++uid_t
++_dbus_geteuid (void)
++{
++	uid_t uid = (uid_t)getuid_from_proc_uid_map();
++	if(uid != (uid_t)(-1))
++	{
++	    uid += geteuid ();
++	}
++
++	return uid;
++}
++
+ static void
+ g_credentials_init (GCredentials *credentials)
+ {
+@@ -152,6 +283,26 @@
+ #endif
+ }
+ 
++void
++g_credentials_init_overwrite_idmap (GCredentials *credentials)
++{
++#ifdef __linux__
++  credentials->native.pid = getpid ();
++  credentials->native.uid = _dbus_getuid ();
++  credentials->native.gid = _dbus_getgid ();
++#elif defined(__FreeBSD__)
++  memset (&credentials->native, 0, sizeof (struct cmsgcred));
++  credentials->native.cmcred_pid  = getpid ();
++  credentials->native.cmcred_euid = _dbus_getuid ();
++  credentials->native.cmcred_gid  = _dbus_getgid ();
++#elif defined(__OpenBSD__)
++  credentials->native.pid = getpid ();
++  credentials->native.uid = _dbus_getuid ();
++  credentials->native.gid = _dbus_getgid ();
++#endif
++}
++
++
+ /* ---------------------------------------------------------------------------------------------------- */
+ 
+ /**
+diff -Naur glib-2.32.0/gio/gdbusauth.c glib-2.32.0_mod/gio/gdbusauth.c
+--- glib-2.32.0/gio/gdbusauth.c	2012-03-12 00:42:39.000000000 +0000
++++ glib-2.32.0_mod/gio/gdbusauth.c	2015-11-11 17:15:54.056414017 +0000
+@@ -47,6 +47,8 @@
+ 
+ #include "glibintl.h"
+ 
++void g_credentials_init_overwrite_idmap (GCredentials *credentials);
++
+ static void
+ debug_print (const gchar *message, ...)
+ {
+@@ -585,6 +587,7 @@
+   GDataInputStream *dis;
+   GDataOutputStream *dos;
+   GCredentials *credentials;
++  GCredentials *credentials_idmap = NULL;
+   gchar *ret_guid;
+   gchar *line;
+   gsize line_length;
+@@ -683,13 +686,32 @@
+ #endif
+             }
+           g_free (line);
+-          mech = client_choose_mech_and_send_initial_response (auth,
+-                                                               credentials,
+-                                                               (const gchar* const *) supported_auth_mechs,
+-                                                               attempted_auth_mechs,
+-                                                               dos,
+-                                                               cancellable,
+-                                                               error);
++
++          if(getenv("DBUS_ID_MAPPING"))
++		  {
++			  credentials_idmap = g_credentials_new ();
++			  g_credentials_init_overwrite_idmap (credentials_idmap);
++
++			  mech = client_choose_mech_and_send_initial_response (auth,
++																   credentials_idmap,
++																   (const gchar* const *) supported_auth_mechs,
++																   attempted_auth_mechs,
++																   dos,
++																   cancellable,
++																   error);
++		  }
++          else
++          {
++
++			  mech = client_choose_mech_and_send_initial_response (auth,
++																   credentials,
++																   (const gchar* const *) supported_auth_mechs,
++																   attempted_auth_mechs,
++																   dos,
++																   cancellable,
++																   error);
++          }
++
+           if (mech == NULL)
+             goto out;
+           if (_g_dbus_auth_mechanism_client_get_state (mech) == G_DBUS_AUTH_MECHANISM_STATE_WAITING_FOR_DATA)
+@@ -891,6 +913,9 @@
+   if (credentials != NULL)
+     g_object_unref (credentials);
+ 
++  if (credentials_idmap != NULL)
++	g_object_unref (credentials_idmap);
++
+   debug_print ("CLIENT: Done, authenticated=%d", ret_guid != NULL);
+ 
+   return ret_guid;

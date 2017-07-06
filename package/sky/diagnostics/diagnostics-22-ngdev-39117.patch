@@ -1,0 +1,72 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_homeplug_interface.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_homeplug_interface.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_homeplug_interface.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_homeplug_interface.c	2015-06-16 14:35:56.563335407 +0100
+@@ -87,6 +87,7 @@
+ 	plc_info_t *plc_info;
+ 
+ 	*cnt = 0;
++#ifdef SKY_TR069_NGDEV_39117
+ 	if (gplcCache != NULL) {
+ 		vendor_hook_deleteCache(gplcCache);
+ 		gplcCache = NULL;
+@@ -95,6 +96,7 @@
+ 	if (gplcCache == NULL) {
+ 		return EFAIL;
+ 	}
++#endif
+ #ifndef VENDOR_HOOK_PLC_USE_STATIC_TEST_DATA
+ #ifdef	SKY_CLI_AIRTIES_LIBRARY
+ 	aci_plc_stats_t *stats;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.h	2015-06-16 14:30:37.147437463 +0100
+@@ -117,6 +117,10 @@
+ #define EFAIL 1
+ #endif
+ 
++/* Segmentation fault caused by bad use of vendor_hook_deleteCache() */
++/* As the Mesh Parameters are not in use by TR069 at this time, removed code */
++/* For later correction , see internal Redmine Issue 3085 */
++#undef SKY_TR069_NGDEV_39117 
+ 
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_wifi_radio.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_wifi_radio.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_wifi_radio.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_wifi_radio.c	2015-06-16 14:32:47.506209215 +0100
+@@ -82,6 +82,7 @@
+ 	radio_info_t *radio_info;
+ 
+ 	*cnt = 0;
++#ifdef SKY_TR069_NGDEV_39117
+ 	if (gradioCache != NULL) {
+ 		vendor_hook_deleteCache(gradioCache);
+ 		gradioCache = NULL;
+@@ -90,7 +91,7 @@
+ 	if (gradioCache == NULL) {
+ 		return EFAIL;
+ 	}
+-
++#endif
+ #ifndef VENDOR_HOOK_WIFI_USE_STATIC_TEST_DATA
+ #ifdef	SKY_CLI_AIRTIES_LIBRARY
+ 	aci_scan_result_t *scan_results;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_wifi_ssid.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_wifi_ssid.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_wifi_ssid.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_wifi_ssid.c	2015-06-16 14:34:08.558691172 +0100
+@@ -79,6 +79,7 @@
+ 	int i;
+ 
+ 	*totalcnt = 0;
++#ifdef SKY_TR069_NGDEV_39117
+ 	if (gSSIDCache != NULL) {
+ 		vendor_hook_deleteCache(gSSIDCache);
+ 		gSSIDCache = NULL;
+@@ -87,6 +88,7 @@
+ 	if (gSSIDCache == NULL) {
+ 		return EFAIL;
+ 	}
++#endif
+ #ifndef VENDOR_HOOK_WIFI_USE_STATIC_TEST_DATA
+ #ifdef	SKY_CLI_AIRTIES_LIBRARY
+ 	aci_scan_result_t *scan_results;

@@ -1,0 +1,4 @@
+config BR2_PACKAGE_FILECAPMESH
+        bool "fileCapMesh"
+        help
+		fileCapMesh will set the capabilities of the mesh files

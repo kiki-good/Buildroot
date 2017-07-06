@@ -1,0 +1,5 @@
+config BR2_PACKAGE_PLY
+	bool "ply"
+	help
+	   PLY (Python Lex-Yacc) is an implementation of lex and yacc
+	   parsing tools for Python.

@@ -1,0 +1,168 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_capabilities_videodecoder_helper.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_capabilities_videodecoder_helper.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_capabilities_videodecoder_helper.c	2015-07-27 13:22:58.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_capabilities_videodecoder_helper.c	2015-07-27 15:32:14.491275266 +0100
+@@ -51,6 +51,10 @@
+     if(eVENDORHOOK_OK !=
+         vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, pVideoDecoderInfo->pFullData, \
+             VIDEODECODER_FORMATS_PROC_MAX_SIZE)){
++		if(pVideoDecoderInfo != NULL){
++			free(pVideoDecoderInfo);
++			pVideoDecoderInfo = NULL ;
++		}
+         return NULL ;
+     }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-07-27 13:22:58.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-07-27 15:33:29.287102664 +0100
+@@ -139,12 +139,19 @@
+ 		return pDeviceInfo;
+ 	}
+ 	pDeviceInfo = ( device_info_t *) calloc(1, DEVICEINFO_PROC_MAX_SIZE+ sizeof(device_info_t));
++	if(NULL == pDeviceInfo){
++		return NULL;
++	}
+ 	pDeviceInfo->pFullData = (char*)pDeviceInfo + sizeof(device_info_t);
+ 
+ 	status = vendor_hook_read_proc_device(PROCPROXY_GET_INFO, (char*)deviceId, pDeviceInfo->pFullData ,
+ 			DEVICEINFO_PROC_MAX_SIZE);
+ 
+ 	if(status != eVENDORHOOK_OK){
++		if(pDeviceInfo != NULL){
++			free(pDeviceInfo);
++			pDeviceInfo = NULL ;
++		}
+ 		return NULL;
+ 	}
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c	2015-07-27 13:22:58.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c	2015-07-27 15:44:05.642027316 +0100
+@@ -85,12 +85,26 @@
+ 	}
+ 	
+ 	pSupportMcuInfo = (supportmcu_info_t*) calloc(1, sizeof(supportmcu_info_t));
++	if(NULL == pSupportMcuInfo){
++		return NULL;
++	}
+ 	pSupportMcuInfo->pFullData = (char*) calloc(1, VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER);
++	if(NULL == pSupportMcuInfo->pFullData){
++		return NULL;
++	}
+ 	
+ 	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		strncpy(pSupportMcuInfo->pFullData, (char*) buffer, VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER);
+ 		pSupportMcuInfo->fullDataSize = strlen(pSupportMcuInfo->pFullData);
+ 	}else {
++		if(pSupportMcuInfo->pFullData != NULL){
++			free(pSupportMcuInfo->pFullData);
++			pSupportMcuInfo->pFullData = NULL ;
++		}
++		if(pSupportMcuInfo != NULL){
++			free(pSupportMcuInfo);
++			pSupportMcuInfo = NULL ;
++		}
+ 		return NULL;
+ 	}
+ 	
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c	2015-07-27 13:22:58.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c	2015-07-27 15:37:56.754609307 +0100
+@@ -128,6 +128,10 @@
+ 	if(eVENDORHOOK_OK !=
+ 		vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, pHDMIInfo->pFullData, \
+ 						BSKYB_HDMI_PROC_MAX_BUFFER_SIZE)){
++		if(pHDMIInfo != NULL){
++			free(pHDMIInfo);
++			pHDMIInfo = NULL ;
++		}
+ 		return NULL ;
+ 	}
+ 	pHDMIInfo->lUpTime = 0;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c	2015-07-27 13:22:58.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c	2015-07-27 15:48:07.633882828 +0100
+@@ -475,7 +475,9 @@
+   vendor_hook_cache_t  *pCache;
+ 
+   pCache = calloc( sizeof( vendor_hook_cache_t ), 1 );
+-
++  if(NULL == pCache){
++     return NULL;
++  }
+   VENDOR_ASSERT(( pCache !=NULL ));
+ 
+   pCache->magic = VENDOR_MAGIC_VALID;
+@@ -513,7 +515,9 @@
+   }
+ 
+   pNewEntry = calloc( sizeof( vendor_cache_entry_t ), 1);
+-
++  if(NULL == pNewEntry){
++	  return  FALSE;
++  }
+   if ( NULL != pCache->pFirstEntry ){
+ 	/* Find the last entry in the list, and add it here */
+ 	pEntry = pCache->pFirstEntry;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-07-27 13:22:58.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-07-27 15:39:22.031639109 +0100
+@@ -782,6 +782,9 @@
+ 	}
+ 
+ 	pSensorInfo = (tsensor_info_t*) calloc(1, VENDOR_TSENSOR_PROC_DEVICE_BUFFER + 1 + sizeof(tsensor_info_t));
++	if(NULL == pSensorInfo){
++		return NULL;
++	}
+ 	pSensorInfo->pFullData = (char*)pSensorInfo + sizeof( tsensor_info_t );
+ 
+ 
+@@ -789,7 +792,10 @@
+ 		strncpy( pSensorInfo->pFullData, (char*) buffer, VENDOR_TSENSOR_PROC_DEVICE_BUFFER);
+ 		pSensorInfo->dataSize = strlen(pSensorInfo->pFullData);
+ 	}else {
+-		free(pSensorInfo);
++		if(pSensorInfo != NULL){
++			free(pSensorInfo);
++			pSensorInfo = NULL ;
++		}
+ 		return NULL;
+ 	}
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c	2015-07-27 13:22:58.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c	2015-07-27 15:29:13.567058989 +0100
+@@ -94,6 +94,9 @@
+ 		return EINVAL;
+ 	}
+ 	pLnbInfo = ( lnb_info_t *) calloc( 1, BSKYB_LNB_PROC_MAX_BUFFER_SIZE + sizeof( lnb_info_t ) );
++	if(NULL == pLnbInfo){
++		return NULL;
++	}
+ 	pLnbInfo->pFullData = (char*)pLnbInfo + sizeof( lnb_info_t );
+ 
+ 	vendor_hook_read_proc_device(PROCPROXY_GET_INFO, pDeviceID, pLnbInfo->pFullData ,
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c	2015-07-27 13:22:58.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c	2015-07-27 15:40:42.935529561 +0100
+@@ -638,6 +638,9 @@
+ 	}
+ 
+ 	pTunerInfo = ( tuner_info_t *) calloc( 1, VENDOR_TUNER_PROC_DEVICE_BUFFER + 1 + sizeof( tuner_info_t ) );
++	if(NULL == pTunerInfo){
++		return NULL;
++	}
+ 	pTunerInfo->pFullData = (char*)pTunerInfo + sizeof( tuner_info_t );
+ 
+ #ifndef VENDOR_HOOK_TUNER_USE_STATIC_TEST_DATA
+@@ -645,6 +648,10 @@
+ 		strncpy( pTunerInfo->pFullData, ( char* ) buffer, VENDOR_TUNER_PROC_DEVICE_BUFFER );
+ 		pTunerInfo->uFullDataSize = strlen( pTunerInfo->pFullData );
+ 	}else {
++		if(pTunerInfo != NULL){
++			free(pTunerInfo);
++			pTunerInfo = NULL ;
++		}
+ 		return NULL;
+ 	}
+ 

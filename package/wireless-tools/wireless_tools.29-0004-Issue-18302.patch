@@ -1,0 +1,27 @@
+From 6ef3c6047103003c2e53dcd3ab93715fd5cfc703 Mon Sep 17 00:00:00 2001
+From: bilal <bilal@airties.com>
+Date: Tue, 31 May 2011 15:22:52 +0300
+Subject: [PATCH 04/26] Issue #18302
+
+wireless_tools.29 using the wrong header file thanks to the damn -MMD flag.
+
+git-svn-id: http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29@25387
+---
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 2d3554a..7c71258 100644
+--- a/Makefile
++++ b/Makefile
+@@ -116,7 +116,6 @@ CFLAGS=-Os -W -Wall -Wstrict-prototypes -Wmissing-prototypes -Wshadow \
+ #bilal: incs added. cflags changed.
+ INCS+=	-I${MADWIFI_DIR}/wlan/core/hal  -I${MADWIFI_DIR}/core/net80211 -I${MADWIFI_DIR}/wlan -I${MADWIFI_DIR}/wlan/core -I${MADWIFI_DIR}/wlan/tools -I${MADWIFI_DIR}/madwifi/tools -I${MADWIFI_DIR}/madwifi -I${MADWIFI_DIR}/madwifi/hal -I${MADWIFI_DIR}/madwifi/net80211 -I$(KERNEL_DIR)/include
+ CFLAGS += -I. -Wall ${INCS}
+-DEPFLAGS=-MMD
+ XCFLAGS=$(CFLAGS) $(DEPFLAGS) $(WARN) $(HEADERS) $(WELIB_FLAG) $(WEDEF_FLAG)
+ PICFLAG=-fPIC
+ 
+-- 
+1.9.1
+

@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+# Sanity checks.
+test -e /usr/bin/uapid || exit 0
+RETVAL=0
+/usr/bin/uapid&
+RETVAL=$?
+exit $RETVAL

@@ -1,0 +1,486 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/Makefile.am diagnostics-1.3_new/apps/mifd/Makefile.am
+--- diagnostics-1.3_orig/apps/mifd/Makefile.am	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/Makefile.am	2015-08-08 20:44:50.328443366 +0100
+@@ -3,12 +3,16 @@
+ 
+ AM_CFLAGS += -Wno-error=unused-variable -Wno-error=unused-function
+ AM_CFLAGS += -Werror
++# Memwatch Defines
++#AM_CFLAGS += -DMEMWATCH -DMEMWATCH_STDIO
++
+ # Needs airties library to be manually located under ./mgmtif/sky_cli directory
+ # The library is not availabel in SPK now, when it is there, this should  be changed.
+ # AM_CPPFLAGS += -DSKY_CLI_AIRTIES_LIBRARY
+ 
+ bin_PROGRAMS = mifd
+ mifd_SOURCES = mifd.c mifd_rpc.c mifd_stats.c
++#mifd_SOURCES = mifd.c mifd_rpc.c mifd_stats.c memwatch.c
+ 
+ #mifd_LDFLAGS = -lpthread -lrt -lm -lcrypto
+ mifd_LDFLAGS = -lpthread -lrt -lm -lresolv -liksemel
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_database_manager.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_database_manager.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_database_manager.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_database_manager.c	2015-08-07 21:19:20.697918532 +0100
+@@ -114,8 +114,10 @@
+ 	VENDOR_DBM_CHECK_NULL(iks_insert_attrib(node, VENDOR_DBM_DATA_ATTRIB_VALUE, dataIn.data));
+ 
+     if (IKS_OK != iks_save(database, root)) {
++		iks_delete(root);
+         return EFAIL;
+     }
++	iks_delete(root);
+ 	return EOK;
+ }
+ 
+@@ -148,17 +150,20 @@
+ 	
+ 	node = iks_find_with_attrib(root, VENDOR_DBM_DATA_NODE, VENDOR_DBM_DATA_ATTRIB_NAME, inOutData->name);
+ 	if (NULL == node) {
++		iks_delete(root);
+ 		return EFAIL;
+ 	}
+ 
+ 	type = iks_find_attrib(node, VENDOR_DBM_DATA_ATTRIB_TYPE);
+ 	data = iks_find_attrib(node, VENDOR_DBM_DATA_ATTRIB_VALUE);
+ 	if ((NULL == type) || (NULL == data)) {
++		iks_delete(root);
+ 		return EFAIL;
+ 	}
+ 
+ 	inOutData->type = strtol(type, NULL, VENDOR_HOOKS_BASE_10_NUMBER);
+ 	strncpy(inOutData->data, data, sizeof(inOutData->data));
++	iks_delete(root);
+ 
+ 	return EOK;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_energy.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_energy.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_energy.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_energy.c	2015-08-08 20:53:56.358610009 +0100
+@@ -135,15 +135,6 @@
+ 	
+ 	result = extractIntFromSupportMcuProc(deviceId, VENDOR_SUPPORTMCU_ENERGY_POWER_CONSUMPTION, value);
+ 
+-	/*Fix for NGDEV-34868 mifd crash. If Cache expiry time is non zero, We should not delete cache entry explicitly as they
+-	  will be deleted automatically when the timer expires . If at all, we try to delete cache entry explicitly, it may 
+-	  result in concurrency problems if both timer operation and the synchronous deleteSupportMCUInfoFromCache call 
+-	  try to delete the cache entry at the same time.
+-	*/
+-	if(0 == VENDOR_SUPPORTMCU_CACHE_EXPIRE_TIME){
+-		deleteSupportMCUInfoFromCache(deviceId);
+-	}	
+-
+ 	return result;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.c	2015-08-07 22:32:51.724988347 +0100
+@@ -90,6 +90,10 @@
+ 	}
+ 	pSupportMcuInfo->pFullData = (char*) calloc(1, VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER);
+ 	if(NULL == pSupportMcuInfo->pFullData){
++		if(pSupportMcuInfo != NULL){
++			free(pSupportMcuInfo);
++			pSupportMcuInfo = NULL ;
++		}
+ 		return NULL;
+ 	}
+ 	
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_helper.h	2015-08-08 00:08:18.694271852 +0100
+@@ -29,8 +29,7 @@
+ */
+ #define VENDOR_SUPPORTMCU_PROC_DEVICE_BUFFER        (4096U)
+ #define VENDOR_SUPPORTMCU_PROC_DEVICE_NAME_BUFFER   (40U)
+-/*!< Create a cache with Expiry Time of 10 seconds. The cache entry shall be deleted upon reading
+-the last paramter of the requested object OR it shall be expired after 10 seconds*/
++/*!< Create a cache with Expiry Time of 10 seconds. */
+ #define VENDOR_SUPPORTMCU_CACHE_EXPIRE_TIME         (10U)
+ #define VENDOR_SUPPORTMCU_PATTERN_BUF_SIZE          (64U)
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_mcuresetstatistics.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_mcuresetstatistics.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_mcuresetstatistics.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_mcuresetstatistics.c	2015-08-08 20:54:09.535686487 +0100
+@@ -118,7 +118,6 @@
+ 	int result = 0;
+ 	
+ 	result = extractIntFromSupportMcuProc(deviceId, VENDOR_SUPPORTMCU_RESETSTATS_COUNT_5VUSB_LVD, value);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 
+ 	return result;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_power.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_power.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_power.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_power.c	2015-08-08 20:54:15.763722634 +0100
+@@ -235,7 +235,6 @@
+ 	int result = 0;
+ 	
+ 	result = extractStringFromSupportMcuProc(deviceId, VENDOR_SUPPORTMCU_POWER_FRONTEND_POWER, buf, length);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 
+ 	return result;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_resetstatus.c	2015-08-08 20:54:20.355749286 +0100
+@@ -219,7 +219,6 @@
+ 	int result;
+ 	
+ 	result = extractIntFromSupportMcuProc(deviceId, VENDOR_SUPPORTMCU_RESET_TOTAL_WATCHDOG_RESETS, value);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 
+ 	return result;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_status.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_status.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_status.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_x_sky_com_supportmcu_status.c	2015-08-08 20:54:28.025793803 +0100
+@@ -157,7 +157,6 @@
+ 	int result = 0;
+ 	
+ 	result = extractStringFromSupportMcuProc(deviceId, VENDOR_SUPPORTMCU_STATUS_VERSION, buf, length);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 	
+ 	return result;
+ 	
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_fan_alerts.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_fan_alerts.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_fan_alerts.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_fan_alerts.c	2015-08-08 20:54:35.966839894 +0100
+@@ -96,7 +96,6 @@
+ 
+ 	snprintf(pattern, sizeof(pattern), VENDOR_SUPPORTMCU_FAN_ALERTS_REBOOT, (instance - 1));
+ 	result = extractStringFromSupportMcuProc(deviceId, pattern, buf, length);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 
+ 	return result;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_fan_speed.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_fan_speed.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_fan_speed.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_fan_speed.c	2015-08-08 20:54:40.760867720 +0100
+@@ -117,7 +117,6 @@
+ 
+ 	snprintf(pattern, sizeof(pattern), VENDOR_SUPPORTMCU_FAN_SPEED_REBOOT, (instance - 1));
+ 	result = extractStringFromSupportMcuProc(deviceId, pattern, buf, length);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 
+ 	return result;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_hdmi_displaydevice.c	2015-08-08 01:14:56.545565912 +0100
+@@ -77,6 +77,10 @@
+ 	 VENDOR_ASSERT(NULL!= resultString);
+ 	 if(NULL == resultString){
+ 		 fclose(fpDevice);
++		 if(NULL != pCurrentHDMIData){
++			 free(pCurrentHDMIData);
++			 pCurrentHDMIData = NULL ;
++		 }
+ 		 return VENDOR_STATUS_ERROR;
+ 	 }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_power_lowvoltagedetection.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_power_lowvoltagedetection.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_power_lowvoltagedetection.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_power_lowvoltagedetection.c	2015-08-08 20:54:52.044473590 +0100
+@@ -160,7 +160,6 @@
+ 
+ 	snprintf(pattern, sizeof(pattern), VENDOR_SUPPORTMCU_POWER_LVD_REBOOT, (instance - 1));
+ 	result = extractStringFromSupportMcuProc(deviceId, pattern, buf, length);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 
+ 	return result;
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c	2015-08-07 13:52:54.387665550 +0100
+@@ -497,6 +497,7 @@
+   vendor_cache_entry_t	*pEntry;
+   vendor_cache_entry_t	*pNewEntry;
+   int32_t i;
++  int32_t maxCacheEntries;
+ 
+   VENDOR_ASSERT(( pCache != NULL ));
+   VENDOR_ASSERT(( keyString != NULL ));
+@@ -511,7 +512,8 @@
+   if ( NULL != pCache->pFirstEntry ){
+ 	pEntry = pCache->pFirstEntry;
+ 	/* Search for the string already existing */
+-	for (i=0;i<pCache->entries;i++){
++	maxCacheEntries = pCache->entries; 
++	for (i = 0; i < maxCacheEntries; i++){
+ 	    if ( 0==strncmp(pEntry->keyString,keyString, VENDOR_HOOK_CACHE_ENTRY_KEY_MAX)){
+ 		VENDOR_LOG_ERROR("%s: Entry Key Already Exists\n",__FUNCTION__);
+ 		return  FALSE;
+@@ -527,7 +529,8 @@
+   if ( NULL != pCache->pFirstEntry ){
+ 	/* Find the last entry in the list, and add it here */
+ 	pEntry = pCache->pFirstEntry;
+-	for (i=0;i<pCache->entries-1;i++){
++	maxCacheEntries = pCache->entries - 1; 
++	for (i = 0; i < maxCacheEntries; i++){
+ 	  pEntry = pEntry->pNext;
+ 	}
+ 	pEntry->pNext = pNewEntry;
+@@ -561,6 +564,7 @@
+   vendor_cache_entry_t	*pEntry;
+   int32_t i;
+   bool bFound = FALSE;
++  int32_t maxCacheEntries;
+ 
+   VENDOR_ASSERT(( pCache != NULL ));
+   VENDOR_ASSERT(( keyString != NULL ));
+@@ -578,7 +582,8 @@
+ 
+   /* Find the last entry in the list, and add it here */
+   pEntry = pCache->pFirstEntry;
+-  for (i=0;i<pCache->entries;i++){
++  maxCacheEntries = pCache->entries; 
++  for (i = 0; i < maxCacheEntries; i++){
+ 	if ( 0 == strncmp( pEntry->keyString, keyString, VENDOR_HOOK_CACHE_ENTRY_KEY_MAX )){
+ 	  bFound = TRUE;
+ 	  break;
+@@ -607,6 +612,7 @@
+   vendor_cache_entry_t	*pEntry;
+   bool result=FALSE;
+   int32_t i;
++  int32_t maxCacheEntries;
+ 
+   VENDOR_ASSERT(( pCache != NULL ));
+   VENDOR_ASSERT(( keyString != NULL ));
+@@ -619,7 +625,8 @@
+   }
+ 
+   pEntry = pCache->pFirstEntry;
+-  for (i=0;i<pCache->entries;i++){
++  maxCacheEntries = pCache->entries; 
++  for (i = 0; i < maxCacheEntries; i++){
+   	if( (NULL == pEntry) || (NULL == pEntry->keyString) ){
+   		return FALSE;
+   	}
+@@ -673,6 +680,7 @@
+ 		pEntry->pData = NULL;
+ 	}
+ 	free( pEntry );
++	pEntry = NULL;
+ 	pCache->entries--;
+ 	return TRUE;
+   }
+@@ -706,7 +714,7 @@
+   pCache->pFirstEntry = NULL;
+   pCache->pLastEntry = NULL;
+   free (pCache);
+-
++  pCache = NULL;
+   return TRUE;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.h	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.h	2015-08-08 20:49:15.972825016 +0100
+@@ -37,8 +37,9 @@
+ #ifdef __TEST_APP__
+ #include <linux_stub.h>
+ #endif
+-
+-
++/*
++#include "../memwatch.h"
++*/
+ /*---------------------------------------------------------------------------
+ ** Defines and Macros
+ */
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-08-08 20:49:36.825104217 +0100
+@@ -45,6 +45,7 @@
+ #include "vendor_hook_database_manager.c"
+ #endif
+ 
++
+ /*---------------------------------------------------------------------------
+ ** Defines and Macros
+ */
+@@ -59,9 +60,10 @@
+ 
+ #define VENDOR_TSENSOR_EPOCH_START_YEAR     (1900)
+ #define VENDOR_TSENSOR_MIN_POLLING_INTERVAL (10 * 60)
+-#define VENDOR_TSENSOR_ABS_ZERO_TEMP        (-273)
+-
++#define VENDOR_TSENSOR_ABS_ZERO_TEMP        (-274)
+ 
++/* Turn Temp Sensor Thread on/off */
++#undef BSKYB_TURN_ON_TEMP_THREAD
+ 
+ 
+ /*---------------------------------------------------------------------------
+@@ -138,6 +140,7 @@
+ {
+ 	int timeOut = 0;
+ #if !defined (VENDOR_HOOK_TSENSOR_USES_STATIC_TEST_DATA)
++#ifdef BSKYB_TURN_ON_TEMP_THREAD
+ 	/*!
+ 	 * Check if the tsensor thread is running. If not, read the proc and update the
+ 	 * values in db. Its the best place to do this since this is the first parameter
+@@ -153,6 +156,9 @@
+ 	if (timeOut == -1) {
+ 		updateTSensorRecords(instance);
+ 	}
++#else
++	updateTSensorRecords(instance);
++#endif
+ #endif
+ 
+ 	snprintf(buf, length, "Not Implemented");
+@@ -622,7 +628,7 @@
+ 		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
+ 		return EFAIL;
+ 	}
+-
++#ifdef BSKYB_TURN_ON_TEMP_THREAD
+ 	if(pthread_mutex_lock(&tSensorMutex)) {
+ 		return EFAIL;
+ 	}
+@@ -632,6 +638,9 @@
+ 	if(pthread_mutex_unlock(&tSensorMutex)) {
+ 		return EFAIL;
+ 	}
++#else
++	*value = (threadPollInterval == -1) ? 0 : threadPollInterval;
++#endif
+ 
+ 	return EOK;
+ }
+@@ -649,6 +658,7 @@
+ /* DO NOT REMOVE this set function, keep for future use */
+ int set_temperaturestatus_temperaturesensor_pollinginterval(int value)
+ {
++#ifdef BSKYB_TURN_ON_TEMP_THREAD
+ 	int count = 0;
+ 
+ 	if (value < VENDOR_TSENSOR_MIN_POLLING_INTERVAL) {
+@@ -675,6 +685,7 @@
+ 		sem_post(&tSensorSem);
+ 	}
+ #endif
++#endif
+ 	return EOK;
+ }
+ 
+@@ -715,6 +726,7 @@
+ */
+ int init_temperaturesensor_thread()
+ {
++#ifdef BSKYB_TURN_ON_TEMP_THREAD
+ 	if(!tSensorThreadInitialised) {
+ 		if(sem_init(&tSensorSem, 0, 0)) {
+ 			return EFAIL;
+@@ -724,7 +736,7 @@
+ 			return EFAIL;
+ 		}
+ 	}
+-
++#endif
+ 	return EOK;
+ }
+ 
+@@ -737,6 +749,7 @@
+ */
+ int terminate_temperaturesensor_thread()
+ {
++#ifdef BSKYB_TURN_ON_TEMP_THREAD
+ 	tSensorThreadInitialised = false;
+ 	if (sem_destroy(&tSensorSem)) {
+ 		return EFAIL;
+@@ -749,6 +762,7 @@
+ 	if (pthread_mutex_destroy(&tSensorMutex)) {
+ 		return EFAIL;
+ 	}
++#endif
+ 	return EOK;
+ }
+ #endif
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_standby.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_standby.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_standby.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_standby.c	2015-08-08 20:54:58.660971620 +0100
+@@ -139,7 +139,6 @@
+ 
+ 	snprintf(pattern, sizeof(pattern), VENDOR_SUPPORTMCU_STANDBY_REBOOT, (instance - 1));
+ 	result = extractStringFromSupportMcuProc(deviceId, pattern, buf, length);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 
+ 	return result;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_wakeup_config.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_wakeup_config.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_wakeup_config.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_supportmcu_wakeup_config.c	2015-08-08 20:55:03.127997549 +0100
+@@ -165,7 +165,6 @@
+ 	int result = 0;
+ 
+ 	result = extractStringFromSupportMcuProc(deviceId, VENDOR_SUPPORTMCU_WAKEUP_CONFIG_CEC, buf, length);
+-	deleteSupportMCUInfoFromCache(deviceId);
+ 
+ 	return result;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mifd.c diagnostics-1.3_new/apps/mifd/mifd.c
+--- diagnostics-1.3_orig/apps/mifd/mifd.c	2015-08-06 12:54:05.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mifd.c	2015-08-08 21:05:55.551561656 +0100
+@@ -156,6 +156,22 @@
+ #include "mgmtif/sky_cli/sky_cli.h"
+ #endif
+ 
++/*
++#include "memwatch.h" 
++
++#ifndef SIGSEGV
++#error "SIGNAL.H does not define SIGSEGV; running this program WILL cause a core dump/crash!"
++#endif
++
++#ifndef MEMWATCH
++#error "You really, really don't want to run this without memwatch. Trust me."
++#endif
++
++#if !defined(MW_STDIO) && !defined(MEMWATCH_STDIO)
++#error "Define MW_STDIO and try again, please."
++#endif
++*/
++
+ /********************************************************************/
+ /* To start using a set of stubs see header file mgmtif/mgmtif_dslf_stubs_status.h */
+ /********************************************************************/
+@@ -4107,6 +4123,9 @@
+     bool debug = false;
+     int c = 0;
+ 
++/* memwatch
++	mwDoFlush(1);
++*/
+     name = argv[0];
+ 
+     while ((c = getopt_long(argc, argv, opt_string, mifd_options,
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mifd_rpc.c diagnostics-1.3_new/apps/mifd/mifd_rpc.c
+--- diagnostics-1.3_orig/apps/mifd/mifd_rpc.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mifd_rpc.c	2015-08-08 20:48:45.191636270 +0100
+@@ -26,6 +26,9 @@
+ #include "mifd_int.h"
+ 
+ #include "mifd_lib.h"
++/*
++#include "memwatch.h"
++*/
+ 
+ static int mifd_format_results(char **errstr, int error,
+         const char *format, ...)
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mifd_stats.c diagnostics-1.3_new/apps/mifd/mifd_stats.c
+--- diagnostics-1.3_orig/apps/mifd/mifd_stats.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mifd_stats.c	2015-08-08 20:49:02.196667887 +0100
+@@ -28,7 +28,9 @@
+ #include "mifd_int.h"
+ #include "mifd_stats.h"
+ #include "mifd_lib.h"
+-
++/*
++#include "memwatch.h"
++*/
+ #define STATS_MIN_INTERVAL       30 /* in seconds */
+ #define STATS_DIEWAIT_INTERVAL   30 /* in seconds */
+ 

@@ -1,0 +1,32 @@
+From 1c7f84aa7ae099025cea911f7e5e4a38f84d2d3b Mon Sep 17 00:00:00 2001
+From: bilal <bilal@airties.com>
+Date: Tue, 14 Aug 2012 16:47:12 +0300
+Subject: [PATCH 13/26] Issue #26453
+
+cannot obtain scan results when scan buffer is more than 32768 bytes
+
+git-svn-id: http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29@36006
+---
+ iwlist.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/iwlist.c b/iwlist.c
+index 0575c1d..6fc007f 100644
+--- a/iwlist.c
++++ b/iwlist.c
+@@ -1189,6 +1189,12 @@ print_scanning_info(int		skfd,
+ 	  wrq.u.data.pointer = buffer;
+ 	  wrq.u.data.flags = 0;
+ 	  wrq.u.data.length = buflen;
++
++	  // uint16 overflow! use max possible value
++	  if (buflen > 65535) {
++		wrq.u.data.length = 65535;
++	  }
++
+ 	  if(iw_get_ext(skfd, ifname, SIOCGIWSCAN, &wrq) < 0)
+ 	    {
+ 	      /* Check if buffer was too small (WE-17 only) */
+-- 
+1.9.1
+

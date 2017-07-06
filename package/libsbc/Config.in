@@ -1,0 +1,9 @@
+config BR2_PACKAGE_LIBSBC
+	bool "libsbc"
+	help
+	  Install the sbc library which is used
+	  to support Bluetooth audio streaming.
+	  SBC is Sub Band Codec for Bluetooth.
+
+	  http://www.bluez.org/sbc-13/
+

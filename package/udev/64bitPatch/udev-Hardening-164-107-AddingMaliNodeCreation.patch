@@ -1,0 +1,13 @@
+diff -Naur udev-164_org/rules/rules.d/50-udev-default.rules udev-164/rules/rules.d/50-udev-default.rules
+--- udev-164_org/rules/rules.d/50-udev-default.rules	2016-10-11 12:13:14.284521096 +0100
++++ udev-164/rules/rules.d/50-udev-default.rules	2016-10-11 12:18:07.600214088 +0100
+@@ -3,6 +3,9 @@
+ SUBSYSTEM=="block", SYMLINK{unique}+="block/%M:%m"
+ SUBSYSTEM!="block", SYMLINK{unique}+="char/%M:%m"
+ 
++# mali device
++KERNEL=="mali", MODE="0660",  GROUP="NDS_MW"
++
+ # input
+ KERNEL=="event*",	NAME="input/udev.NO.use.event"
+ KERNEL=="ts[0-9]*|uinput",	MODE="0660", GROUP="NDS_MW"

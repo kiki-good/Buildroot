@@ -1,0 +1,11 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/Makefile.am diagnostics-1.3_new/apps/mifd/Makefile.am
+--- diagnostics-1.3_orig/apps/mifd/Makefile.am	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/Makefile.am	2015-07-10 09:56:47.768193967 +0100
+@@ -3,7 +3,6 @@
+ 
+ AM_CFLAGS += -Wno-error=unused-variable -Wno-error=unused-function
+ AM_CFLAGS += -Werror
+-AM_CPPFLAGS += -DMIFD_DEBUG
+ # Needs airties library to be manually located under ./mgmtif/sky_cli directory
+ # The library is not availabel in SPK now, when it is there, this should  be changed.
+ # AM_CPPFLAGS += -DSKY_CLI_AIRTIES_LIBRARY

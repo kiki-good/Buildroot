@@ -1,0 +1,29 @@
+--- bluez-5.5/configure_orig	2014-09-11 17:09:55.842347986 +0100
++++ bluez-5.5/configure	2014-09-11 17:10:52.374349439 +0100
+@@ -13664,11 +13664,7 @@
+ 	prefix="${ac_default_prefix}"
+ fi
+ 
+-if (test "$localstatedir" = '${prefix}/var'); then
+-	storagedir="${prefix}/var/lib/bluetooth"
+-else
+-	storagedir="${localstatedir}/lib/bluetooth"
+-fi
++storagedir="/tmp/bluez"
+ 
+ cat >>confdefs.h <<_ACEOF
+ #define STORAGEDIR "${storagedir}"
+--- bluez-5.5/configure.ac_orig	2014-09-11 17:10:07.434348285 +0100
++++ bluez-5.5/configure.ac	2014-09-11 17:11:20.034350149 +0100
+@@ -238,11 +238,7 @@
+ 	prefix="${ac_default_prefix}"
+ fi
+ 
+-if (test "$localstatedir" = '${prefix}/var'); then
+-	storagedir="${prefix}/var/lib/bluetooth"
+-else
+-	storagedir="${localstatedir}/lib/bluetooth"
+-fi
++storagedir="/tmp/bluez"
+ AC_DEFINE_UNQUOTED(STORAGEDIR, "${storagedir}",
+ 			[Directory for the storage files])

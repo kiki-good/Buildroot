@@ -1,0 +1,476 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_components_frontend.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_components_frontend.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_components_frontend.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_stbservice_components_frontend.c	2015-08-13 12:03:10.393214543 +0100
+@@ -106,7 +106,7 @@
+ 
+ 	/* These parametes are not required for Mr Box */
+ 	/* Test if this is Mr Box, No Tuners */
+-	if (VendorTunerCalculateNumberOfTuners() == 0) {
++	if ((VendorTunerCalculateNumberOfTuners() == 0) || (VendorTunerCalculateNumberOfTuners() == -1)) {
+ 		return EOK;
+ 	}
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_avplayers_avplayer.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_avplayers_avplayer.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_avplayers_avplayer.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_avplayers_avplayer.c	2015-08-13 11:57:50.117236810 +0100
+@@ -62,7 +62,9 @@
+     int decoder_running = 0;
+     char decoderStatus[VENDOR_HOOKS_MAX_RESPONSE_SIZE];
+   
+-    if(EOK != get_videodecoder_components_numentries(pDeviceID, &num_video_decoders) ){
++    num_video_decoders = get_videodecoder_components_numentries();
++	if (-1 == num_video_decoders){
++        strncpy(buf, "Disabled", length);   
+         return EFAIL;
+     }
+     for(i = 0; i< num_video_decoders; i++){
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_audiodecoder.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_audiodecoder.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_audiodecoder.c	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_audiodecoder.c	2015-08-13 14:06:10.265111816 +0100
+@@ -38,6 +38,7 @@
+ #ifndef EOK
+ #define EOK 0
+ #endif
++#define BSKYB_MAX_NUMBER_AUDIO_DECODERS (4)
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+ */
+@@ -300,18 +301,23 @@
+ {
+ 	audiodecoderdata_t audiodecoderdata;
+ 	char strToMatch[VENDOR_HOOKS_MAX_RESPONSE_SIZE], *procBuffer;
+-	int count = 0;
++	static int totalAudioDecoders = 0;
+ 
+ 	VENDOR_ASSERT( ( NULL!=numdecoders ) );
+-	if (bskyb_audiodecoder_get_data(&audiodecoderdata, BSKYB_AUDIODECODER_NOINSTANCE) == VENDOR_STATUS_OK) {
+-		snprintf(strToMatch, VENDOR_HOOKS_MAX_RESPONSE_SIZE, "%s", BSKYB_AUDIODECODER_DECODER_STRING);
+-		procBuffer = audiodecoderdata.procBuffer;
+-		while(NULL != (procBuffer = strstr(procBuffer, strToMatch))) {
+-			count++;
+-			procBuffer += strlen(strToMatch);
++	if(0 == totalAudioDecoders){
++		if (bskyb_audiodecoder_get_data(&audiodecoderdata, BSKYB_AUDIODECODER_NOINSTANCE) == VENDOR_STATUS_OK) {
++			snprintf(strToMatch, VENDOR_HOOKS_MAX_RESPONSE_SIZE, "%s", BSKYB_AUDIODECODER_DECODER_STRING);
++			procBuffer = audiodecoderdata.procBuffer;
++			while(NULL != (procBuffer = strstr(procBuffer, strToMatch))) {
++				totalAudioDecoders++;
++				if (totalAudioDecoders == BSKYB_MAX_NUMBER_AUDIO_DECODERS){
++					break;
++				}
++				procBuffer += strlen(strToMatch);
++			}
+ 		}
+ 	}
+-	*numdecoders = count;
++	*numdecoders = totalAudioDecoders;
+ 	return VENDOR_STATUS_OK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_spdif.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_spdif.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_spdif.c	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_spdif.c	2015-08-13 12:19:31.062997264 +0100
+@@ -44,10 +44,9 @@
+  ** @param[in] pSpdifProcEntry  - Name of the proc entry
+  ** @param[out] pSpdifNumEntries - Number of Video Decoders
+  **
+- ** @retval EINVAL - Error in Processing
+- ** @retval EOK  - Succesful Scenario
++ ** @retval Total SPDIF or -1 on error
+  */
+-int get_spdif_components_numentries(char * pSpdifProcEntry, int * pSpdifNumEntries)
++int get_spdif_components_numentries(void)
+ {
+ 	static int spdifTotal = 0;
+ 	char buffer[PROCPROXY_BUFF_SIZE];
+@@ -56,15 +55,14 @@
+ 	if (0 == spdifTotal){
+ 		memset(buffer, 0, sizeof(buffer));
+ 		memset(message, 0, sizeof(message));
+-		snprintf(message, sizeof(message), "%s/", pSpdifProcEntry);
++		snprintf(message, sizeof(message), "%s/", SPDIF_PROC_ENTRY);
+ 		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
+ 			return 0;
+ 		}else{
+ 			spdifTotal = atoi(buffer);	
+ 		}
+ 	}
+-	*pSpdifNumEntries = spdifTotal;
+-	return EOK;
++	return spdifTotal;
+ }
+ 
+ /*!
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_spdif.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_spdif.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_spdif.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_spdif.h	2015-08-13 12:18:22.600583072 +0100
+@@ -65,6 +65,6 @@
+ 
+ int get_components_spdif_audiodelay(char *pDeviceID, int *audiodelay, size_t length, int instance);
+ 
+-int get_spdif_components_numentries(char *pSpdifProcEntry, int * pSpdifNumEntries);
++int get_spdif_components_numentries(void);
+ #endif
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videodecoder.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videodecoder.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videodecoder.c	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videodecoder.c	2015-08-13 11:58:50.372077808 +0100
+@@ -49,27 +49,25 @@
+ ** @param[in] pVideoDecoderProcEntry  - Name of the proc entry
+ ** @param[out] pVideoDecNumEntries - Number of Video Decoders
+ **
+-** @retval EINVAL - Error in Processing
+-** @retval EOK  - Succesful Scenario
++** @retval Total Videodecoders / -1 on error
+ */
+-int get_videodecoder_components_numentries(char * pVideoDecoderProcEntry, int * pVideoDecNumEntries)
++int get_videodecoder_components_numentries(void)
+ {
+-    static int videodecoderTotal = 0;
++	static int videodecoderTotal = 0;
+ 	char buffer[PROCPROXY_BUFF_SIZE];
+ 	char message[PROCPROXY_MSG_SIZE];
+ 
+ 	if(0 == videodecoderTotal){
+ 		memset(buffer, 0, sizeof(buffer));
+ 		memset(message, 0, sizeof(message));
+-		snprintf(message, sizeof(message), "%s/", pVideoDecoderProcEntry);
++		snprintf(message, sizeof(message), "%s/", VIDEO_DECODER_PROC_ENTRY);
+ 		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
+ 			return 0;
+ 		}else{
+ 			videodecoderTotal = atoi(buffer);	
+ 		}
+ 	}
+-    *pVideoDecNumEntries = videodecoderTotal;
+-    return EOK;
++	return videodecoderTotal;
+ }
+ 
+ /*!
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videodecoder.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videodecoder.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videodecoder.h	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videodecoder.h	2015-08-13 11:59:18.727248740 +0100
+@@ -52,7 +52,7 @@
+ 
+ int get_components_videodecoder_contentaspectratio(char* pDeviceID, char *, size_t, int);
+ 
+-int get_videodecoder_components_numentries(char * pVideoDecoderProcEntry, int * pVideoDecNumEntries);
++int get_videodecoder_components_numentries(void);
+ 
+ 
+ #endif
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videooutput.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videooutput.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_components_videooutput.c	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_components_videooutput.c	2015-08-13 12:00:17.699890905 +0100
+@@ -195,8 +195,8 @@
+         return EFAIL ;
+     }
+ 
+-    sts = get_videodecoder_components_numentries(VIDEO_DECODER_PROC_ENTRY, &count);
+-    if (sts != EOK) {
++    count = get_videodecoder_components_numentries();
++    if (-1 == count) {
+         return EFAIL;
+     }
+     for(videoDecoderInstance = 0; videoDecoderInstance < count ; videoDecoderInstance++){
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_device_ethernet.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_device_ethernet.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_device_ethernet.c	2014-12-04 12:42:15.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_device_ethernet.c	2015-08-13 11:50:18.856916895 +0100
+@@ -27,7 +27,6 @@
+ #include "vendor_hooks.h"
+ #include <errno.h>
+ #include <net/if.h>
+-#include <ifaddrs.h>
+ 
+ 
+ 
+@@ -35,6 +34,8 @@
+ /*---------------------------------------------------------------------------
+ ** Defines and Macros
+ */
++#define BSKYB_ETHERNET_INTERFACE_DIRECTORY "/sys/class/net/"
++
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+ */
+@@ -91,33 +92,60 @@
+ 
+ int bskyb_ethernet_get_interfaces(uint * pNumInterfaces)
+ {
+-	struct ifaddrs *ifap, *ifa;
+-	int interfaces = 0;
+-	int32_t result = VENDOR_STATUS_ERROR;
+-
++	DIR* dir;
++	 struct dirent* ent;
++	 int interfaces = 0;
++	 int32_t result = VENDOR_STATUS_ERROR;
++	
++	
+ #ifndef VENDOR_HOOK_ETHERNET_USE_STATIC_DATA
+-
+-	getifaddrs (&ifap);
+-
+-	for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+-		if ((strcmp("lo", ifa->ifa_name) == 0)) {
+-			continue;
+-		}
+-		memcpy(ethInterfaces[interfaces],ifa->ifa_name,\
+-			sizeof(ethInterfaces[interfaces]));
+-		interfaces ++;
+-	}
+-	*pNumInterfaces = interfaces ;
+-	freeifaddrs(ifap);
+-
+-	if(interfaces){
+-		result = VENDOR_STATUS_OK ;
+-	}
++	
++	 if (NULL == pNumInterfaces){
++		 return result;
++	 }
++	
++	 if (!(dir = opendir(BSKYB_ETHERNET_INTERFACE_DIRECTORY))) {
++		 syslog(LOG_ERR, "can't open %s: %s", BSKYB_ETHERNET_INTERFACE_DIRECTORY, strerror(errno));
++		 return result;
++	 }
++	
++	 while((ent = readdir(dir)) != NULL) {
++		 if ((strncmp(".", ent->d_name, strlen(".")) == 0)) {
++			 continue;
++		 }
++		 if ((strncmp("..", ent->d_name, strlen("..")) == 0)) {
++			 continue;
++		 }
++		 if ((strncmp("lo", ent->d_name, strlen("lo")) == 0)) {
++			 continue;
++		 }
++		 if ((strstr(ent->d_name, "nic") != NULL)) {
++			 continue;
++		 }
++		 memcpy(ethInterfaces[interfaces], ent->d_name,\
++			 sizeof(ethInterfaces[interfaces]));
++		 interfaces ++;
++	
++		 if (interfaces == BSKYB_ETH_INTERFACE_MAX_STATIC_ITEMS){
++			 break;
++		 }
++	 }
++	
++	 closedir(dir);
++	
++	 *pNumInterfaces = interfaces ;
++	
++	 if(interfaces){
++		 result = VENDOR_STATUS_OK ;
++	 }
++	
+ #else
+-	result = VENDOR_STATUS_OK ;
+-	*pNumInterfaces = BSKYB_NUM_ETHERNET_INTERFACES;
++		 result = VENDOR_STATUS_OK ;
++		 *pNumInterfaces = BSKYB_NUM_ETHERNET_INTERFACES;
+ #endif
+-	return result ;
++	
++return result;
++
+ }
+ 
+ /*!
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-08-13 12:10:29.038637737 +0100
+@@ -245,7 +245,9 @@
+ 
+ int get_deviceinfo_productclass(const char* pDeviceID, char *buf, size_t length)
+ {
+-	if( VendorTunerCalculateNumberOfTuners() > 0 ) {
++	if( VendorTunerCalculateNumberOfTuners() == -1 ) {
++		snprintf(buf, length, "Info not Available");
++	}else if( VendorTunerCalculateNumberOfTuners() > 0 ) {
+ 		snprintf(buf, length, "Satellite STB");
+ 	}else{
+ 		snprintf(buf, length, "Multi-Room STB");
+@@ -827,6 +829,10 @@
+ 	}
+ 
+ 	numTuners = VendorTunerCalculateNumberOfTuners();
++	if(-1 == numTuners){
++		strncpy(hwVersion, "Info not Available", length);
++		return EFAIL;
++	}
+ 	switch(numTuners) {
+ 		case BSKYB_DEVICEINFO_TUNERS_FALCON:
+ 		/*! @todo - Number of tuners in the Falcon CDI driver code is still 16.
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.c	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.c	2015-08-13 12:20:50.906030911 +0100
+@@ -59,7 +59,7 @@
+ ** @returns Count of tsensors available in the device
+ **
+ */
+-int get_deviceinfo_temperaturestatus_temperaturesensornumberofentries()
++int get_deviceinfo_temperaturestatus_temperaturesensornumberofentries(void)
+ {
+ 	static int numTempSensors = 0;
+ 	char buffer[PROCPROXY_BUFF_SIZE];
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.h	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo_temperaturestatus.h	2015-08-13 12:22:39.766949071 +0100
+@@ -54,6 +54,6 @@
+ ** Functions
+ */
+ 
+-int get_deviceinfo_temperaturestatus_temperaturesensornumberofentries();
++int get_deviceinfo_temperaturestatus_temperaturesensornumberofentries(void);
+ #endif
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.c	2015-08-13 12:26:39.955254209 +0100
+@@ -45,10 +45,9 @@
+ ** @param[in] pLnbProc  - Name of the proc entry
+ ** @param[out] pLnbNumEntries - Number of LNB's
+ **
+-** @retval EINVAL - Error in Processing
+-** @retval EOK  - Succesful Scenario
++** @retval Total LNB or -1 for error
+ */
+-int get_lnb_numentries(char * pLnbProc, int * pLnbNumEntries)
++int get_lnb_numentries(void)
+ {
+ 	static int lnbTotal = 0;
+ 	char buffer[PROCPROXY_BUFF_SIZE];
+@@ -57,15 +56,14 @@
+ 	if (0 == lnbTotal){
+ 		memset(buffer, 0, sizeof(buffer));
+ 		memset(message, 0, sizeof(message));
+-		snprintf(message, sizeof(message), "%s/", pLnbProc);
++		snprintf(message, sizeof(message), "%s/", BSKYB_LNB_PROC);
+ 		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
+ 			return 0;
+ 		}else{
+ 			lnbTotal = atoi(buffer);	
+ 		}
+ 	}
+-	*pLnbNumEntries = lnbTotal;
+-	return EOK;
++	return lnbTotal;
+ }
+ 
+ /*!
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_lnb.h	2015-08-13 12:28:26.019839718 +0100
+@@ -50,7 +50,7 @@
+ }lnb_info_t;
+ 
+ 
+-int get_lnb_numentries(char * pLnbProc, int * pLnbNumEntries);
++int get_lnb_numentries(void);
+ 
+ int get_x_sky_com_dvbs_lnb_state(char*, char *, size_t);
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mifd.c diagnostics-1.3_new/apps/mifd/mifd.c
+--- diagnostics-1.3_orig/apps/mifd/mifd.c	2015-08-13 11:33:31.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mifd.c	2015-08-13 12:32:01.950548634 +0100
+@@ -974,6 +974,9 @@
+     }
+ 
+     count = get_deviceinfo_temperaturestatus_temperaturesensornumberofentries();
++	if(-1 == count){
++		return EOK;
++	}
+     for (i = 0; i < count; i++) {
+         /* add temperature sensor device itself */
+         off1 = s_snprintf(buf, sizeof(buf),
+@@ -1005,6 +1008,9 @@
+     }
+ 
+     count = VendorTunerCalculateNumberOfTuners();
++	if (-1 == count){
++		return EOK;
++	}
+     for (i = 0; i < count; i++) {
+         /* add tuner device itself */
+         off1 = s_snprintf(buf, sizeof(buf),
+@@ -1036,8 +1042,10 @@
+         return EINVAL;
+     }
+ 
+-    get_lnb_numentries(BSKYB_LNB_PROC, &count);
+-
++    count = get_lnb_numentries();
++	if(-1 == count){
++		return EOK;
++	}
+     for (i = 0; i < count; i++) {
+         /* add LNB device itself */
+         off1 = s_snprintf(buf, sizeof(buf),
+@@ -1288,11 +1296,11 @@
+     if (!ctx /*|| !state->table_states || !states*/) {
+         return EINVAL;
+     }
+-    sts = get_videodecoder_components_numentries(VIDEO_DECODER_PROC_ENTRY, &count);
+-    if (sts != EOK) {
++    count = get_videodecoder_components_numentries();
++	if (-1 == count){
+         /* See RM850: The mifd Daemon will exit if EFAIL is returned by this function. */
+-        count = 0;
+-    }
++		return EOK;
++	}
+     for (i = 0; i < count; i++) {
+         off1 = s_snprintf(buf, sizeof(buf),
+             "Device.Services.STBService.Components.VideoDecoder.%u",
+@@ -1380,15 +1388,14 @@
+     int off1;
+     int i;
+     int count = 0;
+-    int sts = EFAIL ;
+ 
+ 	if (!ctx /*|| !state->table_states || !states*/) {
+ 	   return EINVAL;
+ 	}
+-	sts = get_spdif_components_numentries(SPDIF_PROC_ENTRY, &count);
+-	if (sts != EOK) {
++	count = get_spdif_components_numentries();
++	if (-1 == count) {
+             /* See RM850: The mifd Daemon will exit if EFAIL is returned by this function. */
+-            count = 0;
++			return EOK;
+ 	}
+ 	for (i = 0; i < count; i++) {
+         off1 = s_snprintf(buf, sizeof(buf),
+@@ -1890,6 +1897,9 @@
+     }
+ 
+     count = get_x_sky_com_frontpanel_buttons_count();
++	if(-1 == count){
++		return EOK;
++	}
+     for (i = 0; i < count; i++) {
+         off1 = s_snprintf(buf, sizeof(buf),
+             "Device.Services.STBService.X_SKY_COM_FrontPanel.Buttons.%u",
+@@ -1921,6 +1931,9 @@
+     }
+ 
+     count = get_x_sky_com_frontpanel_leds_count();
++	if(-1 == count){
++		return EOK;
++	}
+     for (i = 0; i < count; i++) {
+         off1 = s_snprintf(buf, sizeof(buf),
+             "Device.Services.STBService.X_SKY_COM_FrontPanel.LEDs.%u",
+@@ -2232,6 +2245,9 @@
+     }
+ 
+     count = bskyb_usb_get_numberofinterfaces();
++	if(-1 == count){
++		return EOK;
++	}
+     for (i = 0; i < count; i++) {
+             /* add interface device itself */
+             off1 = s_snprintf(buf, sizeof(buf),

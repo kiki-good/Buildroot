@@ -1,0 +1,6 @@
+config BR2_PACKAGE_RUWIDO
+	bool "ruwido_daemon"
+	select BR2_PACKAGE_BLUEZ
+	default n
+	help
+		Ruwido Bluetooth Daemon

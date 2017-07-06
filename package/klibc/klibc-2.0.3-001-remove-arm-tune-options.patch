@@ -1,0 +1,11 @@
+--- klibc-2.0.3/usr/klibc/arch/arm/MCONFIG	2013-12-03 18:53:46.000000000 +0000
++++ klibc-2.0.3/usr/klibc/arch/arm/MCONFIG	2014-07-25 09:43:07.826041720 +0100
+@@ -10,7 +10,7 @@
+ CPU_ARCH ?= armv4
+ CPU_TUNE ?= strongarm
+ 
+-KLIBCOPTFLAGS += -Os -march=$(CPU_ARCH) -mtune=$(CPU_TUNE)
++KLIBCOPTFLAGS +=  -Os
+ KLIBCBITSIZE  = 32
+ KLIBCREQFLAGS += -fno-exceptions
+ KLIBCSTRIPFLAGS += -R .ARM.exidx

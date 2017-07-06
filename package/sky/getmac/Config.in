@@ -1,0 +1,4 @@
+config BR2_PACKAGE_GETMAC
+        bool "getmac"
+        help
+		gitmac will read the mac address from the specific address

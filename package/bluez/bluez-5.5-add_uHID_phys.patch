@@ -1,0 +1,51 @@
+--- bluez-5.5_orig/profiles/input/hog.c	2013-08-01 10:41:34.000000000 +0100
++++ bluez-5.5/profiles/input/hog.c	2014-09-03 17:28:50.812633673 +0100
+@@ -404,6 +404,7 @@
+ 	struct hog_device *hogdev = user_data;
+ 	uint8_t value[HOG_REPORT_MAP_MAX_SIZE];
+ 	struct uhid_event ev;
++	bdaddr_t *ba;
+ 	uint16_t vendor_src, vendor, product, version;
+ 	ssize_t vlen;
+ 	int i;
+@@ -454,6 +455,15 @@
+ 	ev.u.create.bus = BUS_BLUETOOTH;
+ 	ev.u.create.rd_data = value;
+ 	ev.u.create.rd_size = vlen;
++	
++	/* Tijo@Sky: Adding Bluetooth MACADDR as the phys value for the uHID device */
++	ba = (bdaddr_t *)btd_device_get_bdaddr(hogdev->device);
++	sprintf(ev.u.create.phys, "%2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X",
++		ba->b[5], ba->b[4], ba->b[3], ba->b[2], ba->b[1], ba->b[0]);
++
++	/* Tijo@Sky: Adding Bluetooth MACADDR as the uniq value for the uHID device */
++	sprintf(ev.u.create.uniq, "%2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X",
++		ba->b[5], ba->b[4], ba->b[3], ba->b[2], ba->b[1], ba->b[0]);
+ 
+ 	if (write(hogdev->uhid_fd, &ev, sizeof(ev)) < 0)
+ 		error("Failed to create uHID device: %s", strerror(errno));
+--- bluez-5.5/src/device.c	2013-05-14 02:04:08.000000000 +0100
++++ bluez-5.5_moded/src/device.c	2013-09-20 16:14:18.206934209 +0100
+@@ -2278,6 +2278,13 @@
+ 	return device->version;
+ }
+ 
++/* Tijo@Sky: Added to get the bdaddr from outside device.c */
++bdaddr_t* btd_device_get_bdaddr(struct btd_device *device)
++{
++	return &(device->bdaddr);
++}
++
++
+ static void delete_folder_tree(const char *dirname)
+ {
+ 	DIR *dir;
+--- bluez-5.5/src/device.h	2013-05-14 02:04:08.000000000 +0100
++++ bluez-5.5_moded/src/device.h	2013-09-20 16:14:27.750934454 +0100
+@@ -133,3 +133,6 @@
+ 
+ void btd_device_init(void);
+ void btd_device_cleanup(void);
++
++/* Tijo@Sky: Added to get the bdaddr from outside device.c */
++bdaddr_t* btd_device_get_bdaddr(struct btd_device *device);

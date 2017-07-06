@@ -1,0 +1,10 @@
+--- a/bus/dbus.service.in	2015-08-04 14:49:09.794232267 +0100
++++ b/bus/dbus.service.in	2015-08-04 14:49:51.202233330 +0100
+@@ -4,6 +4,6 @@
+ Requires=dbus.socket
+ 
+ [Service]
+-ExecStart=@EXPANDED_BINDIR@/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
++ExecStart=@EXPANDED_BINDIR@/dbus-daemon --system --fork
+ ExecReload=@EXPANDED_BINDIR@/dbus-send --print-reply --system --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+ OOMScoreAdjust=-900

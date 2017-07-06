@@ -1,0 +1,7 @@
+config BR2_PACKAGE_WAYLAND
+	bool "wayland"
+	depends on BR2_PACKAGE_LIBFFI
+	help
+	  Wayland window manager protocol libraries.
+		
+	  http://wayland.freedesktop.org/

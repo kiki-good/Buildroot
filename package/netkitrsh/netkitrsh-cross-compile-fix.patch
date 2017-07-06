@@ -1,0 +1,371 @@
+Index: netkit-rsh-0.17/configure
+===================================================================
+--- netkit-rsh-0.17.orig/configure
++++ netkit-rsh-0.17/configure
+@@ -95,19 +95,6 @@ if [ x"$CC" = x ]; then
+         exit
+     fi
+     echo "$CC"
+-else
+-    echo -n 'Checking if C compiler works... '
+-    if (
+-          $CC __conftest.c -o __conftest || exit 1
+-          ./__conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-         echo 'yes'
+-     else
+-         echo 'no'
+-         echo 'Compiler '"$CC"' does not exist or cannot compile C; try another.'
+-         rm -f __conftest*
+-         exit
+-     fi
+ fi
+ 
+ echo -n "Checking if $CC accepts gcc warnings... "
+@@ -160,122 +147,11 @@ rm -f __conftest*
+ 
+ ##################################################
+ 
+-echo -n 'Checking for BSD signal semantics... '
+-cat <<EOF >__conftest.c
+-#include <unistd.h>
+-#include <signal.h>
+-int count=0;
+-void handle(int foo) { count++; }
+-int main(void) {
+-    int pid=getpid();
+-    signal(SIGINT, handle);
+-    kill(pid,SIGINT);
+-    kill(pid,SIGINT);
+-    kill(pid,SIGINT);
+-    if (count!=3) return 1;
+-    return 0;
+-}
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c  -o __conftest || exit 1
+-      ./__conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'yes'
+-else
+-    if (
+-          $CC $CFLAGS -D__USE_BSD_SIGNAL __conftest.c  -o __conftest || exit 1
+-          ./__conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo '-D__USE_BSD_SIGNAL'
+-        CFLAGS="$CFLAGS -D__USE_BSD_SIGNAL"
+-    else
+-        echo 'no'
+-        echo 'This package needs BSD signal semantics to run.'
+-        rm -f __conftest*
+-        exit
+-    fi
+-fi
+-rm -f __conftest*
++LIBTERMCAP=-ltermcap
+ 
+ ##################################################
+ 
+-echo -n 'Checking for ncurses... '
+-cat <<EOF >__conftest.c
+-#include <stdio.h>
+-#include <curses.h>
+-#ifndef KEY_DOWN
+-syntax error. /* not ncurses */
+-#endif
+-int main(void) {
+-    endwin();
+-    return 0;
+-}
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c -lncurses -o __conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'yes'
+-    NCURSES=1
+-else
+-    if (
+-          $CC $CFLAGS -I/usr/include/ncurses __conftest.c -lncurses -o __conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo '-I/usr/include/ncurses'
+-        CFLAGS="$CFLAGS -I/usr/include/ncurses"
+-        NCURSES=1
+-    else
+-        echo 'no'
+-    fi
+-fi
+-
+-if [ x$NCURSES != x ]; then
+-    LIBTERMCAP=-lncurses
+-else
+-    echo -n 'Checking for traditional termcap... '
+-cat <<EOF >__conftest.c
+-#include <stdio.h>
+-#include <termcap.h>
+-int main(void) {
+-    tgetent(NULL, NULL); return 0;
+-}
+-
+-EOF
+-    if (
+-          $CC $CFLAGS  __conftest.c -ltermcap -o __conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo '-ltermcap'
+-        LIBTERMCAP=-ltermcap
+-    else
+-        echo 'not found'
+-        echo 'This package needs termcap to run.'
+-        rm -f __conftest*
+-        exit
+-    fi
+-fi
+-rm -f __conftest*
+-
+-##################################################
+-
+-echo -n 'Checking for GNU libc... '
+-cat <<EOF >__conftest.c
+-#include <stdio.h>
+-#if defined(__GLIBC__) && (__GLIBC__ >= 2)
+-int tester;
+-#endif
+-int main(void) { tester=6; return 0; }
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c  -o __conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'yes'
+-    USE_GLIBC=1
+-else
+-    echo 'no'
+-fi
+-rm -f __conftest*
++USE_GLIBC=1
+ 
+ ##################################################
+ 
+@@ -342,218 +218,15 @@ rm -f __conftest*
+ 
+ ##################################################
+ 
+-echo -n 'Checking for crypt... '
+-cat <<EOF >__conftest.c
+-int main(void) { crypt("aa", "bb"); }
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c  -o __conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'yes'
+-else
+-    if (
+-          $CC $CFLAGS  __conftest.c -lcrypt -o __conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo '-lcrypt'
+-        LIBS="$LIBS -lcrypt"
+-    else
+-        echo 'no'
+-        echo 'This package requires crypt.'
+-        rm -f __conftest*
+-        exit
+-    fi
+-fi
+-rm -f __conftest*
++LIBS="$LIBS -lcrypt"
+ 
+ ##################################################
+ 
+-echo -n 'Checking for forkpty... '
+-cat <<EOF >__conftest.c
+-#include <pty.h>
+-int main(void) { forkpty(0, 0, 0, 0); }
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c  -o __conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'yes'
+-else
+-    if (
+-          $CC $CFLAGS  __conftest.c -lutil -o __conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo '-lutil'
+-        LIBS="$LIBS -lutil"
+-    else
+-        if (
+-              $CC $CFLAGS  __conftest.c -lbsd -o __conftest || exit 1
+-           ) >/dev/null 2>&1; then
+-            echo '-lbsd'
+-            LIBBSD="-lbsd"
+-        else
+-            echo 'no'
+-            echo 'This package requires forkpty.'
+-            rm -f __conftest*
+-            exit
+-        fi
+-    fi
+-fi
+-rm -f __conftest*
+-
+-##################################################
+-
+-echo -n 'Checking for logwtmp... '
+-cat <<EOF >__conftest.c
+-#ifdef __cplusplus
+-extern "C"
+-#endif
+-void logwtmp(const char *, const char *, const char *);
+-int main(void) { logwtmp(0, 0, 0); }
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c  -o __conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'yes'
+-else
+-    if (
+-          $CC $CFLAGS  __conftest.c -lutil -o __conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo '-lutil'
+-        LIBS="$LIBS -lutil"
+-    else
+-        if (
+-              $CC $CFLAGS  __conftest.c -lbsd -o __conftest || exit 1
+-           ) >/dev/null 2>&1; then
+-            echo '-lbsd'
+-            LIBBSD="-lbsd"
+-        else
+-            echo 'no'
+-            echo 'This package requires logwtmp.'
+-            rm -f __conftest*
+-            exit
+-        fi
+-    fi
+-fi
+-rm -f __conftest*
+-
+-##################################################
+-
+-echo -n 'Checking for socklen_t... '
+-cat <<EOF >__conftest.c
+-#include <sys/types.h>
+-#include <sys/socket.h>
+-#include <netinet/in.h>
+-int main(void) {
+-    struct sockaddr_in sn;
+-    socklen_t len = sizeof(sn);
+-    getpeername(0, (struct sockaddr *)&sn, &len);
+-    return 0;
+-}
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c  -o __conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'yes'
+-else
+-    if (
+-          $CC $CFLAGS -Dsocklen_t=int __conftest.c  -o __conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo 'int'
+-        CFLAGS="$CFLAGS -Dsocklen_t=int"
+-    else
+-        if (
+-              $CC $CFLAGS -Dsocklen_t=size_t __conftest.c  -o __conftest || exit 1
+-           ) >/dev/null 2>&1; then
+-            echo 'size_t'
+-            CFLAGS="$CFLAGS -Dsocklen_t=size_t"
+-        else
+-            echo 'no'
+-            echo 'Cannot work out what to use for socklen_t. Help...'
+-            rm -f __conftest*
+-            exit
+-        fi
+-    fi
+-fi
+-rm -f __conftest*
++CFLAGS="$CFLAGS -Dsocklen_t=size_t"
+ 
+ ##################################################
+ 
+-echo -n 'Checking for snprintf declaration... '
+-cat <<EOF >__conftest.c
+-#include <stdio.h>
+-int main(void) {
+-    void *x = (void *)snprintf;
+-    printf("%lx", (long)x);
+-    return 0;
+-}
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c  -o __conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'ok'
+-else
+-    if (
+-          $CC $CFLAGS -D_GNU_SOURCE __conftest.c  -o __conftest || exit 1
+-          ./__conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo '-D_GNU_SOURCE'
+-        CFLAGS="$CFLAGS -D_GNU_SOURCE"
+-    else
+-        echo 'manual'
+-        CFLAGS="$CFLAGS -DDECLARE_SNPRINTF"
+-    fi
+-fi
+-rm -f __conftest*
+-
+-echo -n 'Checking for snprintf implementation... '
+-cat <<EOF >__conftest.c
+-#include <stdio.h>
+-#include <string.h>
+-#ifdef DECLARE_SNPRINTF
+-#ifdef __cplusplus
+-extern "C"
+-#endif /*__cplusplus*/
+-int snprintf(char *, int, const char *, ...);
+-#endif /*DECLARE_SNPRINTF*/
+-int main(void) {
+-    char buf[32];
+-    snprintf(buf, 8, "%s", "1234567890");
+-    if (strlen(buf)!=7) return 1;
+-    return 0;
+-}
+-
+-EOF
+-if (
+-      $CC $CFLAGS  __conftest.c $LIBBSD -o __conftest || exit 1
+-      ./__conftest || exit 1
+-   ) >/dev/null 2>&1; then
+-    echo 'ok'
+-else
+-    if (
+-          $CC $CFLAGS  __conftest.c -lsnprintf $LIBBSD -o __conftest || exit 1
+-          ./__conftest || exit 1
+-       ) >/dev/null 2>&1; then
+-        echo '-lsnprintf'
+-        LIBS="$LIBS -lsnprintf"
+-    else
+-        if (
+-              $CC $CFLAGS  __conftest.c -ldb $LIBBSD -o __conftest || exit 1
+-              ./__conftest || exit 1
+-           ) >/dev/null 2>&1; then
+-            echo '-ldb'
+-            LIBS="$LIBS -ldb"
+-        else
+-            echo 'missing'
+-            echo 'This package requires snprintf.'
+-            rm -f __conftest*
+-            exit
+-        fi
+-    fi
+-fi
+-rm -f __conftest*
++CFLAGS="$CFLAGS -D_GNU_SOURCE"
+ 
+ ##################################################
+ 

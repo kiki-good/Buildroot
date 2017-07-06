@@ -1,0 +1,12 @@
+diff -Naur ltp-full-20070228/testcases/kernel/fs/ftest/ftest06.c ltp-full-20070228_New/testcases/kernel/fs/ftest/ftest06.c
+--- ltp-full-20070228/testcases/kernel/fs/ftest/ftest06.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_New/testcases/kernel/fs/ftest/ftest06.c	2013-07-04 18:07:44.393730799 +0100
+@@ -113,7 +113,7 @@
+ 	int	child;
+ 	int	status;
+ 	int	count;
+-	char	name[3];
++	char	name[256];
+ 
+         int lc;                 /* loop counter */
+         char *msg;              /* message returned from parse_opts */

@@ -1,0 +1,32 @@
+diff -Naur ruwido/rapid.conf ruwido_mod/rapid.conf
+--- ruwido/rapid.conf	2015-08-12 16:03:22.000000000 +0100
++++ ruwido_mod/rapid.conf	2015-10-06 17:13:42.272472704 +0100
+@@ -3,7 +3,7 @@
+  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+ <busconfig>
+ 
+-        <policy user="system">
++        <policy user="RCU_USR">
+                 <allow own="com.ruwido.rcu"/>
+                 <allow send_destination="com.ruwido.rcu"/>
+ 		<allow send_interface="com.sky.rcu.Manager1"/>
+@@ -21,19 +21,6 @@
+                 <allow send_destination="com.ruwido.rcu"/>
+ 		<allow send_interface="com.sky.rcu.Manager1"/>
+ 		<allow send_interface="com.sky.rcu.Remote1"/>
+-		<allow send_interface="com.sky.rcu.DIS1"/>
+-		<allow send_interface="com.sky.rcu.IAS1"/>
+-		<allow send_interface="com.sky.rcu.BAS1"/>
+-		<allow send_interface="com.sky.rcu.Upgrade1"/>
+-		<allow send_interface="com.sky.rcu.Audio1"/>
+-		<allow send_interface="com.sky.rcu.Infrared1"/>
+-                <allow receive_sender="com.ruwido.rcu"/>
+-        </policy>
+-
+-        <policy user="darwin">
+-                <allow send_destination="com.ruwido.rcu"/>
+-		<allow send_interface="com.sky.rcu.Manager1"/>
+-		<allow send_interface="com.sky.rcu.Remote1"/>
+ 		<allow send_interface="com.sky.rcu.DIS1"/>
+ 		<allow send_interface="com.sky.rcu.IAS1"/>
+ 		<allow send_interface="com.sky.rcu.BAS1"/>

@@ -1,0 +1,9 @@
+config BR2_PACKAGE_ATTR
+	bool "attr"
+	default n
+	select BR2_PACKAGE_PKGCONFIG
+	select BR2_PACKAGE_LIBINTL
+	help
+	  This package contains utilities to 
+	  administer the extended attributes 
+	  on filesystem objects.

@@ -1,0 +1,29 @@
+--- libs3-002/GNUmakefile	2017-02-23 11:29:16.000000000 +0000
++++ libs3-002_new/GNUmakefile	2017-07-06 17:39:20.077655401 +0100
+@@ -208,7 +208,9 @@
+ # Compile target patterns
+ 
+ $(BUILD)/obj/%.o: src/%.c
+-	$(QUIET_ECHO) $@: Compiling object
++	#$(QUIET_ECHO) $@: Compiling object
++	#$(ECHO) $@: Compiling object
++	$(info $$COMPILING....++++___ is [$(CC)])
+ 	@ mkdir -p $(dir $(BUILD)/dep/$<)
+ 	@ $(CC) $(CFLAGS) -M -MG -MQ $@ -DCOMPILINGDEPENDENCIES \
+         -o $(BUILD)/dep/$(<:%.c=%.d) -c $<
+@@ -217,6 +219,7 @@
+ 
+ $(BUILD)/obj/%.do: src/%.c
+ 	$(QUIET_ECHO) $@: Compiling dynamic object
++	$(info $$COMPILING....++++=== is [$(CC)])
+ 	@ mkdir -p $(dir $(BUILD)/dep/$<)
+ 	@ $(CC) $(CFLAGS) -M -MG -MQ $@ -DCOMPILINGDEPENDENCIES \
+         -o $(BUILD)/dep/$(<:%.c=%.dd) -c $<
+@@ -301,7 +304,6 @@
+ 
+ 
+ # --------------------------------------------------------------------------
+-# Clean dependencies target
+ 
+ .PHONY: cleandeps
+ cleandeps:

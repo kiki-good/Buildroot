@@ -1,0 +1,19 @@
+diff -ur bluez-5.8-orig/src/adapter.c bluez-5.8/src/adapter.c
+--- bluez-5.8-orig/src/adapter.c	2013-06-26 17:17:07.000000000 +0100
++++ bluez-5.8/src/adapter.c	2015-03-31 07:06:44.228186030 +0100
+@@ -549,6 +549,7 @@
+ static void trigger_pairable_timeout(struct btd_adapter *adapter)
+ {
+ 	if (adapter->pairable_timeout_id > 0) {
++    		DBG("Removing current pending timeout %d", adapter->pairable_timeout_id);
+ 		g_source_remove(adapter->pairable_timeout_id);
+ 		adapter->pairable_timeout_id = 0;
+ 	}
+@@ -560,7 +561,7 @@
+ 		return;
+ 
+ 	if (adapter->pairable_timeout > 0)
+-		g_timeout_add_seconds(adapter->pairable_timeout,
++		adapter->pairable_timeout_id = g_timeout_add_seconds(adapter->pairable_timeout,
+ 					pairable_timeout_handler, adapter);
+ }

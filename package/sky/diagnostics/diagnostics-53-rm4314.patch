@@ -1,0 +1,36 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_hdmi_displaydevice.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_hdmi_displaydevice.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_hdmi_displaydevice.c	2016-07-14 14:58:10.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_hdmi_displaydevice.c	2016-07-22 14:02:15.196077017 +0100
+@@ -37,7 +37,7 @@
+  /* shortcut for readability */
+ #define DEVICE(x) __CONCAT(DEVICE_SERVICES_STBSERVICE_COMPONENTS_HDMI_HDMIENTRY_DISPLAYDEVICE_,x)
+ 
+-#define BUFFER_LENGTH	(256)
++#define HDMI_DISPLAYDEVICE_BUFFER_LENGTH	(1024)
+ 
+ int
+ mif_dslf_hdmi_displaydevice_reg(struct mif_request_s *req)
+@@ -90,8 +90,7 @@
+ mif_dslf_hdmi_displaydevice_get_config(struct mif_request_s *req, int id)
+ {
+ 	int sts = 1;
+-	char buf[BUFFER_LENGTH + 1];
+-    char edid[BSKYB_MAX_EDID_SIZE];
++	char buf[HDMI_DISPLAYDEVICE_BUFFER_LENGTH + 1];
+ 	char *deviceID = BSKYB_HDMI_PROC_ENTRY ;
+ 	uint32_t uint_val;
+ 	int err;
+@@ -121,11 +120,11 @@
+ 		}
+ 		case DEVICE(EEDID):
+ 		{
+-		    sts = get_hdmi_displaydevice_eedid(deviceID, edid, sizeof(edid), instance);
++		    sts = get_hdmi_displaydevice_eedid(deviceID, buf, sizeof(buf), instance);
+ 		    if (sts != EOK) {
+ 		        break;
+ 		    }
+-		    return mif_request_set_value(req, id, edid, sizeof(edid));
++		    return mif_request_set_value(req, id, buf, sizeof(buf));
+ 		}
+ 		case DEVICE(SUPPORTEDRESOLUTIONS):
+ 		{

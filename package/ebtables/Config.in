@@ -1,0 +1,7 @@
+config BR2_PACKAGE_EBTABLES
+	bool "ebtables"
+	help
+	  Ethernet bridge frame table administration
+
+	  http://ebtables.sourceforge.net
+

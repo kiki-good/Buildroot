@@ -1,0 +1,17 @@
+--- ltp-full-20070228/testcases/kernel/fs/fsx-linux/fsxtest.orig	2009-06-29 12:08:50.000000000 +0100
++++ ltp-full-20070228/testcases/kernel/fs/fsx-linux/fsxtest	2009-06-29 12:12:35.000000000 +0100
+@@ -29,10 +29,11 @@
+ #Uncomment line below for debugging
+ #set -x
+ if [ $2 = "jfs" ]; then
+-  mkfs -t $2 -q $1
+-else
+-  mkfs -t $2 $1
++  mkfs.jffs -q $1
++else 
++  mkfs.ext3 -q $1
+ fi
++
+ mkdir /testmount
+ mount -t $2 $1 /testmount
+ touch /testmount/testfile

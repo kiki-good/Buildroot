@@ -1,0 +1,29 @@
+From f1745d125f231e494fa8cfbffc0924b63188dc7f Mon Sep 17 00:00:00 2001
+From: bilal <bilal@airties.com>
+Date: Mon, 20 Feb 2012 12:33:07 +0200
+Subject: [PATCH 07/26] Issue #22847
+
+iwconfig now prints the channel next to the frequency value. now it is human readable :)
+
+git-svn-id: http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29@31377
+---
+ iwconfig.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/iwconfig.c b/iwconfig.c
+index d01f29a..acf1f07 100644
+--- a/iwconfig.c
++++ b/iwconfig.c
+@@ -229,7 +229,8 @@ display_info(struct wireless_info *	info,
+       if(info->has_range && (freq < KILO))
+ 	channel = iw_channel_to_freq((int) freq, &freq, &info->range);
+       /* Display */
+-      iw_print_freq(buffer, sizeof(buffer), freq, -1, info->b.freq_flags);
++	channel = iw_freq_to_channel(freq, &info->range);
++      iw_print_freq(buffer, sizeof(buffer), freq, channel, info->b.freq_flags);
+       printf("%s  ", buffer);
+       tokens +=4;
+     }
+-- 
+1.9.1
+

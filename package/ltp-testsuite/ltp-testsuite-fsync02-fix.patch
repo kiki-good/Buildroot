@@ -1,0 +1,18 @@
+diff -Naurr ltp-full-20070228_org/testcases/kernel/syscalls/fsync/fsync02.c ltp-full-20070228/testcases/kernel/syscalls/fsync/fsync02.c
+--- ltp-full-20070228_org/testcases/kernel/syscalls/fsync/fsync02.c	2007-03-01 04:40:36.000000000 +0000
++++ ltp-full-20070228/testcases/kernel/syscalls/fsync/fsync02.c	2009-09-04 16:30:04.000000000 +0100
+@@ -186,10 +186,12 @@
+ 			 "file system");
+ 	}
+ 
+-	if ((stat_buf.f_bavail / (BLOCKSIZE / stat_buf.f_frsize)) <  MAXBLKS) {
++        if (stat_buf.f_bavail > 0)
++         {
++	  if ((stat_buf.f_bavail / (BLOCKSIZE / stat_buf.f_frsize)) <  MAXBLKS) {
+ 		max_blks = stat_buf.f_bavail / (BLOCKSIZE / stat_buf.f_frsize);
++	  }
+ 	}
+-
+ #ifdef LARGEFILE
+ 	if ((fcntl(fd, F_SETFL, O_LARGEFILE)) == -1) {
+ 		tst_brkm(TBROK, cleanup, "fcntl failed to O_LARGEFILE");

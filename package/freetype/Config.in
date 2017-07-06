@@ -1,0 +1,40 @@
+config BR2_PACKAGE_FREETYPE
+	bool "freetype"
+	select BR2_PACKAGE_PKGCONFIG
+	help
+	a free, high-quality and portable font engine.
+
+	http://www.freetype.org/
+
+choice
+	prompt "Freetype Version"
+	depends on BR2_PACKAGE_FREETYPE
+	default BR2_FREETYPE_VERSION_2_5_4
+	help
+	  Select the version of Freetype you wish to use.
+
+	config BR2_FREETYPE_VERSION_2_2_1
+		bool "Freetype 2.2.1"
+
+	config BR2_FREETYPE_VERSION_2_3_7
+		bool "Freetype 2.3.7"
+
+	config BR2_FREETYPE_VERSION_2_4_12
+		bool "Freetype 2.4.12"
+
+	config BR2_FREETYPE_VERSION_2_5_4
+		bool "Freetype 2.5.4"
+
+endchoice
+
+config BR2_FREETYPE_VERSION
+	string
+	default "2.2.1"		if BR2_FREETYPE_VERSION_2_2_1
+	default "2.3.7"		if BR2_FREETYPE_VERSION_2_3_7
+	default "2.4.12"	if BR2_FREETYPE_VERSION_2_4_12
+	default "2.5.4"		if BR2_FREETYPE_VERSION_2_5_4
+
+config BR2_PACKAGE_FREETYPE_FONTS_TARBALL
+	string "Preinstalled fonts tarball?"
+	depends on BR2_PACKAGE_FREETYPE
+	default "fonts-bskyb-default.tar.gz"

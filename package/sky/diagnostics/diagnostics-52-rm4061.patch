@@ -1,0 +1,3621 @@
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/dslf_services.xml diagnostics-1.3-new/apps/mifd/mgmtif/dslf_services.xml
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/dslf_services.xml	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3-new/apps/mifd/mgmtif/dslf_services.xml	2016-05-31 13:32:04.110637027 +0100
+@@ -115,4 +115,14 @@
+       <nodeid>Device.Services.STBService.Components.FrontEnd</nodeid>
+     </sub>
+   </node>
++  <node name="X_SKY_COM_DVBT" id="Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT">
++    <status>mandatory</status>
++    <access>read-write</access>
++    <description>Sky specific front end object.</description>
++    <type>node</type>
++    <sub>
++      <name>FrontEnd</name>
++      <nodeid>Device.Services.STBService.Components.FrontEnd</nodeid>
++    </sub>
++  </node>
+ </tns:mgmtns>
+\ No newline at end of file
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/dslf_tuner.xml diagnostics-1.3-new/apps/mifd/mgmtif/dslf_tuner.xml
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/dslf_tuner.xml	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3-new/apps/mifd/mgmtif/dslf_tuner.xml	2016-06-06 11:40:12.196956784 +0100
+@@ -463,4 +463,436 @@
+     <description>Parameter indicating the transponder definition to use to run the test.</description>
+     <syntax type="string" />
+   </attribute>
+-</tns:mgmtns>
++  <node name="Tuner" id="Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner">
++    <status>optional</status>
++    <access>read-write</access>
++    <description>DVBT Tuner Iteration.</description>
++    <type>node</type>
++    <sub>
++      <name>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT</name>
++      <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT</nodeid>
++    </sub>
++  </node>
++  <node name="TunerEntry" id="Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}">
++    <status>mandatory</status>
++    <access>read-write</access>
++    <description>DVBT Tuner Iteration.</description>
++    <type>sequence</type>
++    <sub>
++      <name>Tuner</name>
++      <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner</nodeid>
++    </sub>
++  </node>
++  <attribute name="tuneDVBTmodulationPSK">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Modulation PSK.</description>
++    <syntax type="string"></syntax>
++  </attribute>
++  <attribute name="tuneDVBTmodulationQAM">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Modulation QAM.</description>
++    <syntax type="string"></syntax>
++  </attribute>
++  <attribute name="tuneDVBTfrequency">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Frequency.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBTcodeRateLP">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Code Rate LP.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBTcodeRateHP">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Code Rate HP.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBTbandwidth">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Bandwidth.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBThierarchy">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Hierarchy.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBTguardInterval">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Guard Interval.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBTtransmissionMode">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Transmission Mode.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBTinversion">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Inversion.</description>
++    <syntax type="string"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2requestType">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Request Type.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2plp">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner PLP.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2Mandatoryfrequency">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Mandatory Frequency.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2Mandatorybandwidth">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Mandatory Bandwidth.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryvalidFlags">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Valid Flags.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryplpDataRate">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary PLP Data Rate.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryspatialMux">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Spatial Mux.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryguardInterval">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Guard Interval.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionarytransmissionMode">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Transmission Mode.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionarypaprMode">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Papr Mode.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionarypilotPattern">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Pilot Pattern.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryextCarrier">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Ext Carrier.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryrotatedConstellation">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Rotated Constellation.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryplpType">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary PLP Type.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryframeLength">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Frame Length.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryfefPresent">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary FEF Present.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryfefLength">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary FEF Length.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="tuneDVBT2DiscretionaryspectrumInversion">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Discretionary Spectrum Inversion.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBTmodulationPSK">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Modulation PSK.</description>
++    <syntax type="string"></syntax>
++  </attribute>
++  <attribute name="statusDVBTmodulationQAM">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Modulation QAM.</description>
++    <syntax type="string"></syntax>
++  </attribute>
++  <attribute name="statusDVBTfrequency">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Frequency.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBTsymbolRate">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Symbol Rate.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBTcodeRateLP">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Code Rate LP.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBTcodeRateHP">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Code Rate HP.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBTberWindow">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner BER Window.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBTberCount">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner BER Count.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBTsignalStrength">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Signal Strength.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBTinversion">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Inversion.</description>
++    <syntax type="string"></syntax>
++  </attribute>
++  <attribute name="statusDVBTsignalStatus">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tuner Signal Status.</description>
++    <syntax type="string"></syntax>
++  </attribute>
++  <attribute name="statusDVBT2flags">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Flags.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBT2frequency">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Frequency.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBT2berWindow">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner BER Window.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBT2berCount">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner BER Count.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBT2signalStrength">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Signal Strength.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBT2spectrumInversion">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Spectrum Inversion.</description>
++    <syntax type="uint"></syntax>
++  </attribute>
++  <attribute name="statusDVBT2signalStatus">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT2 Tuner Signal Status.</description>
++    <syntax type="string"></syntax>
++  </attribute>
++  <attribute name="RxPowerLevel">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>Rx power level</description>
++    <syntax type="int" />
++  </attribute>
++  <attribute name="SNR">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>Signal to Noise Ratio.</description>
++    <syntax type="int" />
++  </attribute>
++  <attribute name="Status">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>Tuning status. Enumeration of 'Tuned', 'Not Tuned', 'Tuning in Progress', 'Error'.</description>
++    <syntax type="string">
++      <values>
++        <value comment="Tuning status is currently Tuned.">Tuned</value>
++        <value comment="Tuning status is currently Not Tuned.">Not Tuned</value>
++        <value comment="Tuning status is currently Tuning in Progress.">Tuning in Progress</value>
++      </values>
++    </syntax>
++  </attribute>
++  <attribute name="TunerState">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>Tuner State.</description>
++    <syntax type="string">
++      <values>
++        <value comment="Tuning state is currently Closed.">Closed</value>
++        <value comment="Tuning state is currently Opened.">Opened</value>
++        <value comment="Tuning state is currently Tuning.">Tuning</value>
++        <value comment="Tuning state is currently Carrier Locked.">Carrier Locked</value>
++        <value comment="Tuning state is currently Demod Locked.">Demod Locked</value>
++        <value comment="Tuning state is currently Sync Locked.">Sync Locked</value>
++        <value comment="Tuning state is currently Scan Failed.">Scan Failed</value>
++        <value comment="Tuning state is currently Scan Tuning.">Scan Tuning</value>
++        <value comment="Tuning state is currently Scan Locked.">Scan Locked</value>
++        <value comment="Tuning state is currently Scan Configured.">Scan Configured</value>
++        <value comment="Tuning state is currently Unknown Mode.">Unknown Mode</value>
++      </values>
++    </syntax>
++  </attribute>
++  <attribute name="TuneMode">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Tune Mode.</description>
++    <syntax type="string">
++      <values>
++        <value comment="Tuning Mode is currently SAT DVB-S.">SAT DVB-S</value>
++        <value comment="Tuning Mode is currently SAT DVB-S2.">SAT DVB-S2</value>
++        <value comment="Tuning Mode is currently Cable Annex A.">Cable Annex A</value>
++        <value comment="Tuning Mode is currently Cable Annex B.">Cable Annex B</value>
++        <value comment="Tuning Mode is currently Cable Annex C.">Cable Annex C</value>
++        <value comment="Tuning Mode is currently Cable Annex D.">Cable Annex D</value>
++        <value comment="Tuning Mode is currently DVB-T.">DVB-T</value>
++        <value comment="Tuning Mode is currently ATSC.">ATSC</value>
++        <value comment="Tuning Mode is currently Terrestrial Analogue.">Terrestrial Analogue</value>
++        <value comment="Tuning Mode is currently Cable Analogue.">Cable Analogue</value>
++        <value comment="Tuning Mode is currently Unknown Mode.">Unknown Mode</value>
++      </values>
++    </syntax>
++  </attribute>
++  <attribute name="StatusMode">
++    <nodeid>Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}</nodeid>
++    <status>mandatory</status>
++    <access>read-only</access>
++    <description>DVBT Status Mode</description>
++    <syntax type="string">
++      <values>
++        <value comment="Tuner Status Mode is currently SAT DVB-S.">SAT DVB-S</value>
++        <value comment="Tuner Status Mode is currently SAT DVB-S2.">SAT DVB-S2</value>
++        <value comment="Tuner Status Mode is currently Cable Annex A.">Cable Annex A</value>
++        <value comment="Tuner Status Mode is currently Cable Annex B.">Cable Annex B</value>
++        <value comment="Tuner Status Mode is currently Cable Annex C.">Cable Annex C</value>
++        <value comment="Tuner Status Mode is currently Cable Annex D.">Cable Annex D</value>
++        <value comment="Tuner Status Mode is currently DVB-T.">DVB-T</value>
++        <value comment="Tuner Status Mode is currently ATSC.">ATSC</value>
++        <value comment="Tuner Status Mode is currently Terrestrial Analogue.">Terrestrial Analogue</value>
++        <value comment="Tuner Status Mode is currently Cable Analogue.">Cable Analogue</value>
++        <value comment="Tuner Status Mode is currently Unknown Mode.">Unknown Mode</value>
++      </values>
++    </syntax>
++  </attribute>
++</tns:mgmtns>
+\ No newline at end of file
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/mgmtif_dslf.h diagnostics-1.3-new/apps/mifd/mgmtif/mgmtif_dslf.h
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/mgmtif_dslf.h	2016-05-27 13:43:23.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mgmtif/mgmtif_dslf.h	2016-05-31 13:53:28.739955329 +0100
+@@ -1513,6 +1513,21 @@
+ 
+ #define DSLF_X_SKY_COM_DVBS_TUNER_TUNERENTRY_NOTIFY mif_dslf_x_sky_com_dvbs_tuner_notify
+ 
++/* mgmtif_dslf_x_sky_com_dvbt_tuner_tunerentry  */
++#ifdef MGMTIF_DSLF_H_RM4061_DVBT_TUNER
++int mif_dslf_x_sky_com_dvbt_tuner_reg (struct mif_request_s *req);
++#define DSLF_X_SKY_COM_DVBT_TUNER_TUNERENTRY_REG  mif_dslf_x_sky_com_dvbt_tuner_reg
++
++int mif_dslf_x_sky_com_dvbt_tuner_get_config (struct mif_request_s *req, int id);
++#define DSLF_X_SKY_COM_DVBT_TUNER_TUNERENTRY_GET_CONFIG mif_dslf_x_sky_com_dvbt_tuner_get_config
++
++int mif_dslf_x_sky_com_dvbt_tuner_set_config (struct mif_request_s *req, int id);
++#define DSLF_X_SKY_COM_DVBT_TUNER_TUNERENTRY_SET_CONFIG mif_dslf_x_sky_com_dvbt_tuner_set_config
++
++int mif_dslf_x_sky_com_dvbt_tuner_notify (struct mif_request_s *req, int id,
++        int notification, mif_notify_t notify_func, mifd_conn_t *mconn);
++#define DSLF_X_SKY_COM_DVBT_TUNER_TUNERENTRY_NOTIFY mif_dslf_x_sky_com_dvbt_tuner_notify
++#endif
+ 
+ /* Name: ScanChannelEntry
+  * Id: Device.Services.STBService.{i}.Components.FrontEnd.{i}.X_SKY_COM_DVBS.Tuner.{i}.ScanChannel.{i}
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/mgmtif_dslf_stubs_status.h diagnostics-1.3-new/apps/mifd/mgmtif/mgmtif_dslf_stubs_status.h
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/mgmtif_dslf_stubs_status.h	2016-05-27 13:43:23.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mgmtif/mgmtif_dslf_stubs_status.h	2016-06-20 14:17:54.584654365 +0100
+@@ -105,6 +105,9 @@
+ /*SupportMCU Mains power stats*/
+ #undef MGMTIF_DSLF_H_RM1766_MCU_MAINS_POWER_STATS
+ 
++/* Turn ON/OFF DVBT Tuner */
++#undef MGMTIF_DSLF_H_RM4061_DVBT_TUNER
++
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+ */
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbt_tuner.c diagnostics-1.3-new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbt_tuner.c
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbt_tuner.c	1970-01-01 01:00:00.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mgmtif/mgmtif_dslf_x_sky_com_dvbt_tuner.c	2016-06-07 11:05:27.085204651 +0100
+@@ -0,0 +1,703 @@
++
++/*
++ *
++ * Copyright (C) 2013  Pace Plc
++ * All Rights Reserved.
++ * Automatically generated by mgmtns.pl. Please do not edit unless you know what you are doing 
++ * as far as changing the datamodels are concerned.
++ */
++/**
++ * filemgmtif_dslf_x_sky_com_dvbt_tuner.c
++ *
++ * Implementation for mgmtif_dslf_x_sky_com_dvbt_tuner
++**/
++
++#include <fcntl.h>
++#include <stdlib.h>
++#include <sys/syslog.h>
++#include <librgw_compat/lib_cms.h>
++#include "mgmtif_dslf.h"
++#include "mgmtns_dslf.h"
++#include "vendor_hook_x_sky_com_dvbt_tuner.h"
++#include "vendor_hook_x_sky_com_dvbt_tuner.c"
++#define DESCRIPTION_STR     ""
++#define SPECVERSION_STR     "1.0"
++ 
++ /* shortcut for readability */
++#define DEVICE(x) __CONCAT(DEVICE_SERVICES_STBSERVICE_COMPONENTS_FRONTEND_X_SKY_COM_DVBT_TUNER_TUNERENTRY_,x)
++
++#define BUFFER_LENGTH	(256)
++
++int
++mif_dslf_x_sky_com_dvbt_tuner_reg(struct mif_request_s *req)
++{
++	struct mif_node_s *mn = NULL;
++	struct mif_attribute_s *ma = NULL;
++	if (!req || !(mn = mif_request_node(req))) {
++		return EINVAL;
++	}
++	if (!mn->mn_attr) {
++		return EOK;
++	}
++	for (ma = mn->mn_attr; ma->ma_name; ma++) {
++		switch (ma->ma_id) {
++			case DEVICE(TUNEDVBTMODULATIONPSK):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTMODULATIONQAM):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTFREQUENCY):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTCODERATELP):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTCODERATEHP):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTBANDWIDTH):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTHIERARCHY):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTGUARDINTERVAL):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTTRANSMISSIONMODE):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBTINVERSION):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2REQUESTTYPE):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2PLP):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2MANDATORYFREQUENCY):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2MANDATORYBANDWIDTH):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYVALIDFLAGS):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYPLPDATARATE):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYSPATIALMUX):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYGUARDINTERVAL):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYTRANSMISSIONMODE):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYPAPRMODE):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYPILOTPATTERN):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYEXTCARRIER):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYROTATEDCONSTELLATION):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYPLPTYPE):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYFRAMELENGTH):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYFEFPRESENT):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYFEFLENGTH):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEDVBT2DISCRETIONARYSPECTRUMINVERSION):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTMODULATIONPSK):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTMODULATIONQAM):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTFREQUENCY):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTSYMBOLRATE):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTCODERATELP):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTCODERATEHP):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTBERWINDOW):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTBERCOUNT):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTSIGNALSTRENGTH):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTINVERSION):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBTSIGNALSTATUS):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBT2FLAGS):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBT2FREQUENCY):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBT2BERWINDOW):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBT2BERCOUNT):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBT2SIGNALSTRENGTH):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBT2SPECTRUMINVERSION):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSDVBT2SIGNALSTATUS):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(RXPOWERLEVEL):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(SNR):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUS):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNERSTATE):
++				ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(TUNEMODE):
++					ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			case DEVICE(STATUSMODE):
++					ma->ma_flags |= MIF_ATTR_FLAG_READOK;
++			break;
++			default:
++			break;
++		}
++	}
++	return EOK;
++}
++
++int
++mif_dslf_x_sky_com_dvbt_tuner_get_config(struct mif_request_s *req, int id)
++{
++	int sts = 1;
++	char buf[BUFFER_LENGTH + 1];
++	char *deviceID = NULL;
++	char proc_device[VENDOR_DTT_TUNER_PROC_DEVICE_NAME_BUFFER + 1];
++	unsigned int uint_val = 0;
++	int int_val = 0;
++	int val = 0;
++	int err;
++	int instance;
++	err = mif_request_get_instance(req, &instance, 0);
++	if (err != EOK) {
++		return err;
++	}
++	snprintf(proc_device, sizeof(proc_device), VENDOR_DTT_TUNER_PROC_FILENAME, instance);
++	deviceID = proc_device;
++#ifdef VENDOR_HOOK_DTT_TUNER_USE_STATIC_TEST_DATA
++	gDTTTunerInstanceNumber = instance;
++#endif
++
++	switch (id) {
++		case DEVICE(TUNEDVBTMODULATIONPSK):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbtmodulationpsk(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(TUNEDVBTMODULATIONQAM):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbtmodulationqam(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(TUNEDVBTFREQUENCY):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbtfrequency(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBTCODERATELP):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbtcoderatelp(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBTCODERATEHP):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbtcoderatehp(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBTBANDWIDTH):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbtbandwidth(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBTHIERARCHY):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbthierarchy(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBTGUARDINTERVAL):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbtguardinterval(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBTTRANSMISSIONMODE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbttransmissionmode(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBTINVERSION):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbtinversion(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(TUNEDVBT2REQUESTTYPE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2requesttype(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2PLP):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2plp(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2MANDATORYFREQUENCY):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2mandatoryfrequency(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2MANDATORYBANDWIDTH):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2mandatorybandwidth(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYVALIDFLAGS):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryvalidflags(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYPLPDATARATE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryplpdatarate(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYSPATIALMUX):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryspatialmux(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYGUARDINTERVAL):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryguardinterval(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYTRANSMISSIONMODE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionarytransmissionmode(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYPAPRMODE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionarypaprmode(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYPILOTPATTERN):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionarypilotpattern(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYEXTCARRIER):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryextcarrier(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYROTATEDCONSTELLATION):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryrotatedconstellation(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYPLPTYPE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryplptype(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYFRAMELENGTH):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryframelength(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYFEFPRESENT):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryfefpresent(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYFEFLENGTH):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryfeflength(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(TUNEDVBT2DISCRETIONARYSPECTRUMINVERSION):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryspectruminversion(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBTMODULATIONPSK):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtmodulationpsk(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(STATUSDVBTMODULATIONQAM):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtmodulationqam(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(STATUSDVBTFREQUENCY):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtfrequency(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBTSYMBOLRATE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtsymbolrate(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBTCODERATELP):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtcoderatelp(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBTCODERATEHP):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtcoderatehp(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBTBERWINDOW):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtberwindow(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBTBERCOUNT):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtbercount(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBTSIGNALSTRENGTH):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtsignalstrength(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBTINVERSION):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtinversion(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(STATUSDVBTSIGNALSTATUS):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbtsignalstatus(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(STATUSDVBT2FLAGS):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbt2flags(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBT2FREQUENCY):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbt2frequency(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBT2BERWINDOW):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbt2berwindow(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBT2BERCOUNT):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbt2bercount(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBT2SIGNALSTRENGTH):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbt2signalstrength(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBT2SPECTRUMINVERSION):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbt2spectruminversion(deviceID, &uint_val, sizeof(uint_val));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, &uint_val, sizeof(uint_val));
++		}
++		case DEVICE(STATUSDVBT2SIGNALSTATUS):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusdvbt2signalstatus(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++				break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(RXPOWERLEVEL):
++		{
++ 			 sts = get_x_sky_com_dvbt_tuner_rxpowerlevel(deviceID, &int_val, sizeof(int_val));
++ 			 if (sts != EOK) {
++ 					 break;
++ 			 }
++ 			 return mif_request_set_value(req, id, &int_val, sizeof(int_val));
++		}
++		case DEVICE(SNR):
++		{
++			 sts = get_x_sky_com_dvbt_tuner_snr(deviceID, &int_val, sizeof(int_val));
++			 if (sts != EOK) {
++					 break;
++			 }
++			 return mif_request_set_value(req, id, &int_val, sizeof(int_val));
++		}
++		case DEVICE(STATUS):
++		{
++			 sts = get_x_sky_com_dvbt_tuner_status(deviceID, buf, sizeof(buf));
++			 if (sts != EOK) {
++					 break;
++			 }
++			 return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(TUNERSTATE):
++		{
++			 sts = get_x_sky_com_dvbt_tuner_tunerstate(deviceID, buf, sizeof(buf));
++			 if (sts != EOK) {
++					 break;
++			 }
++			 return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(TUNEMODE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_tunemode(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++					break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		case DEVICE(STATUSMODE):
++		{
++			sts = get_x_sky_com_dvbt_tuner_statusmode(deviceID, buf, sizeof(buf));
++			if (sts != EOK) {
++					break;
++			}
++			return mif_request_set_value(req, id, buf, sizeof(buf));
++		}
++		default:
++			syslog(LOG_ERR, "Unsupported Get Request in %s\n", __FUNCTION__);
++			return EFAIL;
++		break;
++	}
++	return EFAIL;
++}
++
++int
++mif_dslf_x_sky_com_dvbt_tuner_set_config(struct mif_request_s *req, int id)
++{
++	int sts;
++	cm_tran_id_t tid = mif_request_tid(req);
++	char buf[BUFFER_LENGTH];
++	int val;
++	int err;
++	int instance;
++	err = mif_request_get_instance(req, &instance, 0);
++	if (err != EOK) {
++		return err;
++	}
++	instance++;
++
++	switch (id) {
++		default:
++			sts = ENOENT;
++		break;
++	}
++	return sts;
++}
++
++int
++mif_dslf_x_sky_com_dvbt_tuner_notify(struct mif_request_s *req, int id,
++			int notification, mif_notify_t func,
++			mifd_conn_t *mconn)
++{
++	int sts = EOK;
++	int cms_modid;
++	cm_tran_id_t tid = mif_request_tid(req);
++	switch (id) {
++		default:
++		{
++			/* To support active notification, the corresponding cm notify
++			* callback has to be registered. On the other hand,
++			* nothing needs to be done at this layer for passive
++			* notification.
++			*/
++			if (notification == TW_MGMT_NOTIFY_ACTIVE) {
++				sts = ENOTSUP;
++			} else {
++				sts = EOK;
++			}
++			break;
++		}
++	}
++	return sts;
++}
++
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/mif_defs.mk diagnostics-1.3-new/apps/mifd/mgmtif/mif_defs.mk
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/mif_defs.mk	2016-05-27 13:43:23.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mgmtif/mif_defs.mk	2016-05-31 13:50:50.214068198 +0100
+@@ -254,6 +254,7 @@
+ 	mgmtif_dslf_deviceinfo_x_sky_com_supportmcu_wakeup.c \
+ 	mgmtif_dslf_x_sky_com_supportmcu_wakeup_config.c \
+ 	mgmtif_dslf_mesh.c \
++	mgmtif_dslf_x_sky_com_dvbt_tuner.c \
+ 	vendor_hooks.c
+ 
+ DSLF_FILES_ALL = \
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c diagnostics-1.3-new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c	2016-05-27 13:43:23.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbs_tuner.c	2016-06-01 15:22:38.255222348 +0100
+@@ -33,6 +33,7 @@
+ #include "librgw_compat/lib_errno.h"
+ 
+ #include "vendor_hooks.h"
++#include "vendor_hook_x_sky_com_tuner.h"
+ #include "vendor_hook_x_sky_com_dvbs_tuner.h"
+ 
+ /*---------------------------------------------------------------------------
+@@ -45,129 +46,16 @@
+ /* Used to Test Code locally, before CUnit Tests are written */
+ #undef VENDOR_HOOK_TUNER_USE_STATIC_TEST_DATA
+ 
+-/*
+-CDI Issue 19 Amendment 5
+-*/
+-/*!< Definitions and types. */
+-/*!< TunerMode definitions. */
+-#define TUNER_MODE_SAT_DVB_S       (0x00000001U)
+-#define TUNER_MODE_SAT_DVB_S2      (0x00000002U)
+-#define TUNER_MODE_CAB_ANNEX_A     (0x00000004U)
+-#define TUNER_MODE_CAB_ANNEX_B     (0x00000008U)
+-#define TUNER_MODE_CAB_ANNEX_C     (0x00000010U)
+-#define TUNER_MODE_CAB_ANNEX_D     (0x00000020U)
+-#define TUNER_MODE_TER_DVB_T       (0x00000040U)
+-#define TUNER_MODE_TER_ATSC        (0x00000080U)
+-#define TUNER_MODE_TER_ANALOGUE    (0x00000100U)
+-#define TUNER_MODE_CAB_ANALOGUE    (0x00000200U)
+-#define TUNER_MODE_TER_DVB_T2      (0x00000400U)
+-#define TUNER_MODE_CAB_DVB_C2      (0x00000800U)
+-#define TUNER_MODE_TER_ISDB_T      (0x00001000U)
+-#define TUNER_MODE_RESERVED_1      (0x01000000U)
+-
+-/*!< Tuner FEC definitions. */
+-#define TUNER_FEC_1_4     (0x00000001U)
+-#define TUNER_FEC_1_3     (0x00000002U)
+-#define TUNER_FEC_2_5     (0x00000004U)
+-#define TUNER_FEC_5_11    (0x00000008U)
+-#define TUNER_FEC_1_2     (0x00000010U)
+-#define TUNER_FEC_3_5     (0x00000020U)
+-#define TUNER_FEC_2_3     (0x00000040U)
+-#define TUNER_FEC_3_4     (0x00000080U)
+-#define TUNER_FEC_4_5     (0x00000100U)
+-#define TUNER_FEC_5_6     (0x00000200U)
+-#define TUNER_FEC_6_7     (0x00000400U)
+-#define TUNER_FEC_7_8     (0x00000800U)
+-#define TUNER_FEC_8_9     (0x00001000U)
+-#define TUNER_FEC_9_10    (0x00002000U)
+-#define TUNER_FEC_AUTO    (0x80000000U)
+-
+-/*!< Tuner Modulation QAM definitions. */
+-#define TUNER_MODULATION_4_QAM       (0x00000001U)
+-#define TUNER_MODULATION_16_QAM      (0x00000002U)
+-#define TUNER_MODULATION_32_QAM      (0x00000004U)
+-#define TUNER_MODULATION_64_QAM      (0x00000008U)
+-#define TUNER_MODULATION_128_QAM     (0x00000010U)
+-#define TUNER_MODULATION_256_QAM     (0x00000020U)
+-#define TUNER_MODULATION_1024_QAM    (0x00000040U)
+-#define TUNER_MODULATION_4096_QAM    (0x00000080U)
+-#define TUNER_MODULATION_QAM_AUTO    (0x80000000U)
+-
+-/*!< Tuner Modulation QPSK definitions. */
+-#define TUNER_MODULATION_QPSK        (0x00000001U)
+-#define TUNER_MODULATION_8PSK        (0x00000002U)
+-#define TUNER_MODULATION_OQPSK       (0x00000004U)
+-#define TUNER_MODULATION_16APSK      (0x00000008U)
+-#define TUNER_MODULATION_32APSK      (0x00000010U)
+-#define TUNER_MODULATION_DQPSK       (0x00000020U)
+-#define TUNER_MODULATION_PSK_AUTO    (0x80000000U)
+-
+-/*!< Tuner Inversion definitions. */
+-#define TUNER_INVERSION_OFF     (1U)
+-#define TUNER_INVERSION_ON      (2U)
+-#define TUNER_INVERSION_AUTO    (255U)
+-
+-/*!< Tuner Signal Status definitions. */
+-#define TUNER_SIGNAL_NO_CARRIER    (0x00U)
+-#define TUNER_SIGNAL_CARRIER       (0x01U)
+-#define TUNER_SIGNAL_DEMOD         (0x02U)
+-#define TUNER_SIGNAL_SYNC          (0x04U)
+-#define TUNER_SCAN_LOCKED          (0x10U)
+-#define TUNER_SCAN_FAILED          (0x20U)
+-
+-#define TUNER_SIGNAL_NO_CARRIER_STR    ("No Carrier")
+-#define TUNER_SIGNAL_CARRIER_STR       ("Carrier")
+-#define TUNER_SIGNAL_DEMOD_STR         ("Demod")
+-#define TUNER_SIGNAL_SYNC_STR          ("Sync")
+-#define TUNER_SCAN_LOCKED_STR          ("Scan Locked")
+-#define TUNER_SCAN_FAILED_STR          ("Scan Failed")
+-#define TUNER_SIGNAL_STATUS_UNKNOWN    ("Unknown Signal Status")
+-
+-#define TUNER_SIGNAL_CONCAT_STRING(ptr, size, string, prev)\
+-	if (prev) {\
+-		strncat(ptr, ", ", size);\
+-	}\
+-	strncat (ptr, string, size);
+-
+ /*---------------------------------------------------------------------------
+ ** Typedefs
+ */
+-
+-/*
+- *!< Tuner states
+- */
+-typedef enum {
+-	TUNER_CLOSED = 0,
+-	TUNER_OPENED,
+-	TUNER_TUNING,
+-	TUNER_CARRIERLOCKED,
+-	TUNER_DEMODLOCKED,
+-	TUNER_SYNCLOCKED,
+-	TUNER_SCANFAILED,
+-	TUNER_SCANTUNING,
+-	TUNER_SCANLOCKED,
+-	TUNER_SCANCONFIGURED,
+-	TUNER_UNKNOWN_STATE = -1,
+-} eTuner_state_t;
+-
+-/*
+- *!< Tuner proc info and Tuner state
+- */
+-typedef struct {
+-	char		  *pFullData;
+-	unsigned int  uFullDataSize;
+-	eTuner_state_t eTunerState;
+-}tuner_info_t;
+-
++/* NONE */
+ 
+ /*---------------------------------------------------------------------------
+ ** Local Function Prototypes
+ */
+-static char *tunerStateToString(const eTuner_state_t TunerState);
+-static char *tunerModeToString(int TunerMode);
+-static char *tunerModulationToString(int TunerMode, int TunerModulation);
+ static char *tunerFecToString(int FEC);
+-static char *tunerInversionToString(int Inversion);
++static char *tunerModulationToString(int TunerMode, int TunerModulation);
+ static tuner_info_t *getTunerInfo( char *deviceId );
+ 
+ /*---------------------------------------------------------------------------
+@@ -314,10 +202,6 @@
+ 	return numberOfTuners;
+ }
+ 
+-/*---------------------------------------------------------------------------
+-** Local Functions
+-*/
+-
+ /*!
+ ** ------------------------------------------------------------------------------------------
+ ** @brief Return Tuner State as a string.
+@@ -326,7 +210,7 @@
+ **
+ ** @retval Tuner State as a string
+ */
+-static char *tunerStateToString(const eTuner_state_t TunerState)
++char *tunerStateToString(const eTuner_state_t TunerState)
+ {
+ 	switch (TunerState){
+ 		case TUNER_CLOSED:
+@@ -385,7 +269,7 @@
+ **
+ ** @retval Tuner Mode as a string
+ */
+-static char *tunerModeToString(int TunerMode)
++char *tunerModeToString(int TunerMode)
+ {
+ 	switch (TunerMode){
+ 		case TUNER_MODE_SAT_DVB_S:
+@@ -396,6 +280,14 @@
+ 		{
+ 			return "SAT DVB-S2";
+ 		}
++		case TUNER_MODE_TER_DVB_T:
++		{
++			return "TER DVB-T";
++		}
++		case TUNER_MODE_TER_DVB_T2:
++		{
++			return "TER DVB-T2";
++		}
+ 		default:
+ 		{
+ 			return "Unknown Mode";
+@@ -406,49 +298,86 @@
+ 
+ /*!
+ ** ------------------------------------------------------------------------------------------
+-** @brief Return Tuner Modulation as a string.
++** @brief Return Tuner Signal as a string.
+ **
+-** @param[in] TunerMode value
+-** @param[in] TunerModulation value
++** @param[in] status value
+ **
+-** @retval Tuner Modulation as a string
++** @retval Tuner Signal Status as a string
+ */
+-static char *tunerModulationToString(int TunerMode, int TunerModulation)
++char *tunerSignalToString (const int status)
+ {
+-	if ((TUNER_MODE_SAT_DVB_S == TunerMode) || (TUNER_MODE_SAT_DVB_S2 == TunerMode))	{
+-		switch ( TunerModulation ){
+-			case TUNER_MODULATION_QPSK:
+-			{
+-				return "QPSK";
+-			}
+-			case TUNER_MODULATION_8PSK:
+-			{
+-				return "8PSK";
+-			}
+-			case TUNER_MODULATION_OQPSK:
+-			{
+-				return "OQPSK";
+-			}
+-			case TUNER_MODULATION_16APSK:
+-			{
+-				return "16APSK";
+-			}
+-			case TUNER_MODULATION_32APSK:
+-			{
+-				return "32APSK";
+-			}
+-			default:
+-			{
+-				return "Unknown DVB-S/S2 Modulation";
+-			}
+-		}
++	/* Accomodate all statuses, plus ", ", with space to spare. */
++	static char string[VENDOR_TUNER_MAX_SIGNAL_STATUS_SIZE];
++	bool previous = false;
++
++	memset (string, 0, sizeof (string));
++	if (status == TUNER_SIGNAL_NO_CARRIER){
++		strncpy (string, TUNER_SIGNAL_NO_CARRIER_STR, sizeof (string) - 1);
++		previous = true;
+ 	}
+-	else{
+-		return "Unknown Modulation";
++	if (status & TUNER_SIGNAL_CARRIER){
++		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SIGNAL_CARRIER_STR, previous);
++		previous = true;
++	}
++	if (status & TUNER_SIGNAL_DEMOD){
++		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SIGNAL_DEMOD_STR, previous);
++		previous = true;
++	}
++	if (status & TUNER_SIGNAL_SYNC){
++		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SIGNAL_SYNC_STR, previous);
++		previous = true;
++	}
++	if (status & TUNER_SCAN_LOCKED){
++		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SCAN_LOCKED_STR, previous);
++		previous = true;
++	}
++	if (status & TUNER_SCAN_FAILED){
++		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SCAN_FAILED_STR, previous);
++		previous = true;
++	}
++	if (false == previous){
++		strncpy (string, TUNER_SIGNAL_STATUS_UNKNOWN, sizeof (string) - 1);
+ 	}
+ 
++	return string;
+ }
+ 
++
++/*!
++** ------------------------------------------------------------------------------------------
++** @brief Return Tuner Inversion as a string.
++**
++** @param[in] Inversion value
++**
++** @retval Tuner Inversion as a string
++*/
++char *tunerInversionToString(int Inversion)
++{
++	switch ( Inversion ){
++		case TUNER_INVERSION_OFF:
++		{
++			return "Off";
++		}
++		case TUNER_INVERSION_ON:
++		{
++			return "On";
++		}
++		case TUNER_INVERSION_AUTO:
++		{
++			return "Auto";
++		}
++		default:
++		{
++			return "Unknown Inversion";
++		}
++	}
++
++}
++
++/*---------------------------------------------------------------------------
++** Local Functions
++*/
++
+ /*!
+ ** ------------------------------------------------------------------------------------------
+ ** @brief Return Tuner FEC as a string.
+@@ -530,84 +459,52 @@
+ 
+ /*!
+ ** ------------------------------------------------------------------------------------------
+-** @brief Return Tuner Signal as a string.
++** @brief Return Tuner Modulation as a string.
+ **
+-** @param[in] status value
++** @param[in] TunerMode value
++** @param[in] TunerModulation value
+ **
+-** @retval Tuner Signal Status as a string
++** @retval Tuner Modulation as a string
+ */
+-static char *tunerSignalToString (const int status)
++static char *tunerModulationToString(int TunerMode, int TunerModulation)
+ {
+-	/* Accomodate all statuses, plus ", ", with space to spare. */
+-	static char string[VENDOR_TUNER_MAX_SIGNAL_STATUS_SIZE];
+-	bool previous = false;
+-
+-	memset (string, 0, sizeof (string));
+-	if (status == TUNER_SIGNAL_NO_CARRIER){
+-		strncpy (string, TUNER_SIGNAL_NO_CARRIER_STR, sizeof (string) - 1);
+-		previous = true;
+-	}
+-	if (status & TUNER_SIGNAL_CARRIER){
+-		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SIGNAL_CARRIER_STR, previous);
+-		previous = true;
+-	}
+-	if (status & TUNER_SIGNAL_DEMOD){
+-		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SIGNAL_DEMOD_STR, previous);
+-		previous = true;
+-	}
+-	if (status & TUNER_SIGNAL_SYNC){
+-		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SIGNAL_SYNC_STR, previous);
+-		previous = true;
+-	}
+-	if (status & TUNER_SCAN_LOCKED){
+-		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SCAN_LOCKED_STR, previous);
+-		previous = true;
+-	}
+-	if (status & TUNER_SCAN_FAILED){
+-		TUNER_SIGNAL_CONCAT_STRING(string, (sizeof(string) - 1), TUNER_SCAN_FAILED_STR, previous);
+-		previous = true;
++	if ((TUNER_MODE_SAT_DVB_S == TunerMode) || (TUNER_MODE_SAT_DVB_S2 == TunerMode))	{
++		switch ( TunerModulation ){
++			case TUNER_MODULATION_QPSK:
++			{
++				return "QPSK";
++			}
++			case TUNER_MODULATION_8PSK:
++			{
++				return "8PSK";
++			}
++			case TUNER_MODULATION_OQPSK:
++			{
++				return "OQPSK";
++			}
++			case TUNER_MODULATION_16APSK:
++			{
++				return "16APSK";
++			}
++			case TUNER_MODULATION_32APSK:
++			{
++				return "32APSK";
++			}
++			default:
++			{
++				return "Unknown DVB-S/S2 Modulation";
++			}
++		}
+ 	}
+-	if (false == previous){
+-		strncpy (string, TUNER_SIGNAL_STATUS_UNKNOWN, sizeof (string) - 1);
++	else{
++		return "Unknown Modulation";
+ 	}
+ 
+-	return string;
+ }
+ 
+ 
+ /*!
+ ** ------------------------------------------------------------------------------------------
+-** @brief Return Tuner Inversion as a string.
+-**
+-** @param[in] Inversion value
+-**
+-** @retval Tuner Inversion as a string
+-*/
+-static char *tunerInversionToString(int Inversion)
+-{
+-	switch ( Inversion ){
+-		case TUNER_INVERSION_OFF:
+-		{
+-			return "Off";
+-		}
+-		case TUNER_INVERSION_ON:
+-		{
+-			return "On";
+-		}
+-		case TUNER_INVERSION_AUTO:
+-		{
+-			return "Auto";
+-		}
+-		default:
+-		{
+-			return "Unknown Inversion";
+-		}
+-	}
+-
+-}
+-
+-/*!
+-** ------------------------------------------------------------------------------------------
+ ** @brief Copy the /proc entry to a buffer and cache it. If there is already an entry in the cache , return it
+ **		  unless the state of the device has changed from its previous state .
+ **
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbt_tuner.c diagnostics-1.3-new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbt_tuner.c
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbt_tuner.c	1970-01-01 01:00:00.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbt_tuner.c	2016-06-06 15:43:10.951441039 +0100
+@@ -0,0 +1,1521 @@
++/*
++** @file          vendor_hook_x_sky_com_dvbt_tuner.c
++** @author        David Roberts
++** @date          31/05/2016
++** @addtogroup Diagnostics - TR-069
++**
++**
++** $Log$
++*/
++/**************************************************************************************************************
++*
++* Description:  Interface to implement Object
++*				Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}
++* -------------------------------------------------------------------------------------------------------------
++* Copyright (C) 2016 Sky CP Ltd, All Rights Reserved
++* -------------------------------------------------------------------------------------------------------------
++* SKY PROPRIETARY/CONFIDENTIAL
++* Not for distribution outside of the BSKYB Group without approval
++**************************************************************************************************************/
++/*---------------------------------------------------------------------------
++** Includes
++*/
++#include <sys/types.h>
++#include <sys/ioctl.h>
++#include <sys/syslog.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <stdint.h>
++#include <string.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include "librgw_compat/lib_errno.h"
++
++#include "vendor_hooks.h"
++#include "vendor_hook_x_sky_com_tuner.h"
++#include "vendor_hook_x_sky_com_dvbs_tuner.h"
++
++/*---------------------------------------------------------------------------
++** Defines and Macros
++*/
++#ifndef EOK
++#define EOK 0
++#endif
++
++/* Used to Test Code locally, before CUnit Tests are written */
++#undef VENDOR_HOOK_DTT_TUNER_USE_STATIC_TEST_DATA
++
++/*---------------------------------------------------------------------------
++** Local Function Prototypes
++*/
++static tuner_info_t *getDTTTunerInfo( char *deviceId );
++
++/*---------------------------------------------------------------------------
++** Data
++*/
++static vendor_hook_cache_t  *gDTTTunerCache = NULL;
++
++#ifdef VENDOR_HOOK_DTT_TUNER_USE_STATIC_TEST_DATA
++	int  gDTTTunerInstanceNumber = 0;
++	static char *testTunerInfo[] = {
++
++			"Tuner CDI information\n"
++			"Tuner - 0\n"
++			"State - 0\n"
++		,
++
++			"Tuner CDI information\n"
++			"Tuner - 1\n"
++			"State - 5\n"
++			"Last tune request - Mode 1024\n"
++			"Last tune request - Request Type 128\n"
++			"Last tune request - PLP 0\n"
++			"Last tune request - Manatory Frequency 1111799356\n"
++			"Last tune request - Manatory Bandwidth 0\n"
++			"Last tune request - Discretionary Valid Flags 31329\n"
++			"Last tune request - Discretionary PLP Data Rate 1701229848\n"
++			"Last tune request - Discretionary Spatial Mux 132\n"
++			"Last tune request - Discretionary Guard Interval 200\n"
++			"Last tune request - Discretionary Transmission Mode 133\n"
++			"Last tune request - Discretionary Papr Mode 68\n"
++			"Last tune request - Discretionary Pilot Pattern 91\n"
++			"Last tune request - Discretionary Ext Carrier 24\n"
++			"Last tune request - Discretionary Rotated Constellation 5\n"
++			"Last tune request - Discretionary PLP Type 6\n"
++			"Last tune request - Discretionary Frame Length 65\n"
++			"Last tune request - Discretionary FEF Present 47\n"
++			"Last tune request - Discretionary FEF Length 2891126620\n"
++			"Last tune request - Discretionary Spectrum Inversion 38\n"
++			"		Tuner status:\n"
++			"Tuner Status - Mode 1024\n"
++			"Tuner Status - SNR 0\n"
++			"Tuner Status - RxPowerLevel 0\n"
++			"Tuner Status - DVBT2 Flags 7\n"
++			"Tuner Status - Hz 169\n"
++			"Tuner Status - BER window 2702977704\n"
++			"Tuner Status - BER count 2629226392\n"
++			"Tuner Status - Signal Strength 164\n"
++			"Tuner Status - Spectrum Inversion 7\n"
++			"Tuner Status - Signal Status 7\n"
++		,
++		"",
++	};
++#endif
++
++/*---------------------------------------------------------------------------
++** Local Functions
++*/
++
++/*!
++** ------------------------------------------------------------------------------------------
++** @brief Return Tuner Modulation as a string.
++**
++** @param[in] TunerMode value
++** @param[in] TunerModulation value
++**
++** @retval Tuner Modulation as a string
++*/
++static char *dttTunerModulationToString(int TunerMode, int TunerModulation)
++{
++	if ((TUNER_MODE_TER_DVB_T == TunerMode) || (TUNER_MODE_TER_DVB_T2 == TunerMode))	{
++		switch ( TunerModulation ){
++			case TUNER_MODULATION_QAM_AUTO:
++			{
++				return "AUTO";
++			}
++			case TUNER_MODULATION_QPSK:
++			{
++				return "QPSK";
++			}
++			case TUNER_MODULATION_16_QAM:
++			{
++				return "QAM16";
++			}
++			case TUNER_MODULATION_32_QAM:
++			{
++				return "QAM32";
++			}
++			case TUNER_MODULATION_64_QAM:
++			{
++				return "QAM64";
++			}
++			case TUNER_MODULATION_128_QAM:
++			{
++				return "QAM128";
++			}
++			case TUNER_MODULATION_256_QAM:
++			{
++				return "QAM256";
++			}
++			case TUNER_MODULATION_1024_QAM:
++			{
++				return "QAM1024";
++			}
++			case TUNER_MODULATION_4096_QAM:
++			{
++				return "QAM4096";
++			}
++			default:
++			{
++				return "Unknown DVB-T/T2 Modulation";
++			}
++		}
++	}
++	else{
++		return "Unknown Modulation";
++	}
++
++}
++
++/*!
++** ------------------------------------------------------------------------------------------
++** @brief Copy the /proc entry to a buffer and cache it. If there is already an entry in the cache , return it
++**		  unless the state of the device has changed from its previous state .
++**
++** @param[in] pDeviceID - /proc entry associated with the device
++**
++** @returns tuner_info_t* - Pointer to a cache entry thats available
++**
++** @retval NULL - NULL if there is an error parsing the /proc
++** @retval pHDMIInfo - In the succesful case
++*/
++static tuner_info_t *getDTTTunerInfo( char *deviceId )
++{
++	tuner_info_t *pTunerInfo = NULL;
++	int32_t int_value = 0;
++#ifndef VENDOR_HOOK_DTT_TUNER_USE_STATIC_TEST_DATA
++	char buffer[VENDOR_DTT_TUNER_PROC_DEVICE_BUFFER + 1];
++#endif
++
++	if ( NULL == gDTTTunerCache ){
++		/*!< Create a cache with Expiry Time 0 ... 0 means cache doesnt expire at all */
++		/*!< The cache is deleted in the last parameter, so is only cached during get. */
++		gDTTTunerCache = vendor_hook_createCache( BSKYB_VENDOR_DTT_TUNER_CACHE_EXPIRE_TIME  );
++	}
++
++	pTunerInfo = vendor_hook_getCacheEntry( gDTTTunerCache, deviceId );
++	if ( pTunerInfo != NULL ){
++		return  pTunerInfo;
++	}
++
++	pTunerInfo = ( tuner_info_t *) calloc( 1, VENDOR_DTT_TUNER_PROC_DEVICE_BUFFER + 1 + sizeof( tuner_info_t ) );
++	if(NULL == pTunerInfo){
++		return NULL;
++	}
++	pTunerInfo->pFullData = (char*)pTunerInfo + sizeof( tuner_info_t );
++
++#ifndef VENDOR_HOOK_DTT_TUNER_USE_STATIC_TEST_DATA
++	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer)) ) {
++		strncpy( pTunerInfo->pFullData, ( char* ) buffer, VENDOR_DTT_TUNER_PROC_DEVICE_BUFFER );
++		pTunerInfo->uFullDataSize = strlen( pTunerInfo->pFullData );
++	}else {
++		if(pTunerInfo != NULL){
++			free(pTunerInfo);
++			pTunerInfo = NULL ;
++		}
++		return NULL;
++	}
++
++#else
++	strncpy( pTunerInfo->pFullData, ( char* ) testTunerInfo[ gTunerInstanceNumber ], VENDOR_DTT_TUNER_PROC_DEVICE_BUFFER );
++	pTunerInfo->uFullDataSize = strlen( pTunerInfo->pFullData );
++#endif
++
++
++	/*!< Tuner State is required multiple times so save in pTunerInfo */
++	/*!< Also required before its been obtained. */
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData,
++													"State - ",
++													&int_value) ){
++		/* Data exists, but not tuner State, so set to Unknown State. */
++		pTunerInfo->eTunerState = TUNER_UNKNOWN_STATE;
++	}else{
++		pTunerInfo->eTunerState = (eTuner_state_t)int_value;
++	}
++
++	vendor_hook_addCacheEntry( gDTTTunerCache, pTunerInfo, deviceId );
++	return pTunerInfo;
++}
++
++
++
++/*---------------------------------------------------------------------------
++** Global Functions
++*/
++
++/*!
++** ------------------------------------------------------------------------------------------
++** @brief Calculate number of DTT tuners that exist on the STB
++**        by checking if the dtt /proc exists
++**
++** @param[in] None
++**
++** @retval Number of tuners that exist on STB
++*/
++int VendorTunerCalculateNumberOfDTTTuners(void)
++{
++	static int numberOfTuners = 0;
++
++#ifndef VENDOR_HOOK_DTT_TUNER_USE_STATIC_TEST_DATA
++	char buffer[PROCPROXY_BUFF_SIZE];
++	char message[PROCPROXY_MSG_SIZE];
++	/* Is this first entry to this function ? */
++	if ( 0 == numberOfTuners ){
++		memset(buffer, 0, sizeof(buffer));
++		memset(message, 0, sizeof(message));
++		snprintf(message, sizeof(message), "%s/", VENDOR_DTT_TUNER_PROC_DIRECTORY);
++		if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_DIR, message, buffer, sizeof (buffer))) {
++			return 0;
++		}else{
++			numberOfTuners = atoi(buffer);	
++		}
++	}
++#else
++	numberOfTuners = VENDOR_DTT_TUNER_NUMBER_OF_TEST_TUNERS;
++#endif
++	return numberOfTuners;
++}
++
++/*---------------------------------------------------------------------------
++** Local Functions
++*/
++
++int get_x_sky_com_dvbt_tuner_tunedvbtmodulationpsk(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int32_t int_value = 0;
++	int32_t int_value2 = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Last tune request - Mode ", &int_value) ){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Last tune request - Modulation PSK ", &int_value2) ){
++		return EFAIL;
++	}
++	if (0 == int_value2){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", dttTunerModulationToString(int_value, int_value2));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbtmodulationqam(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int32_t int_value = 0;
++	int32_t int_value2 = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Last tune request - Mode ", &int_value) ){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Last tune request - Modulation QAM ", &int_value2) ){
++		return EFAIL;
++	}
++	if (0 == int_value2){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", dttTunerModulationToString(int_value, int_value2));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbtfrequency(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - MHz ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbtcoderatelp(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - CodeRate LP ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbtcoderatehp(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - CodeRate HP ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbtbandwidth(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Bandwidth ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbthierarchy(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Hierarchy ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbtguardinterval(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Guard Interval ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbttransmissionmode(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Transmission Mode ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbtinversion(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int int_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Last tune request - Inversion ", &int_value) ){
++		return EFAIL;
++	}
++	if (0 == int_value){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", tunerInversionToString(int_value));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2requesttype(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Request Type ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2plp(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - PLP ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2mandatoryfrequency(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Manatory Frequency ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2mandatorybandwidth(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Manatory Bandwidth ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryvalidflags(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Valid Flags ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryplpdatarate(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary PLP Data Rate ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryspatialmux(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Spatial Mux ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryguardinterval(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Guard Interval ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionarytransmissionmode(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Transmission Mode ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionarypaprmode(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Papr Mode ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionarypilotpattern(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Pilot Pattern ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryextcarrier(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Ext Carrier ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryrotatedconstellation(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Rotated Constellation ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryplptype(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary PLP Type ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryframelength(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Frame Length ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryfefpresent(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary FEF Present ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryfeflength(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary FEF Length ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryspectruminversion(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "Last tune request - Discretionary Spectrum Inversion ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtmodulationpsk(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int32_t int_value = 0;
++	int32_t int_value2 = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Tuner Status - Mode ", &int_value) ){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - Modulation PSK ", &int_value2) ){
++		return EFAIL;
++	}
++	if (0 == int_value2){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", dttTunerModulationToString(int_value, int_value2));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtmodulationqam(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int32_t int_value = 0;
++	int32_t int_value2 = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Tuner Status - Mode ", &int_value) ){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - Modulation QAM ", &int_value2) ){
++		return EFAIL;
++	}
++	if (0 == int_value2){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", dttTunerModulationToString(int_value, int_value2));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtfrequency(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - Hz ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtsymbolrate(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData,"DVB-T Tuner Status - SymbolRate ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtcoderatelp(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - CodeRate LP ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtcoderatehp(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - CodeRate HP ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtberwindow(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - BER window ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtbercount(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - BER count ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtsignalstrength(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - Signal Strength ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtinversion(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int int_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - Inversion ", &int_value) ){
++		return EFAIL;
++	}
++	if (0 == int_value){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", tunerInversionToString(int_value));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbtsignalstatus(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int int_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "DVB-T Tuner Status - Signal Status ", &int_value) ){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", tunerSignalToString(int_value));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2flags(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T2 Tuner Status - Flags ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2frequency(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T2 Tuner Status - Hz ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2berwindow(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T2 Tuner Status - BER window ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2bercount(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T2 Tuner Status - BER count ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2signalstrength(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T2 Tuner Status - Signal Strength ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2spectruminversion(char* pDeviceID, unsigned int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	unsigned int uint_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractUINT32FromData(pTunerInfo->pFullData, "DVB-T2 Tuner Status - Spectrum Inversion ", &uint_value) ){
++		return EFAIL;
++	}
++	*value = uint_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2signalstatus(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int int_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "DVB-T2 Tuner Status - Signal Status ", &int_value) ){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", tunerSignalToString(int_value));
++	return EOK;
++}
++int get_x_sky_com_dvbt_tuner_rxpowerlevel(char* pDeviceID, int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int int_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Tuner Status - RxPowerLevel ", &int_value) ){
++		return EFAIL;
++	}
++	*value = int_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_snr(char* pDeviceID, int *value, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int int_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++	*value = 0;
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Tuner Status - SNR ", &int_value) ){
++		return EFAIL;
++	}
++	*value = int_value;
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_status(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	/*!< Don't display Tuner Tuning state if it's closed. */
++	if (TUNER_CLOSED == pTunerInfo->eTunerState){
++		return EFAIL;
++	}
++	switch (pTunerInfo->eTunerState){
++		case TUNER_TUNING:
++		{
++			snprintf(buf, length, "Tuning in Progress");
++			break;
++		}
++		case TUNER_SYNCLOCKED:
++		{
++			snprintf(buf, length, "Tuned");
++			break;
++		}
++		default:
++		{
++			snprintf(buf, length, "Not Tuned");
++			break;
++		}
++	}
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunerstate(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", tunerStateToString(pTunerInfo->eTunerState));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_tunemode(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int int_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		return EFAIL;
++	}
++	if (0 == length){
++		return EFAIL;
++	}
++
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Last tune request - Mode ", &int_value) ){
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", tunerModeToString(int_value));
++	return EOK;
++}
++
++int get_x_sky_com_dvbt_tuner_statusmode(char* pDeviceID, char *buf, size_t length)
++{
++	tuner_info_t * pTunerInfo = NULL ;
++	int int_value = 0;
++	VENDOR_ASSERT(NULL != pDeviceID);
++	
++	if(NULL == pDeviceID){
++		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
++		vendor_hook_deleteCacheEntry(gDTTTunerCache, pDeviceID);
++		return EFAIL;
++	}
++	pTunerInfo = getDTTTunerInfo(pDeviceID);
++	if (( NULL == (void*)pTunerInfo) || (NULL == pTunerInfo->pFullData)){
++		VENDOR_LOG_WARN("%s: Invalid Tuner Data\n", __FUNCTION__ );
++		vendor_hook_deleteCacheEntry(gDTTTunerCache, pDeviceID);
++		return EFAIL;
++	}
++	if (0 == length){
++		vendor_hook_deleteCacheEntry(gDTTTunerCache, pDeviceID);
++		return EFAIL;
++	}
++	
++	if(FALSE == vendor_hooks_extractint32FromData(pTunerInfo->pFullData, "Tuner Status - Mode ", &int_value) ){
++		vendor_hook_deleteCacheEntry(gDTTTunerCache, pDeviceID);
++		return EFAIL;
++	}
++	snprintf(buf, length, "%s", tunerModeToString(int_value));
++	/*!<  The Cache is given a timeout of 0, which is no timeout. */
++	/*!<  The last Parameter on this device, so Cache no longer required. */
++	vendor_hook_deleteCacheEntry(gDTTTunerCache, pDeviceID);
++	return EOK;
++}
++
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbt_tuner.h diagnostics-1.3-new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbt_tuner.h
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbt_tuner.h	1970-01-01 01:00:00.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mgmtif/vendor_hook_x_sky_com_dvbt_tuner.h	2016-06-06 14:59:23.240161897 +0100
+@@ -0,0 +1,167 @@
++
++/*
++** @file          vendor_hook_x_sky_com_dvbt_tuner.h
++** @author        David Roberts
++** @date          31/05/2016
++** @addtogroup Diagnostics - TR-069
++**
++**
++** $Log$
++*/
++/**************************************************************************************************************
++*
++* Description:  Interface to implement Object
++*                 Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.{i}
++* -------------------------------------------------------------------------------------------------------------
++* Copyright (C) 2016 Sky UK Ltd, All Rights Reserved
++* -------------------------------------------------------------------------------------------------------------
++* SKY PROPRIETARY/CONFIDENTIAL
++* Not for distribution outside of the BSKYB Group without approval
++**************************************************************************************************************/
++#ifndef __VENDOR_HOOK_X_SKY_COM_DVBT_TUNER_H__
++#define __VENDOR_HOOK_X_SKY_COM_DVBT_TUNER_H__
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/*---------------------------------------------------------------------------
++** Includes
++*/
++/* NONE */
++
++/*---------------------------------------------------------------------------
++** Defines and Macros
++*/
++/*!< Create a cache with Expiry Time 0 ... 0 means cache doesnt expire at all.	  */
++#define BSKYB_VENDOR_DTT_TUNER_CACHE_EXPIRE_TIME	(0)
++
++#define VENDOR_DTT_TUNER_PROC_DEVICE_NAME_BUFFER	(35)
++#define VENDOR_DTT_TUNER_PROC_DEVICE_BUFFER			(2048)
++#define VENDOR_DTT_TUNER_MAX_SIGNAL_STATUS_SIZE		(100)
++#define VENDOR_DTT_TUNER_MAX_NUMBER_OF_TUNERS		(4)
++#define VENDOR_DTT_TUNER_NUMBER_OF_TEST_TUNERS		(2)
++#define VENDOR_DTT_TUNER_PROC_DIRECTORY				"/proc/Sky/tr69/dtt"
++#define VENDOR_DTT_TUNER_PROC_FILENAME				VENDOR_DTT_TUNER_PROC_DIRECTORY"/%d/status"
++
++/*---------------------------------------------------------------------------
++** Typedefs
++*/
++/* NONE */
++
++/*---------------------------------------------------------------------------
++** Data
++*/
++/* NONE */
++
++/*---------------------------------------------------------------------------
++** Functions
++*/
++
++int VendorTunerCalculateNumberOfDTTTuners(void);
++
++int get_x_sky_com_dvbt_tuner_tunedvbtmodulationpsk(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbtmodulationqam(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbtfrequency(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbtcoderatelp(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbtcoderatehp(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbtbandwidth(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbthierarchy(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbtguardinterval(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbttransmissionmode(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbtinversion(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2requesttype(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2plp(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2mandatoryfrequency(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2mandatorybandwidth(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryvalidflags(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryplpdatarate(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryspatialmux(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryguardinterval(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionarytransmissionmode(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionarypaprmode(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionarypilotpattern(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryextcarrier(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryrotatedconstellation(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryplptype(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryframelength(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryfefpresent(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryfeflength(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunedvbt2discretionaryspectruminversion(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtmodulationpsk(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtmodulationqam(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtfrequency(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtsymbolrate(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtcoderatelp(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtcoderatehp(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtberwindow(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtbercount(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtsignalstrength(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtinversion(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbtsignalstatus(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2flags(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2frequency(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2berwindow(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2bercount(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2signalstrength(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2spectruminversion(char* pDeviceID, unsigned int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusdvbt2signalstatus(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_rxpowerlevel(char* pDeviceID, int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_snr(char* pDeviceID, int *value, size_t length);
++
++int get_x_sky_com_dvbt_tuner_status(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunerstate(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_tunemode(char* pDeviceID, char *buf, size_t length);
++
++int get_x_sky_com_dvbt_tuner_statusmode(char* pDeviceID, char *buf, size_t length);
++
++#endif
++
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_tuner.h diagnostics-1.3-new/apps/mifd/mgmtif/vendor_hook_x_sky_com_tuner.h
+--- diagnostics-1.3-orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_tuner.h	1970-01-01 01:00:00.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mgmtif/vendor_hook_x_sky_com_tuner.h	2016-06-02 11:31:01.722500341 +0100
+@@ -0,0 +1,210 @@
++/*
++** @file          vendor_hook_x_sky_com_tuner.h
++** @author        David Roberts
++** @date          01/06/2016
++** @addtogroup Diagnostics - TR-069
++**
++**
++** $Log$
++*/
++/**************************************************************************************************************
++*
++* Description:  Common header file between the DVBS and DVBT Tuners
++*
++* -------------------------------------------------------------------------------------------------------------
++* Copyright (C) 2016 Sky UK Ltd, All Rights Reserved
++* -------------------------------------------------------------------------------------------------------------
++* SKY PROPRIETARY/CONFIDENTIAL
++* Not for distribution outside of the BSKYB Group without approval
++**************************************************************************************************************/
++#ifndef __VENDOR_HOOK_X_SKY_COM_TUNER_H__
++#define __VENDOR_HOOK_X_SKY_COM_TUNER_H__
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/*---------------------------------------------------------------------------
++** Includes
++*/
++/* NONE */
++
++/*---------------------------------------------------------------------------
++** Defines and Macros
++*/
++
++/*
++CDI [version 2] Issue 20.
++*/
++/*!< Definitions and types. */
++/*!< TunerMode definitions. */
++#define TUNER_MODE_SAT_DVB_S       (0x00000001U)
++#define TUNER_MODE_SAT_DVB_S2      (0x00000002U)
++#define TUNER_MODE_CAB_ANNEX_A     (0x00000004U)
++#define TUNER_MODE_CAB_ANNEX_B     (0x00000008U)
++#define TUNER_MODE_CAB_ANNEX_C     (0x00000010U)
++#define TUNER_MODE_CAB_ANNEX_D     (0x00000020U)
++#define TUNER_MODE_TER_DVB_T       (0x00000040U)
++#define TUNER_MODE_TER_ATSC        (0x00000080U)
++#define TUNER_MODE_TER_ANALOGUE    (0x00000100U)
++#define TUNER_MODE_CAB_ANALOGUE    (0x00000200U)
++#define TUNER_MODE_TER_DVB_T2      (0x00000400U)
++#define TUNER_MODE_CAB_DVB_C2      (0x00000800U)
++#define TUNER_MODE_TER_ISDB_T      (0x00001000U)
++#define TUNER_MODE_RESERVED_1      (0x01000000U)
++
++/* Tuner FEC definitions. */
++#define TUNER_FEC_1_4     (0x00000001U)
++#define TUNER_FEC_1_3     (0x00000002U)
++#define TUNER_FEC_2_5     (0x00000004U)
++#define TUNER_FEC_5_11    (0x00000008U)
++#define TUNER_FEC_1_2     (0x00000010U)
++#define TUNER_FEC_3_5     (0x00000020U)
++#define TUNER_FEC_2_3     (0x00000040U)
++#define TUNER_FEC_3_4     (0x00000080U)
++#define TUNER_FEC_4_5     (0x00000100U)
++#define TUNER_FEC_5_6     (0x00000200U)
++#define TUNER_FEC_6_7     (0x00000400U)
++#define TUNER_FEC_7_8     (0x00000800U)
++#define TUNER_FEC_8_9     (0x00001000U)
++#define TUNER_FEC_9_10    (0x00002000U)
++#define TUNER_FEC_AUTO    (0x80000000U)
++
++/* Tuner Modulation QAM definitions. */
++#define TUNER_MODULATION_16_QAM      (0x00000002U)
++#define TUNER_MODULATION_32_QAM      (0x00000004U)
++#define TUNER_MODULATION_64_QAM      (0x00000008U)
++#define TUNER_MODULATION_128_QAM     (0x00000010U)
++#define TUNER_MODULATION_256_QAM     (0x00000020U)
++#define TUNER_MODULATION_1024_QAM    (0x00000040U)
++#define TUNER_MODULATION_4096_QAM    (0x00000080U)
++#define TUNER_MODULATION_QAM_AUTO    (0x80000000U)
++/* Obsolete:
++	The following definition for TUNER_MODULATION_4_QAM is obsolete
++	as of CDI [version 2] Issue 20.
++	The definition may be removed in a future version 
++	of the CDI specification and from this header file.
++*/
++#define TUNER_MODULATION_4_QAM       (0x00000001U)
++
++/* Tuner Modulation QPSK definitions. */
++#define TUNER_MODULATION_QPSK        (0x00000001U)
++#define TUNER_MODULATION_8PSK        (0x00000002U)
++#define TUNER_MODULATION_OQPSK       (0x00000004U)
++#define TUNER_MODULATION_16APSK      (0x00000008U)
++#define TUNER_MODULATION_32APSK      (0x00000010U)
++#define TUNER_MODULATION_DQPSK       (0x00000020U)
++#define TUNER_MODULATION_PSK_AUTO    (0x80000000U)
++
++/* Tuner Modulation Analogue definitions. */
++#define TUNER_MODULATION_NTSC_M       (0x00000001U)
++#define TUNER_MODULATION_PAL_I        (0x00000002U)
++#define TUNER_MODULATION_PAL_D_K      (0x00000004U)
++#define TUNER_MODULATION_PAL_B_G_H    (0x00000008U)
++#define TUNER_MODULATION_PAL_M        (0x00000010U)
++#define TUNER_MODULATION_PAL_N        (0x00000020U)
++#define TUNER_MODULATION_PAL_NC       (0x00000040U)
++#define TUNER_MODULATION_SECAM_L      (0x00000080U)
++#define TUNER_MODULATION_SECAM_D_K    (0x00000100U)
++#define TUNER_MODULATION_SECAM_B_G    (0x00000200U)
++
++/* Tuner Modulation VSB definitions. */
++#define TUNER_MODULATION_8VSB     (0x00000001U)
++#define TUNER_MODULATION_16VSB    (0x00000002U)
++#define TUNER_MODULATION_2VSB     (0x00000004U)
++#define TUNER_MODULATION_4VSB     (0x00000008U)
++#define TUNER_MODULATION_E8VSB    (0x00000010U)
++
++/* Tuner Bandwidth definitions. */
++#define TUNER_BANDWIDTH_6_MHZ    (1U)
++#define TUNER_BANDWIDTH_7_MHZ    (2U)
++#define TUNER_BANDWIDTH_8_MHZ    (3U)
++#define TUNER_BANDWIDTH_AUTO     (255U)
++
++/* Tuner Inversion definitions. */
++#define TUNER_INVERSION_OFF     (1U)
++#define TUNER_INVERSION_ON      (2U)
++#define TUNER_INVERSION_AUTO    (255U)
++
++/* Tuner Event definitions. */
++#define TUNER_EVENT_CARRIER_LOCKED         (0x00000001U)
++#define TUNER_EVENT_CARRIER_UNLOCKED       (0x00000002U)
++#define TUNER_EVENT_DEMOD_LOCKED           (0x00000004U)
++#define TUNER_EVENT_DEMOD_UNLOCKED         (0x00000008U)
++#define TUNER_EVENT_SYNC_LOCKED            (0x00000010U)
++#define TUNER_EVENT_SYNC_UNLOCKED          (0x00000020U)
++#define TUNER_EVENT_SCAN_LOCKED            (0x00000040U)
++#define TUNER_EVENT_SCAN_FAILED            (0x00000080U)
++#define TUNER_EVENT_NO_SIGNAL              (0x00000100U)
++#define TUNER_EVENT_SMATV_CARRIER_FOUND    (0x01000000U)
++#define TUNER_EVENT_SMATV_NO_CARRIER       (0x02000000U)
++#define TUNER_EVENT_ISDBT_EAW_RECEIVED     (0x00000200U)
++#define TUNER_EVENT_ISDBT_TMCC_CHANGING    (0x00000400U)
++
++/* Tuner Signal Status definitions. */
++#define TUNER_SIGNAL_NO_CARRIER    (0x00U)
++#define TUNER_SIGNAL_CARRIER       (0x01U)
++#define TUNER_SIGNAL_DEMOD         (0x02U)
++#define TUNER_SIGNAL_SYNC          (0x04U)
++#define TUNER_SCAN_LOCKED          (0x10U)
++#define TUNER_SCAN_FAILED          (0x20U)
++	
++#define TUNER_SIGNAL_NO_CARRIER_STR    ("No Carrier")
++#define TUNER_SIGNAL_CARRIER_STR       ("Carrier")
++#define TUNER_SIGNAL_DEMOD_STR         ("Demod")
++#define TUNER_SIGNAL_SYNC_STR          ("Sync")
++#define TUNER_SCAN_LOCKED_STR          ("Scan Locked")
++#define TUNER_SCAN_FAILED_STR          ("Scan Failed")
++#define TUNER_SIGNAL_STATUS_UNKNOWN    ("Unknown Signal Status")
++	
++#define TUNER_SIGNAL_CONCAT_STRING(ptr, size, string, prev)\
++		if (prev) {\
++			strncat(ptr, ", ", size);\
++		}\
++		strncat (ptr, string, size);
++
++/*---------------------------------------------------------------------------
++** Typedefs
++*/
++
++/*
++ *!< Tuner states
++ */
++typedef enum {
++	TUNER_CLOSED = 0,
++	TUNER_OPENED,
++	TUNER_TUNING,
++	TUNER_CARRIERLOCKED,
++	TUNER_DEMODLOCKED,
++	TUNER_SYNCLOCKED,
++	TUNER_SCANFAILED,
++	TUNER_SCANTUNING,
++	TUNER_SCANLOCKED,
++	TUNER_SCANCONFIGURED,
++	TUNER_UNKNOWN_STATE = -1,
++} eTuner_state_t;
++
++/*
++ *!< Tuner proc info and Tuner state
++ */
++typedef struct {
++	char		  *pFullData;
++	unsigned int  uFullDataSize;
++	eTuner_state_t eTunerState;
++}tuner_info_t;
++
++/*---------------------------------------------------------------------------
++** Data
++*/
++/* NONE */
++
++/*---------------------------------------------------------------------------
++** Functions
++*/
++char *tunerStateToString(const eTuner_state_t TunerState);
++
++char *tunerModeToString(int TunerMode);
++
++char *tunerInversionToString(int Inversion);
++
++#endif
++
+diff -Naurr diagnostics-1.3-orig/apps/mifd/mifd.c diagnostics-1.3-new/apps/mifd/mifd.c
+--- diagnostics-1.3-orig/apps/mifd/mifd.c	2016-05-27 13:43:23.000000000 +0100
++++ diagnostics-1.3-new/apps/mifd/mifd.c	2016-06-02 12:16:11.544072784 +0100
+@@ -90,6 +90,7 @@
+ /* Just for numbers of devices.  */
+ #include "mgmtif/vendor_hook_temperaturestatus_temperaturesensor.h"
+ #include "mgmtif/vendor_hook_x_sky_com_dvbs_tuner.h"
++#include "mgmtif/vendor_hook_x_sky_com_dvbt_tuner.h"
+ #include "mgmtif/vendor_hook_smartcardreaders.h"
+ #include "mgmtif/vendor_hook_device_ethernet.h"
+ #include "mgmtif/vendor_hook_dhcpv4_client.h"
+@@ -1038,6 +1039,43 @@
+     return EOK;
+ }
+ 
++#ifdef MGMTIF_DSLF_H_RM4061_DVBT_TUNER
++static int
++mifd_services_stbservice_components_frontend_dtt_tuner_reload(mifd_ctx_t *ctx,
++                      mif_table_state_t *dontuse_states,
++                      cm_tran_id_t tid,
++                      const char *nsname,
++                      mifd_node_t *nodes,
++                      map_t *map)
++{
++    char buf[256];
++    int off1;
++    int i;
++    int count;
++
++    if (!ctx /*|| !state->table_states || !states*/) {
++        return EINVAL;
++    }
++
++    count = VendorTunerCalculateNumberOfDTTTuners();
++	if (-1 == count){
++		return EOK;
++	}
++    for (i = 0; i < count; i++) {
++        /* add tuner device itself */
++        off1 = s_snprintf(buf, sizeof(buf),
++            "Device.Services.STBService.Components.FrontEnd.X_SKY_COM_DVBT.Tuner.%u",
++            i+1);
++        if(off1 > 0){
++			_mifd_insert_node(nodes, buf);
++		}
++
++    }
++
++    return EOK;
++}
++#endif
++
+ static int
+ mifd_services_stbservice_components_frontend_lnb_reload(mifd_ctx_t *ctx,
+                       mif_table_state_t *dontuse_states,
+@@ -2859,6 +2897,11 @@
+     /* BSkyB Tuner */
+     sts |= mifd_services_stbservice_components_frontend_tuner_reload(ctx, /*states*/NULL, tid, nsname, &nodes, &map);
+     MIFD_PROFILE_RECORD("mifd_services_stbservice_components_frontend_tuner_reload");
++#ifdef MGMTIF_DSLF_H_RM4061_DVBT_TUNER
++	/* BSkyB DTT Tuner */
++    sts |= mifd_services_stbservice_components_frontend_dtt_tuner_reload(ctx, /*states*/NULL, tid, nsname, &nodes, &map);
++    MIFD_PROFILE_RECORD("mifd_services_stbservice_components_frontend_dtt_tuner_reload");
++#endif
+     /* BSkyB LNB */
+     sts |= mifd_services_stbservice_components_frontend_lnb_reload(ctx, /*states*/NULL, tid, nsname, &nodes, &map);
+     MIFD_PROFILE_RECORD("mifd_services_stbservice_components_frontend_lnb_reload");

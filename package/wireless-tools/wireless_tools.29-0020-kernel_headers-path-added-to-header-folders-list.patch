@@ -1,0 +1,26 @@
+From bcd3418e686666ee261557ed58c21f187691a38c Mon Sep 17 00:00:00 2001
+From: Taner Deveci <taner.deveci@airties.com>
+Date: Thu, 13 Feb 2014 13:12:34 +0200
+Subject: [PATCH 20/26] kernel_headers path added to header folders list.
+
+Issue:BQ-14
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 7c71258..68ee2be 100644
+--- a/Makefile
++++ b/Makefile
+@@ -114,7 +114,7 @@ CFLAGS=-Os -W -Wall -Wstrict-prototypes -Wmissing-prototypes -Wshadow \
+ 	-Wpointer-arith -Wcast-qual -Winline -I.
+ #CFLAGS=-O2 -W -Wall -Wstrict-prototypes -I.
+ #bilal: incs added. cflags changed.
+-INCS+=	-I${MADWIFI_DIR}/wlan/core/hal  -I${MADWIFI_DIR}/core/net80211 -I${MADWIFI_DIR}/wlan -I${MADWIFI_DIR}/wlan/core -I${MADWIFI_DIR}/wlan/tools -I${MADWIFI_DIR}/madwifi/tools -I${MADWIFI_DIR}/madwifi -I${MADWIFI_DIR}/madwifi/hal -I${MADWIFI_DIR}/madwifi/net80211 -I$(KERNEL_DIR)/include
++INCS+=	-I${MADWIFI_DIR}/wlan/core/hal  -I${MADWIFI_DIR}/core/net80211 -I${MADWIFI_DIR}/wlan -I${MADWIFI_DIR}/wlan/core -I${MADWIFI_DIR}/wlan/tools -I${MADWIFI_DIR}/madwifi/tools -I${MADWIFI_DIR}/madwifi -I${MADWIFI_DIR}/madwifi/hal -I${MADWIFI_DIR}/madwifi/net80211 -I$(KERNEL_DIR)/include -I$(KERNEL_DIR)/kernel_headers/include
+ CFLAGS += -I. -Wall ${INCS}
+ XCFLAGS=$(CFLAGS) $(DEPFLAGS) $(WARN) $(HEADERS) $(WELIB_FLAG) $(WEDEF_FLAG)
+ PICFLAG=-fPIC
+-- 
+1.9.1
+

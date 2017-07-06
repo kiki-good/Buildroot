@@ -1,0 +1,11 @@
+--- a/src/adapter.c	2015-01-14 15:34:19.404767056 +0000
++++ b/src/adapter.c	2015-01-14 15:34:29.196767307 +0000
+@@ -86,7 +86,7 @@
+ 
+ #define CONN_SCAN_TIMEOUT (3)
+ #define IDLE_DISCOV_TIMEOUT (5)
+-#define TEMP_DEV_TIMEOUT (3 * 60)
++#define TEMP_DEV_TIMEOUT (30)
+ #define BONDING_TIMEOUT (2 * 60)
+ 
+ static DBusConnection *dbus_conn = NULL;

@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBICAL
+	bool "libical"
+	default n
+	select BR2_PACKAGE_PKGCONFIG
+	help
+		The libical package contains an implementation of the 
+		iCalendar protocols and data formats.

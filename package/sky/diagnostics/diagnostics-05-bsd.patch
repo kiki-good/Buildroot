@@ -1,0 +1,444 @@
+diff -Naur pace/apps/cmc/Makefile.am pace_10Jun/apps/cmc/Makefile.am
+--- pace/apps/cmc/Makefile.am	2013-01-30 21:54:50.000000000 +0000
++++ pace_10Jun/apps/cmc/Makefile.am	2013-06-12 11:47:41.843875962 +0100
+@@ -8,7 +8,7 @@
+ cmc_SOURCES = cmc.c cmclang.l cmcparse.y
+ cmc_CPPFLAGS = $(AM_CPPFLAGS)
+ #cmc_LDFLAGS = -lm -lxml2 -lcom_err -lpthread -lbsd -lcrypto
+-cmc_LDFLAGS = -lm -lxml2 -lcom_err -lpthread -lbsd
++cmc_LDFLAGS = -lm -lxml2 -lcom_err -lpthread 
+ cmc_LDADD =  $(proj_libarpc)
+ cmc_LDADD += $(proj_libcm_client)
+ cmc_LDADD += $(proj_libstring)
+diff -Naur pace/apps/cmc/Makefile.in pace_10Jun/apps/cmc/Makefile.in
+--- pace/apps/cmc/Makefile.in	2013-04-16 22:46:00.000000000 +0100
++++ pace_10Jun/apps/cmc/Makefile.in	2013-06-12 11:47:06.139875046 +0100
+@@ -293,7 +293,8 @@
+ cmc_SOURCES = cmc.c cmclang.l cmcparse.y
+ cmc_CPPFLAGS = $(AM_CPPFLAGS)
+ #cmc_LDFLAGS = -lm -lxml2 -lcom_err -lpthread -lbsd -lcrypto
+-cmc_LDFLAGS = -lm -lxml2 -lcom_err -lpthread -lbsd
++#cmc_LDFLAGS = -lm -lxml2 -lcom_err -lpthread -lbsd
++cmc_LDFLAGS = -lm -lxml2 -lcom_err -lpthread 
+ cmc_LDADD = $(proj_libarpc) $(proj_libcm_client) $(proj_libstring) \
+ 	$(proj_libmap)
+ all: $(BUILT_SOURCES)
+diff -Naur pace/apps/pkgc/Makefile pace_10Jun/apps/pkgc/Makefile
+--- pace/apps/pkgc/Makefile	2013-02-01 22:23:19.000000000 +0000
++++ pace_10Jun/apps/pkgc/Makefile	2013-06-12 11:45:30.075872580 +0100
+@@ -278,7 +278,8 @@
+ pkgc_SOURCES = pkgc.c 
+ pkgc_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
+ pkgc_WARNS = 4
+-pkgc_LDFLAGS = -lbsd -lpthread
++pkgc_LDFLAGS = -lpthread
++#pkgc_LDFLAGS = -lbsd -lpthread
+ pkgc_LDADD = $(proj_libcm_client) $(proj_libelog) \
+ 	$(proj_libpkg_client) $(proj_libpkg_common) $(proj_libstring) \
+ 	$(proj_libtimeutil)
+diff -Naur pace/apps/pkgc/Makefile.am pace_10Jun/apps/pkgc/Makefile.am
+--- pace/apps/pkgc/Makefile.am	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/apps/pkgc/Makefile.am	2013-06-12 11:45:52.219873148 +0100
+@@ -5,7 +5,8 @@
+ 
+ pkgc_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
+ pkgc_WARNS = 4
+-pkgc_LDFLAGS = -lbsd -lpthread
++#pkgc_LDFLAGS = -lbsd -lpthread
++pkgc_LDFLAGS = -lpthread
+ pkgc_LDADD =  $(proj_libcm_client)
+ pkgc_LDADD += $(proj_libelog)
+ pkgc_LDADD += $(proj_libpkg_client)
+diff -Naur pace/apps/pkgc/Makefile.in pace_10Jun/apps/pkgc/Makefile.in
+--- pace/apps/pkgc/Makefile.in	2013-02-01 22:22:34.000000000 +0000
++++ pace_10Jun/apps/pkgc/Makefile.in	2013-06-12 11:46:12.611873671 +0100
+@@ -278,7 +278,8 @@
+ pkgc_SOURCES = pkgc.c 
+ pkgc_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
+ pkgc_WARNS = 4
+-pkgc_LDFLAGS = -lbsd -lpthread
++#pkgc_LDFLAGS = -lbsd -lpthread
++pkgc_LDFLAGS = -lpthread
+ pkgc_LDADD = $(proj_libcm_client) $(proj_libelog) \
+ 	$(proj_libpkg_client) $(proj_libpkg_common) $(proj_libstring) \
+ 	$(proj_libtimeutil)
+diff -Naur pace/apps/pkgc/pkgc.c pace_10Jun/apps/pkgc/pkgc.c
+--- pace/apps/pkgc/pkgc.c	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/apps/pkgc/pkgc.c	2013-06-12 11:12:14.899821362 +0100
+@@ -30,7 +30,7 @@
+ #include <librgc/rgcutil.h>
+ #include <libpkg/pkg.h>
+ #include <libpkg/pkgutil.h>
+-#include <bsd/stdlib.h>
++//#include <bsd/stdlib.h>
+ 
+ /* options */
+ enum {
+diff -Naur pace/apps/pkgd/Makefile pace_10Jun/apps/pkgd/Makefile
+--- pace/apps/pkgd/Makefile	2013-02-01 22:23:19.000000000 +0000
++++ pace_10Jun/apps/pkgd/Makefile	2013-06-12 11:44:08.259870479 +0100
+@@ -286,7 +286,8 @@
+ 			pkg_stream.c pkg_cert.c pkg_install.c pkg_log.c \
+ 			pkg_rpc.c pkg_config.c pkg_package.c pkgd.c pkgd_fixme.c
+ 
+-pkgd_LDFLAGS = -lbsd -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
++#pkgd_LDFLAGS = -lbsd -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
++pkgd_LDFLAGS = -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
+ pkgd_LDADD = $(proj_lib2sp) $(proj_libcm_client) $(proj_libarpc) \
+ 	$(proj_libarpc) $(proj_libmap) $(proj_libnetutil) \
+ 	$(proj_libfsutil) $(proj_libhttp) $(proj_libhttp) \
+diff -Naur pace/apps/pkgd/Makefile.am pace_10Jun/apps/pkgd/Makefile.am
+--- pace/apps/pkgd/Makefile.am	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/apps/pkgd/Makefile.am	2013-06-12 11:44:41.667871337 +0100
+@@ -7,7 +7,8 @@
+ 			pkg_stream.c pkg_cert.c pkg_install.c pkg_log.c \
+ 			pkg_rpc.c pkg_config.c pkg_package.c pkgd.c pkgd_fixme.c
+ 
+-pkgd_LDFLAGS = -lbsd -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
++#pkgd_LDFLAGS = -lbsd -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
++pkgd_LDFLAGS = -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
+ pkgd_LDADD =  $(proj_lib2sp)
+ pkgd_LDADD += $(proj_libcm_client)
+ pkgd_LDADD += $(proj_libarpc)
+diff -Naur pace/apps/pkgd/Makefile.in pace_10Jun/apps/pkgd/Makefile.in
+--- pace/apps/pkgd/Makefile.in	2013-02-01 22:22:35.000000000 +0000
++++ pace_10Jun/apps/pkgd/Makefile.in	2013-06-12 11:45:02.619871874 +0100
+@@ -286,7 +286,8 @@
+ 			pkg_stream.c pkg_cert.c pkg_install.c pkg_log.c \
+ 			pkg_rpc.c pkg_config.c pkg_package.c pkgd.c pkgd_fixme.c
+ 
+-pkgd_LDFLAGS = -lbsd -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
++#pkgd_LDFLAGS = -lbsd -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
++pkgd_LDFLAGS = -lresolv -lpthread -lm -ldl -lxml2 -lcrypto
+ pkgd_LDADD = $(proj_lib2sp) $(proj_libcm_client) $(proj_libarpc) \
+ 	$(proj_libarpc) $(proj_libmap) $(proj_libnetutil) \
+ 	$(proj_libfsutil) $(proj_libhttp) $(proj_libhttp) \
+diff -Naur pace/apps/pkgd/pkg_cert.c pace_10Jun/apps/pkgd/pkg_cert.c
+--- pace/apps/pkgd/pkg_cert.c	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/apps/pkgd/pkg_cert.c	2013-06-12 11:11:51.563820763 +0100
+@@ -15,7 +15,7 @@
+ #include <stdbool.h>
+ #include <sys/syslog.h>
+ 
+-#include <bsd/stdlib.h>
++//#include <bsd/stdlib.h>
+ 
+ #include <libcm/cm.h>
+ #include <libcm/cmlegacy.h>
+diff -Naur pace/apps/pkgd/pkg_graph.c pace_10Jun/apps/pkgd/pkg_graph.c
+--- pace/apps/pkgd/pkg_graph.c	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/apps/pkgd/pkg_graph.c	2013-06-12 11:12:03.739821076 +0100
+@@ -22,7 +22,7 @@
+ #include <sys/stat.h>
+ #include <sys/syslog.h>
+ 
+-#include <bsd/stdlib.h>
++//#include <bsd/stdlib.h>
+ 
+ #include <libnetutil/uri.h>
+ #include <libmap/map.h>
+diff -Naur pace/libs/libcm/cmclient.c pace_10Jun/libs/libcm/cmclient.c
+--- pace/libs/libcm/cmclient.c	2013-03-27 00:51:10.000000000 +0000
++++ pace_10Jun/libs/libcm/cmclient.c	2013-06-12 11:11:18.163819907 +0100
+@@ -35,7 +35,7 @@
+ #include <ctype.h>
+ #include <errno.h>
+ 
+-#include <bsd/stdlib.h>
++//#include <bsd/stdlib.h>
+ 
+ #include <sys/types.h>
+ #include <sys/mman.h>
+diff -Naur pace/libs/libcm/Makefile.am pace_10Jun/libs/libcm/Makefile.am
+--- pace/libs/libcm/Makefile.am	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/libs/libcm/Makefile.am	2013-06-12 11:40:10.335864371 +0100
+@@ -17,7 +17,7 @@
+ # libcm_client
+ libcm_client_la_SOURCES = cmclient.c
+ nodist_libcm_client_la_SOURCES = cmdbx_clnt.c cmdbx_notify_svc.c
+-libcm_client_la_LDFLAGS = -lbsd
++#libcm_client_la_LDFLAGS = -lbsd
+ libcm_client_la_LIBADD =  libcm_common.la
+ libcm_client_la_LIBADD += $(proj_libarpc)
+ libcm_client_la_LIBADD += $(proj_libnetutil)
+diff -Naur pace/libs/libcm/Makefile.in pace_10Jun/libs/libcm/Makefile.in
+--- pace/libs/libcm/Makefile.in	2013-04-16 22:46:03.000000000 +0100
++++ pace_10Jun/libs/libcm/Makefile.in	2013-06-12 11:40:25.023864748 +0100
+@@ -339,7 +339,7 @@
+ # libcm_client
+ libcm_client_la_SOURCES = cmclient.c
+ nodist_libcm_client_la_SOURCES = cmdbx_clnt.c cmdbx_notify_svc.c
+-libcm_client_la_LDFLAGS = -lbsd
++#libcm_client_la_LDFLAGS = -lbsd
+ libcm_client_la_LIBADD = libcm_common.la $(proj_libarpc) \
+ 	$(proj_libnetutil)
+ 
+diff -Naur pace/libs/libhttp/httpauth.c pace_10Jun/libs/libhttp/httpauth.c
+--- pace/libs/libhttp/httpauth.c	2013-02-01 21:05:04.000000000 +0000
++++ pace_10Jun/libs/libhttp/httpauth.c	2013-06-13 15:24:04.338427160 +0100
+@@ -23,7 +23,7 @@
+ #include <resolv.h> /* b64_ntop and b64_pton*/
+ #include <libnetutil/base64.h> 
+ 
+-#include <bsd/stdlib.h>
++//#include <bsd/stdlib.h>
+ 
+ #include <openssl/md5.h>
+ #include <libhttp/httpauth.h>
+@@ -38,6 +38,23 @@
+ #define EPARSE EINVAL
+ #endif
+ 
++#define SUPPORT_LIBBSD 1 // Added to remove libbsd dependency while compiling
++
++#if SUPPORT_LIBBSD // Start : Added to remove libbsd dependency while compiling
++
++#include <sys/cdefs.h>
++#include <sys/time.h>
++#include <fcntl.h>
++#include <unistd.h>
++
++
++struct arc4_stream {
++	u_int8_t i;
++	u_int8_t j;
++	u_int8_t s[256];
++};
++
++#endif // End: Added to remove libbsd dependency while compiling
+ struct httpauth_helper_s {
+ 	const char *hh_method;
+ 	size_t hh_methodsz;
+@@ -79,6 +96,20 @@
+ 	char **hv_ptr;
+ } httpauth_value_t;
+ 
++#if SUPPORT_LIBBSD // Start : Added to remove libbsd dependency while compiling
++
++#define	RANDOMDEV	"/dev/urandom"
++#define KEYSIZE		128
++
++static struct arc4_stream rs;
++static int rs_initialized;
++static int rs_stired;
++static int arc4_count;
++
++static inline u_int8_t arc4_getbyte(void);
++static void arc4_stir(void);
++
++#endif // End: Added to remove libbsd dependency while compiling
+ /* parse the incoming string into the values
+  *
+  * NOTE: this changes the string 's' by adding null termination into it
+@@ -111,6 +142,135 @@
+                                   const char *header, bool *ok);
+ static int _httpauth_digest_verify(struct httpauth_helper_s *hh,
+                                    const char *header, bool *ok);
++								   
++								   
++#if SUPPORT_LIBBSD // Start : Added to remove libbsd dependency while compiling
++
++static inline void
++arc4_init(void)
++{
++	int     n;
++
++	for (n = 0; n < 256; n++)
++		rs.s[n] = n;
++	rs.i = 0;
++	rs.j = 0;
++}
++
++static inline void
++arc4_addrandom(u_char *dat, int datlen)
++{
++	int     n;
++	u_int8_t si;
++
++	rs.i--;
++	for (n = 0; n < 256; n++) {
++		rs.i = (rs.i + 1);
++		si = rs.s[rs.i];
++		rs.j = (rs.j + si + dat[n % datlen]);
++		rs.s[rs.i] = rs.s[rs.j];
++		rs.s[rs.j] = si;
++	}
++	rs.j = rs.i;
++}
++
++static void
++arc4_stir(void)
++{
++	int done, fd, n;
++	struct {
++		struct timeval	tv;
++		pid_t 		pid;
++		u_int8_t 	rnd[KEYSIZE];
++	} rdat;
++
++	fd = open(RANDOMDEV, O_RDONLY, 0);
++	done = 0;
++	if (fd >= 0) {
++		if (read(fd, &rdat, KEYSIZE) == KEYSIZE)
++			done = 1;
++		(void)close(fd);
++	} 
++	if (!done) {
++		(void)gettimeofday(&rdat.tv, NULL);
++		rdat.pid = getpid();
++		/* We'll just take whatever was on the stack too... */
++	}
++
++	arc4_addrandom((u_char *)&rdat, KEYSIZE);
++
++	/*
++	 * Throw away the first N bytes of output, as suggested in the
++	 * paper "Weaknesses in the Key Scheduling Algorithm of RC4"
++	 * by Fluher, Mantin, and Shamir.  N=1024 is based on
++	 * suggestions in the paper "(Not So) Random Shuffles of RC4"
++	 * by Ilya Mironov.
++	 */
++	for (n = 0; n < 1024; n++)
++		(void) arc4_getbyte();
++	arc4_count = 1600000;
++}
++
++static inline u_int8_t
++arc4_getbyte(void)
++{
++	u_int8_t si, sj;
++
++	rs.i = (rs.i + 1);
++	si = rs.s[rs.i];
++	rs.j = (rs.j + si);
++	sj = rs.s[rs.j];
++	rs.s[rs.i] = sj;
++	rs.s[rs.j] = si;
++
++	return (rs.s[(si + sj) & 0xff]);
++}
++
++static inline u_int32_t
++arc4_getword(void)
++{
++	u_int32_t val;
++
++	val = arc4_getbyte() << 24;
++	val |= arc4_getbyte() << 16;
++	val |= arc4_getbyte() << 8;
++	val |= arc4_getbyte();
++
++	return (val);
++}
++
++static void
++arc4_check_init(void)
++{
++	if (!rs_initialized) {
++		arc4_init();
++		rs_initialized = 1;
++	}
++}
++
++static inline void
++arc4_check_stir(void)
++{
++	if (!rs_stired || arc4_count <= 0) {
++		arc4_stir();
++		rs_stired = 1;
++	}
++}
++
++u_int32_t
++arc4random(void)
++{
++	u_int32_t rnd;
++
++	arc4_check_init();
++	arc4_check_stir();
++	rnd = arc4_getword();
++	arc4_count -= 4;
++
++	return (rnd);
++}
++
++#endif // End: Added to remove libbsd dependency while compiling
+ 
+ 
+ int
+diff -Naur pace/libs/libhttp/Makefile.am pace_10Jun/libs/libhttp/Makefile.am
+--- pace/libs/libhttp/Makefile.am	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/libs/libhttp/Makefile.am	2013-06-12 11:40:54.383865503 +0100
+@@ -16,7 +16,8 @@
+ 
+ libhttp_la_SOURCES = httpc.c httpauth.c httpcookie.c urlescape.c
+ libhttp_la_CPPFLAGS = $(AM_CPPFLAGS) -D_GNU_SOURCE
+-libhttp_la_LDFLAGS = -lbsd -lcares -lssl
++#libhttp_la_LDFLAGS = -lbsd -lcares -lssl
++libhttp_la_LDFLAGS = -lcares -lssl
+ libhttp_la_LIBADD =  $(proj_libmap)
+ libhttp_la_LIBADD += $(proj_libnetutil)
+ 
+diff -Naur pace/libs/libhttp/Makefile.in pace_10Jun/libs/libhttp/Makefile.in
+--- pace/libs/libhttp/Makefile.in	2013-04-16 22:46:03.000000000 +0100
++++ pace_10Jun/libs/libhttp/Makefile.in	2013-06-12 11:43:46.355869917 +0100
+@@ -315,7 +315,8 @@
+ #libhttp_server_la_LIBADD += $(proj_librgc)
+ libhttp_la_SOURCES = httpc.c httpauth.c httpcookie.c urlescape.c
+ libhttp_la_CPPFLAGS = $(AM_CPPFLAGS) -D_GNU_SOURCE
+-libhttp_la_LDFLAGS = -lbsd -lcares -lssl
++#libhttp_la_LDFLAGS = -lbsd -lcares -lssl
++libhttp_la_LDFLAGS = -lcares -lssl
+ libhttp_la_LIBADD = $(proj_libmap) $(proj_libnetutil)
+ CLEANFILES = $(BUILT_SOURCES) \
+ 	$(nodist_libhttp_server_la_SOURCES) \
+diff -Naur pace/libs/librgw_compat/lib_bind.c pace_10Jun/libs/librgw_compat/lib_bind.c
+--- pace/libs/librgw_compat/lib_bind.c	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/libs/librgw_compat/lib_bind.c	2013-06-12 11:11:04.367819550 +0100
+@@ -23,7 +23,7 @@
+ #include <evutil.h>
+ #include <netinet/in.h>
+ 
+-#include <bsd/stdlib.h>
++//#include <bsd/stdlib.h>
+ 
+ #include <libnetutil/ipaddr.h>
+ #include <librgc/rgc.h>
+diff -Naur pace/libs/librgw_compat/lib_revnat.c pace_10Jun/libs/librgw_compat/lib_revnat.c
+--- pace/libs/librgw_compat/lib_revnat.c	2012-12-10 19:49:09.000000000 +0000
++++ pace_10Jun/libs/librgw_compat/lib_revnat.c	2013-06-12 11:10:50.755819202 +0100
+@@ -17,7 +17,7 @@
+ #include <fcntl.h>
+ #include <unistd.h>
+ 
+-#include <bsd/stdlib.h>
++//#include <bsd/stdlib.h>
+ 
+ #include <sys/types.h>
+ #include <sys/socket.h>
+diff -Naur pace/libs/librgw_compat/Makefile.am pace_10Jun/libs/librgw_compat/Makefile.am
+--- pace/libs/librgw_compat/Makefile.am	2013-04-16 22:26:16.000000000 +0100
++++ pace_10Jun/libs/librgw_compat/Makefile.am	2013-06-12 11:39:25.407863217 +0100
+@@ -25,7 +25,8 @@
+ librgw_compat_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
+ #librgw_compat_la_CPPFLAGS += -D_BSD_SOURCE
+ librgw_compat_la_CPPFLAGS += -D_GNU_SOURCE
+-librgw_compat_la_LDFLAGS = -lbsd -lcom_err -lpthread
++#librgw_compat_la_LDFLAGS = -lbsd -lcom_err -lpthread
++librgw_compat_la_LDFLAGS = -lcom_err -lpthread
+ librgw_compat_la_LIBADD =  $(proj_libboard)
+ librgw_compat_la_LIBADD += $(proj_libcm_client)
+ #librgw_compat_la_LIBADD += $(proj_libcrc)
+diff -Naur pace/libs/librgw_compat/Makefile.in pace_10Jun/libs/librgw_compat/Makefile.in
+--- pace/libs/librgw_compat/Makefile.in	2013-04-16 22:46:04.000000000 +0100
++++ pace_10Jun/libs/librgw_compat/Makefile.in	2013-06-12 11:39:51.055863876 +0100
+@@ -316,7 +316,8 @@
+ #   						
+ #librgw_compat_la_CPPFLAGS += -D_BSD_SOURCE
+ librgw_compat_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir) -D_GNU_SOURCE
+-librgw_compat_la_LDFLAGS = -lbsd -lcom_err -lpthread
++#librgw_compat_la_LDFLAGS = -lbsd -lcom_err -lpthread
++librgw_compat_la_LDFLAGS = -lcom_err -lpthread
+ #librgw_compat_la_LIBADD += $(proj_libcrc)
+ #librgw_compat_la_LIBADD += $(proj_libelog)
+ #librgw_compat_la_LIBADD += $(proj_libpkg_client)

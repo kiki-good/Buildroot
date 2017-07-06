@@ -1,0 +1,12 @@
+diff -Naur e2fsprogs-1.42.6/misc/e4defrag.c e2fsprogs-1.42.6_mod/misc/e4defrag.c
+--- e2fsprogs-1.42.6/misc/e4defrag.c	2012-08-14 22:29:06.000000000 +0100
++++ e2fsprogs-1.42.6_mod/misc/e4defrag.c	2013-10-02 10:38:58.745032905 +0100
+@@ -248,7 +248,7 @@
+  * @offset:		file offset.
+  * @len:		file size.
+  */
+-static int fallocate64(int fd, int mode, loff_t offset, loff_t len)
++int fallocate64(int fd, int mode, loff_t offset, loff_t len)
+ {
+ 	return syscall(__NR_fallocate, fd, mode, offset, len);
+ }

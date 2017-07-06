@@ -1,0 +1,5 @@
+config BR2_PACKAGE_LIBUUID
+        bool "libuuid"
+        help
+		libuuid library is used to generate unique identifiers 
+		for objects that may be accessible beyond the local system.

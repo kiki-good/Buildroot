@@ -1,0 +1,11 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_datamodel.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_datamodel.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_x_sky_com_datamodel.c	2014-12-04 12:42:42.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_x_sky_com_datamodel.c	2015-08-17 10:20:51.728378146 +0100
+@@ -47,6 +47,6 @@
+ 
+ int get_x_sky_com_datamodel_versionminor(cm_tran_id_t tid, char *buf, size_t length)
+ {
+-	snprintf(buf, length, "13");
++	snprintf(buf, length, "20");
+ 	return EOK;
+ }

@@ -1,0 +1,4 @@
+config BR2_PACKAGE_OTPMESHDATA
+        bool "otpMeshData"
+        help
+		otpMeshData will read the mesh data from otp

@@ -1,0 +1,7 @@
+config BR2_PACKAGE_NXP_KAL
+	bool "NXP KAL Driver"
+	depends on BR2_TARGET_SKY_AMS_DRX780
+	default N
+	help
+	  Build and install the NXP KAL driver.
+

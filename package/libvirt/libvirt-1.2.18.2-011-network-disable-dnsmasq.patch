@@ -1,0 +1,50 @@
+With this patch libvirtd will not try and start the dhcp server
+if no dhcp tags were specified in the network config xml.
+
+--- a/src/network/bridge_driver.c	2015-12-23 23:31:03.000000000 +0000
++++ b/src/network/bridge_driver.c	2016-03-29 20:53:18.548356405 +0100
+@@ -867,6 +867,25 @@
+     return ret;
+ }
+ 
++
++/* [Sky] added so can disable dnsmasq/dhcp on networks that don't have the
++ * dhcp tag in their xml.
++ */
++static bool
++networkRequiresDhcp(virNetworkObjPtr network)
++{
++    size_t i;
++    virNetworkIpDefPtr ipdef;
++ 
++    for (i = 0; (ipdef = virNetworkDefGetIpByIndex(network->def, AF_UNSPEC, i)); i++) {
++        if (ipdef->nranges || ipdef->nhosts)
++            return true;
++    }
++
++    return false;
++}
++
++
+ /* the following does not build a file, it builds a list
+  * which is later saved into a file
+  */
+@@ -1448,6 +1467,10 @@
+     if (!virNetworkDefGetIpByIndex(network->def, AF_UNSPEC, 0))
+         return 0;
+ 
++    /* [Sky] if no dhcp settings don't do anything */
++    if (!networkRequiresDhcp(network))
++        return 0;
++
+     /* if there's no running dnsmasq, just start it */
+     if (network->dnsmasqPid <= 0 || (kill(network->dnsmasqPid, 0) < 0))
+         return networkStartDhcpDaemon(driver, network);
+@@ -2152,6 +2175,7 @@
+ 
+     /* start dnsmasq if there are any IP addresses (v4 or v6) */
+     if ((v4present || v6present) &&
++        networkRequiresDhcp(network) &&
+         networkStartDhcpDaemon(driver, network) < 0)
+         goto err3;
+ 

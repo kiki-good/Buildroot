@@ -1,0 +1,203 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-08-08 20:49:36.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-08-10 15:18:37.792773978 +0100
+@@ -196,19 +196,18 @@
+ */
+ int get_temperaturestatus_temperaturesensor_enable(char *deviceId, int *enable)
+ {
+-	tsensor_info_t *pSensorInfo = NULL;
++char buffer[VENDOR_TSENSOR_PROC_DEVICE_BUFFER];
+ 
+ 	if ((NULL == deviceId) || (NULL == enable)) {
+ 		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
+ 		return EFAIL;
+ 	}
+ 
+-	pSensorInfo = getTSensorInfo(deviceId);
+-	if ((NULL == pSensorInfo) || (NULL == pSensorInfo->pFullData)) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+-	if (!vendor_hooks_extractint32FromData(pSensorInfo->pFullData, VENDOR_TSENSOR_ENABLE , enable)) {
++	if (!vendor_hooks_extractint32FromData(buffer, VENDOR_TSENSOR_ENABLE , enable)) {
+ 		return EFAIL;
+ 	}
+ 
+@@ -246,20 +245,19 @@
+ */
+ int get_temperaturestatus_temperaturesensor_status(char *deviceId, char *buf, size_t length)
+ {
+-	tsensor_info_t *pSensorInfo = NULL;
+-	int enable = 0;
++char buffer[VENDOR_TSENSOR_PROC_DEVICE_BUFFER];
++int enable = 0;
+ 
+ 	if ((NULL == deviceId) || (NULL == buf) || (0 == length)) {
+ 		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
+ 		return EFAIL;
+ 	}
+ 
+-	pSensorInfo = getTSensorInfo(deviceId);
+-	if ((NULL == pSensorInfo) || (NULL == pSensorInfo->pFullData)) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+-	if (!vendor_hooks_extractint32FromData(pSensorInfo->pFullData, VENDOR_TSENSOR_ENABLE , &enable)) {
++	if (!vendor_hooks_extractint32FromData(buffer, VENDOR_TSENSOR_ENABLE , &enable)) {
+ 		return EFAIL;
+ 	}
+ 
+@@ -337,19 +335,18 @@
+ */
+ int get_temperaturestatus_temperaturesensor_name(char *deviceId, char *buf, size_t length)
+ {
+-	tsensor_info_t *pSensorInfo = NULL;
++char buffer[VENDOR_TSENSOR_PROC_DEVICE_BUFFER];
+ 
+ 	if ((NULL == deviceId) || (NULL == buf) || (0 == length)) {
+ 		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
+ 		return EFAIL;
+ 	}
+ 
+-	pSensorInfo = getTSensorInfo(deviceId);
+-	if ((NULL == pSensorInfo) || (NULL == pSensorInfo->pFullData)) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+-	if (!vendor_hooks_extractStringFromData(pSensorInfo->pFullData, VENDOR_TSENSOR_NAME, buf)) {
++	if (!vendor_hooks_extractStringFromData(buffer, VENDOR_TSENSOR_NAME, buf)) {
+ 		return EFAIL;
+ 	}
+ 
+@@ -368,25 +365,24 @@
+ */
+ int get_temperaturestatus_temperaturesensor_value(char *deviceId, int *value)
+ {
+-	tsensor_info_t *pSensorInfo = NULL;
++char buffer[VENDOR_TSENSOR_PROC_DEVICE_BUFFER];
+ 
+ 	if ((NULL == deviceId) || (NULL == value)) {
+ 		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
+ 		return EFAIL;
+ 	}
+ 
+-	pSensorInfo = getTSensorInfo(deviceId);
+-	if ((NULL == pSensorInfo) || (NULL == pSensorInfo->pFullData)) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+-	if (!vendor_hooks_extractint32FromData(pSensorInfo->pFullData, VENDOR_TSENSOR_TEMPERATURE, value)) {
++	if (!vendor_hooks_extractint32FromData(buffer, VENDOR_TSENSOR_TEMPERATURE, value)) {
+ 		return EFAIL;
+ 	}
+-
+-	if (*value == VENDOR_TSENSOR_ABS_ZERO_TEMP) {
++	/* Drivers return absolute Zero -273 */
++	if (*value == VENDOR_TSENSOR_ABS_ZERO_TEMP || *value == VENDOR_TSENSOR_ABS_ZERO_TEMP - 1) {
+ 		/*A value of -274 (which is below absolute zero) indicates a non configured value*/
+-		*value = VENDOR_TSENSOR_ABS_ZERO_TEMP - 1;
++		*value = VENDOR_TSENSOR_ABS_ZERO_TEMP;
+ 	}
+ 
+ 	return EOK;
+@@ -570,25 +566,25 @@
+ */
+ int get_temperaturestatus_temperaturesensor_highalarmvalue(char *deviceId, int *value)
+ {
+-	tsensor_info_t *pSensorInfo = NULL;
++char buffer[VENDOR_TSENSOR_PROC_DEVICE_BUFFER];
+ 
+ 	if (NULL == deviceId) {
+ 		VENDOR_LOG_ERROR("Invalid Device ID in %s\n", __FUNCTION__);
+ 		return EFAIL;
+ 	}
+ 
+-	pSensorInfo = getTSensorInfo(deviceId);
+-	if ((NULL == pSensorInfo) || (NULL == pSensorInfo->pFullData)) {
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+ 		return EFAIL;
+ 	}
+ 
+-	if (!vendor_hooks_extractint32FromData(pSensorInfo->pFullData, VENDOR_TSENSOR_HIGHALARM_VALUE, value)) {
++	if (!vendor_hooks_extractint32FromData(buffer, VENDOR_TSENSOR_HIGHALARM_VALUE, value)) {
+ 		return EFAIL;
+ 	}
+ 
+-	if (*value == VENDOR_TSENSOR_ABS_ZERO_TEMP) {
++	/* Drivers return absolute Zero -273 */
++	if (*value == VENDOR_TSENSOR_ABS_ZERO_TEMP || *value == VENDOR_TSENSOR_ABS_ZERO_TEMP - 1) {
+ 		/*A value of -274 (which is below absolute zero) indicates a non configured value*/
+-		*value = VENDOR_TSENSOR_ABS_ZERO_TEMP - 1;
++		*value = VENDOR_TSENSOR_ABS_ZERO_TEMP;
+ 	}
+ 
+ 	return EOK;
+@@ -710,8 +706,6 @@
+ 		return EFAIL;
+ 	}
+ 
+-	vendor_hook_deleteCacheEntry(gTSensorCache, deviceId);
+-
+ 	return getDataFromDB(objectId, buf, length);
+ 
+ }
+@@ -767,55 +761,6 @@
+ }
+ #endif
+ 
+-/*!
+-** ------------------------------------------------------------------------------------------
+-** @brief Copy the /proc entry to a buffer and cache it. If there is already an entry in the cache , return it
+-**		  unless the state of the device has changed from its previous state .
+-**
+-** @param[in] deviceId - /proc entry associated with the device
+-**
+-** @returns tsensor_info_t* - Pointer to a cache entry thats available
+-**
+-** @retval NULL - NULL if there is an error parsing the /proc
+-** @retval pSensorInfo - In the succesful case
+-*/
+-static tsensor_info_t *getTSensorInfo(char *deviceId)
+-{
+-	tsensor_info_t *pSensorInfo = NULL;
+-	char buffer[VENDOR_TSENSOR_PROC_DEVICE_BUFFER];
+-
+-	if (NULL == gTSensorCache){
+-		/*!< Create a cache with Expiry Time 0 ... 0 means cache doesnt expire at all */
+-		/*!< The cache is deleted in the last parameter, so is only cached during get. */
+-		gTSensorCache = vendor_hook_createCache(VENDOR_TSENSOR_CACHE_EXPIRE_TIME);
+-	}
+-
+-	pSensorInfo = vendor_hook_getCacheEntry(gTSensorCache, deviceId);
+-	if ( pSensorInfo != NULL){
+-		return  pSensorInfo;
+-	}
+-
+-	pSensorInfo = (tsensor_info_t*) calloc(1, VENDOR_TSENSOR_PROC_DEVICE_BUFFER + 1 + sizeof(tsensor_info_t));
+-	if(NULL == pSensorInfo){
+-		return NULL;
+-	}
+-	pSensorInfo->pFullData = (char*)pSensorInfo + sizeof( tsensor_info_t );
+-
+-
+-	if (eVENDORHOOK_OK == vendor_hook_read_proc_device(PROCPROXY_GET_INFO, deviceId, buffer, sizeof (buffer))) {
+-		strncpy( pSensorInfo->pFullData, (char*) buffer, VENDOR_TSENSOR_PROC_DEVICE_BUFFER);
+-		pSensorInfo->dataSize = strlen(pSensorInfo->pFullData);
+-	}else {
+-		if(pSensorInfo != NULL){
+-			free(pSensorInfo);
+-			pSensorInfo = NULL ;
+-		}
+-		return NULL;
+-	}
+-
+-	vendor_hook_addCacheEntry(gTSensorCache, pSensorInfo, deviceId);
+-	return pSensorInfo;
+-}
+ 
+ #if !defined (VENDOR_HOOK_TSENSOR_USES_STATIC_TEST_DATA)
+ /*!

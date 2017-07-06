@@ -1,0 +1,344 @@
+diff -Naur upstart-1.13.2/conf/control-alt-delete.conf upstart-1.13.2_mod/conf/control-alt-delete.conf
+--- upstart-1.13.2/conf/control-alt-delete.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/conf/control-alt-delete.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,12 +1,5 @@
+-# control-alt-delete - emergency keypress handling
+-#
+-# This task is run whenever the Control-Alt-Delete key combination is
+-# pressed, and performs a safe reboot of the machine.
+-
+ description	"emergency keypress handling"
+ author		"Scott James Remnant <scott@netsplit.com>"
+-
+ start on control-alt-delete
+-
+ task
+ exec shutdown -r now "Control-Alt-Delete pressed"
+diff -Naur upstart-1.13.2/conf/rc.conf upstart-1.13.2_mod/conf/rc.conf
+--- upstart-1.13.2/conf/rc.conf	2015-12-29 10:38:18.870262331 +0000
++++ upstart-1.13.2_mod/conf/rc.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,18 +1,9 @@
+-# rc - System V runlevel compatibility
+-#
+-# This task runs the old System V-style rc script when changing between
+-# runlevels.
+-
+ description	"System V runlevel compatibility"
+ author		"Scott James Remnant <scott@netsplit.com>"
+-
+ start on runlevel [0123456]
+ stop on runlevel [!$RUNLEVEL]
+-
+ export RUNLEVEL
+ export PREVLEVEL
+-
+ task
+-
+ console none
+ exec /etc/init.d/rc $RUNLEVEL
+diff -Naur upstart-1.13.2/conf/rcS.conf upstart-1.13.2_mod/conf/rcS.conf
+--- upstart-1.13.2/conf/rcS.conf	2015-12-29 10:38:18.870262331 +0000
++++ upstart-1.13.2_mod/conf/rcS.conf	2015-12-29 10:39:39.274264398 +0000
+@@ -1,26 +1,12 @@
+-# rcS - System V single-user mode compatibility
+-#
+-# This task handles the old System V-style single-user mode, this is
+-# distinct from the other runlevels since running the rc script would
+-# be bad.
+-
+ description	"System V single-user mode compatibility"
+ author		"Scott James Remnant <scott@netsplit.com>"
+-
+ start on runlevel S
+ stop on runlevel [!S]
+-
+ console none
+-exec /sbin/sulogin
+-
+ post-stop script
+-    # Don't switch runlevels if we were stopped by an event, since that
+-    # means we're already switching runlevels
+     if [ -n "${UPSTART_STOP_EVENTS}" ]
+     then
+ 	exit 0
+     fi
+-
+-    # Switch, passing a magic flag
+     start --no-wait rc-sysinit FROM_SINGLE_USER_MODE=y
+ end script
+diff -Naur upstart-1.13.2/conf/rc-sysinit.conf upstart-1.13.2_mod/conf/rc-sysinit.conf
+--- upstart-1.13.2/conf/rc-sysinit.conf	2015-12-29 10:38:18.870262331 +0000
++++ upstart-1.13.2_mod/conf/rc-sysinit.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,60 +1,31 @@
+-# rc-sysinit - System V initialisation compatibility
+-#
+-# This task runs the old System V-style system initialisation scripts,
+-# and enters the default runlevel when finished.
+-
+ description	"System V initialisation compatibility"
+ author		"Scott James Remnant <scott@netsplit.com>"
+-
+ start on startup
+ stop on runlevel
+-
+-# Default runlevel, this may be overriden on the kernel command-line
+-# or by faking an old /etc/inittab entry
+ env DEFAULT_RUNLEVEL=2
+-
+ emits runlevel
+-
+-# There can be no previous runlevel here, but there might be old
+-# information in /var/run/utmp that we pick up, and we don't want
+-# that.
+-#
+-# These override that
+ env RUNLEVEL=
+ env PREVLEVEL=
+-
+ task
+-
+ console none
+ script
+-    # Check for default runlevel in /etc/inittab
+     if [ -r /etc/inittab ]
+     then
+ 	eval "$(sed -nre 's/^[^#][^:]*:([0-6sS]):initdefault:.*/DEFAULT_RUNLEVEL="\1";/p' /etc/inittab || true)"
+     fi
+-
+-    # Check kernel command-line for typical arguments
+     for ARG in $(cat /proc/cmdline)
+     do
+ 	case "${ARG}" in
+ 	-b|emergency)
+-	    # Emergency shell
+ 	    [ -n "${FROM_SINGLE_USER_MODE}" ] || sulogin
+ 	    ;;
+ 	[0123456sS])
+-	    # Override runlevel
+ 	    DEFAULT_RUNLEVEL="${ARG}"
+ 	    ;;
+ 	-s|single)
+-	    # Single user mode
+ 	    [ -n "${FROM_SINGLE_USER_MODE}" ] || DEFAULT_RUNLEVEL=S
+ 	    ;;
+ 	esac
+     done
+-
+-    # Run the system initialisation scripts
+     [ -n "${FROM_SINGLE_USER_MODE}" ] || /etc/init.d/rcS
+-
+-    # Switch into the default runlevel
+-    #telinit "${DEFAULT_RUNLEVEL}"
+ end script
+diff -Naur upstart-1.13.2/extra/conf/upstart-dbus-bridge.conf upstart-1.13.2_mod/extra/conf/upstart-dbus-bridge.conf
+--- upstart-1.13.2/extra/conf/upstart-dbus-bridge.conf	2015-12-29 10:38:10.314262114 +0000
++++ upstart-1.13.2_mod/extra/conf/upstart-dbus-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,17 +1,7 @@
+-# upstart-dbus-bridge - Bridge D-Bus signal events into upstart
+-#
+-# This helper daemon receives D-Bus signal events and
+-# emits equivalent Upstart events.
+-
+ description	"Bridge D-Bus signal events into upstart"
+-
+ emits dbus
+-
+ start on stopped rc-sysinit
+-
+ stop on runlevel [06]
+-
+ expect daemon
+ respawn
+-
+ exec upstart-dbus-bridge --daemon --system
+diff -Naur upstart-1.13.2/extra/conf/upstart-event-bridge.conf upstart-1.13.2_mod/extra/conf/upstart-event-bridge.conf
+--- upstart-1.13.2/extra/conf/upstart-event-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf/upstart-event-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,15 +1,6 @@
+-# upstart-event-bridge - Bridge system upstarts events into session upstart
+-#
+-# This helper daemon receives system upstart events from the DBus system bus
+-# and emits equivalent events (with a :sys:) prefix to the session bus
+-
+ description	"Bridge Upstart system events into session Upstart"
+-
+ emits :sys:*
+-
+ start on started dbus
+ stop on stopped dbus
+-
+ respawn
+-
+ exec upstart-event-bridge
+diff -Naur upstart-1.13.2/extra/conf/upstart-file-bridge.conf upstart-1.13.2_mod/extra/conf/upstart-file-bridge.conf
+--- upstart-1.13.2/extra/conf/upstart-file-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf/upstart-file-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,19 +1,7 @@
+-# upstart-file-bridge - Bridge file events into upstart
+-#
+-# This helper daemon receives inotify(7) events and
+-# emits equivalent Upstart events.
+-
+ description	"Bridge file events into upstart"
+-
+ emits file
+-
+-# the bridge does not currently handle dealing with mounts that overlay
+-# already-watched directories.
+ start on filesystem
+-
+ stop on runlevel [!2345]
+-
+ expect daemon
+ respawn
+-
+ exec upstart-file-bridge --daemon
+diff -Naur upstart-1.13.2/extra/conf/upstart-socket-bridge.conf upstart-1.13.2_mod/extra/conf/upstart-socket-bridge.conf
+--- upstart-1.13.2/extra/conf/upstart-socket-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf/upstart-socket-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,16 +1,7 @@
+-# upstart-socket-bridge - Bridge socket events into upstart
+-#
+-# This helper daemon receives socket(7) events and
+-# emits equivalent Upstart events.
+-
+ description	"Bridge socket events into upstart"
+-
+ emits socket
+-
+ start on net-device-up IFACE=lo
+ stop on runlevel [!2345]
+-
+ expect daemon
+ respawn
+-
+ exec upstart-socket-bridge --daemon
+diff -Naur upstart-1.13.2/extra/conf/upstart-udev-bridge.conf upstart-1.13.2_mod/extra/conf/upstart-udev-bridge.conf
+--- upstart-1.13.2/extra/conf/upstart-udev-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf/upstart-udev-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,22 +1,11 @@
+-# upstart-udev-bridge - Bridge udev events into upstart
+-#
+-# This helper daemon receives udev events from the netlink socket and
+-# emits equivalent Upstart events.
+-
+ description	"Bridge udev events into upstart"
+-
+-# From upstart-udev-bridge itself
+ emits *-device-added
+ emits *-device-removed
+ emits *-device-changed
+-# From http://www.kernel.org/pub/linux/utils/kernel/hotplug/libudev/libudev-udev-device.html
+ emits *-device-online
+ emits *-device-offline
+-
+ start on starting udev
+ stop on stopped udev
+-
+ expect daemon
+ respawn
+-
+ exec upstart-udev-bridge --daemon
+diff -Naur upstart-1.13.2/extra/conf-session/re-exec.conf upstart-1.13.2_mod/extra/conf-session/re-exec.conf
+--- upstart-1.13.2/extra/conf-session/re-exec.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf-session/re-exec.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,6 +1,4 @@
+ description "Restart session init when system init restarts"
+ author "Stéphane Graber <stgraber@ubuntu.com>"
+-
+ start on :sys:restarted
+-
+ exec dbus-send --type=method_call --address=$UPSTART_SESSION /com/ubuntu/Upstart com.ubuntu.Upstart0_6.Restart
+diff -Naur upstart-1.13.2/extra/conf-session/upstart-dbus-session-bridge.conf upstart-1.13.2_mod/extra/conf-session/upstart-dbus-session-bridge.conf
+--- upstart-1.13.2/extra/conf-session/upstart-dbus-session-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf-session/upstart-dbus-session-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,16 +1,7 @@
+-# upstart-dbus-bridge - Bridge D-Bus signal events into upstart
+-#
+-# This helper daemon receives D-Bus signal events and
+-# emits equivalent Upstart events.
+-
+ description	"Bridge D-Bus session bus signal events into upstart"
+-
+ emits dbus
+-
+ start on started dbus
+ stop on stopping dbus
+-
+ expect daemon
+ respawn
+-
+ exec upstart-dbus-bridge --daemon --session --user --bus-name session
+diff -Naur upstart-1.13.2/extra/conf-session/upstart-dbus-system-bridge.conf upstart-1.13.2_mod/extra/conf-session/upstart-dbus-system-bridge.conf
+--- upstart-1.13.2/extra/conf-session/upstart-dbus-system-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf-session/upstart-dbus-system-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,16 +1,7 @@
+-# upstart-dbus-bridge - Bridge D-Bus signal events into upstart
+-#
+-# This helper daemon receives D-Bus signal events and
+-# emits equivalent Upstart events.
+-
+ description	"Bridge D-Bus system bus signal events into upstart"
+-
+ emits dbus
+-
+ start on started dbus
+ stop on stopping dbus
+-
+ expect daemon
+ respawn
+-
+ exec upstart-dbus-bridge --daemon --system --user --bus-name system
+diff -Naur upstart-1.13.2/extra/conf-session/upstart-dconf-bridge.conf upstart-1.13.2_mod/extra/conf-session/upstart-dconf-bridge.conf
+--- upstart-1.13.2/extra/conf-session/upstart-dconf-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf-session/upstart-dconf-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,10 +1,6 @@
+ description	"Bridge dconf events into session upstart"
+-
+ emits dconf
+-
+ start on started dbus
+ stop on stopped dbus
+-
+ respawn
+-
+ exec upstart-dconf-bridge
+diff -Naur upstart-1.13.2/extra/conf-session/upstart-event-bridge.conf upstart-1.13.2_mod/extra/conf-session/upstart-event-bridge.conf
+--- upstart-1.13.2/extra/conf-session/upstart-event-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf-session/upstart-event-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,15 +1,6 @@
+-# upstart-event-bridge - Bridge system upstarts events into session upstart
+-#
+-# This helper daemon receives system upstart events from the DBus system bus
+-# and emits equivalent events (with a :sys:) prefix to the session bus
+-
+ description	"Bridge Upstart system events into session Upstart"
+-
+ emits :sys:*
+-
+ start on started dbus
+ stop on stopped dbus
+-
+ respawn
+-
+ exec upstart-event-bridge
+diff -Naur upstart-1.13.2/extra/conf-session/upstart-file-bridge.conf upstart-1.13.2_mod/extra/conf-session/upstart-file-bridge.conf
+--- upstart-1.13.2/extra/conf-session/upstart-file-bridge.conf	2014-08-14 10:35:42.000000000 +0100
++++ upstart-1.13.2_mod/extra/conf-session/upstart-file-bridge.conf	2015-12-29 10:37:48.690261557 +0000
+@@ -1,16 +1,7 @@
+-# upstart-file-bridge - Bridge file events into upstart
+-#
+-# This helper daemon receives inotify(7) events and
+-# emits equivalent Upstart events.
+-
+ description	"Bridge file events into upstart"
+-
+ emits file
+-
+ start on started dbus
+ stop on session-end
+-
+ expect daemon
+ respawn
+-
+ exec upstart-file-bridge --daemon --user

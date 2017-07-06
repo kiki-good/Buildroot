@@ -1,0 +1,9 @@
+--- a/bus/dbus.service.in	2014-09-29 12:47:53.033867132 +0100
++++ b/bus/dbus.service.in	2014-09-29 12:48:07.025867491 +0100
+@@ -6,5 +6,5 @@
+ [Service]
+ ExecStartPre=@EXPANDED_BINDIR@/dbus-uuidgen --ensure
+ ExecStartPre=-/bin/rm -f @DBUS_SYSTEM_PID_FILE@
+-ExecStart=@EXPANDED_BINDIR@/dbus-daemon --system --address=systemd: --nofork --systemd-activation
++ExecStart=@EXPANDED_BINDIR@/dbus-daemon --system --fork
+ ExecReload=@EXPANDED_BINDIR@/dbus-send --print-reply --system --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig

@@ -1,0 +1,132 @@
+diff -Naurr busybox-1.22.1_orig/loginutils/Config.src busybox-1.22.1_new/loginutils/Config.src
+--- busybox-1.22.1_orig/loginutils/Config.src	2014-01-20 02:38:10.000000000 +0000
++++ busybox-1.22.1_new/loginutils/Config.src	2015-03-26 10:21:22.938871727 +0000
+@@ -179,7 +179,7 @@
+ config GETTY
+ 	bool "getty"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  getty lets you log in on a tty. It is normally invoked by init.
+ 
+@@ -198,7 +198,7 @@
+ config LOGIN
+ 	bool "login"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  login is used when signing onto a system.
+ 
+@@ -251,7 +251,7 @@
+ config PASSWD
+ 	bool "passwd"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  passwd changes passwords for user and group accounts. A normal user
+ 	  may only change the password for his/her own account, the super user
+@@ -293,7 +293,7 @@
+ config SU
+ 	bool "su"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  su is used to become another user during a login session.
+ 	  Invoked without a username, su defaults to becoming the super user.
+@@ -314,7 +314,7 @@
+ config SULOGIN
+ 	bool "sulogin"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  sulogin is invoked when the system goes into single user
+ 	  mode (this is done through an entry in inittab).
+diff -Naurr busybox-1.22.1_orig/miscutils/Config.src busybox-1.22.1_new/miscutils/Config.src
+--- busybox-1.22.1_orig/miscutils/Config.src	2014-01-09 18:15:44.000000000 +0000
++++ busybox-1.22.1_new/miscutils/Config.src	2015-03-26 10:22:03.149112847 +0000
+@@ -136,7 +136,7 @@
+ config CROND
+ 	bool "crond"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  Crond is a background daemon that parses individual crontab
+ 	  files and executes commands on behalf of the users in question.
+@@ -195,7 +195,7 @@
+ 	bool "devfsd (obsolete)"
+ 	default n
+ 	select PLATFORM_LINUX
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  This is deprecated and should NOT be used anymore.
+ 	  Use linux >= 2.6 (optionally with hotplug) and mdev instead!
+diff -Naurr busybox-1.22.1_orig/networking/Config.src busybox-1.22.1_new/networking/Config.src
+--- busybox-1.22.1_orig/networking/Config.src	2014-01-09 18:15:44.000000000 +0000
++++ busybox-1.22.1_new/networking/Config.src	2015-03-26 10:23:42.793708564 +0000
+@@ -105,7 +105,7 @@
+ config FAKEIDENTD
+ 	bool "fakeidentd"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  fakeidentd listens on the ident port and returns a predefined
+ 	  fake value on any query.
+@@ -457,7 +457,7 @@
+ config INETD
+ 	bool "inetd"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  Internet superserver daemon
+ 
+@@ -731,7 +731,7 @@
+ config TELNETD
+ 	bool "telnetd"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  A daemon for the TELNET protocol, allowing you to log onto the host
+ 	  running the daemon. Please keep in mind that the TELNET protocol
+@@ -987,7 +987,7 @@
+ 	bool "zcip"
+ 	default y
+ 	select PLATFORM_LINUX
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  ZCIP provides ZeroConf IPv4 address selection, according to RFC 3927.
+ 	  It's a daemon that allocates and defends a dynamically assigned
+diff -Naurr busybox-1.22.1_orig/sysklogd/Config.src busybox-1.22.1_new/sysklogd/Config.src
+--- busybox-1.22.1_orig/sysklogd/Config.src	2014-01-09 18:15:44.000000000 +0000
++++ busybox-1.22.1_new/sysklogd/Config.src	2015-03-26 10:26:33.857731446 +0000
+@@ -159,7 +159,7 @@
+ config LOGGER
+ 	bool "logger"
+ 	default y
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	    The logger utility allows you to send arbitrary text
+ 	    messages to the system log (i.e. the 'syslogd' utility) so
+diff -Naurr busybox-1.22.1_orig/util-linux/Config.src busybox-1.22.1_new/util-linux/Config.src
+--- busybox-1.22.1_orig/util-linux/Config.src	2014-01-09 18:15:44.000000000 +0000
++++ busybox-1.22.1_new/util-linux/Config.src	2015-03-26 10:25:27.549334919 +0000
+@@ -489,7 +489,7 @@
+ 	default n
+ 	depends on MOUNT
+ 	select FEATURE_HAVE_RPC
+-	select FEATURE_SYSLOG
++	#select FEATURE_SYSLOG
+ 	help
+ 	  Enable mounting of NFS file systems on Linux kernels prior
+ 	  to version 2.6.23. Note that in this case mounting of NFS

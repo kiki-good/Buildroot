@@ -1,0 +1,130 @@
+diff -Naurr diagnostics-1.3_orig/apps/cmfilechk/main.c diagnostics-1.3_new/apps/cmfilechk/main.c
+--- diagnostics-1.3_orig/apps/cmfilechk/main.c	2015-11-11 10:06:13.000000000 +0000
++++ diagnostics-1.3_new/apps/cmfilechk/main.c	2015-11-12 16:28:43.758233379 +0000
+@@ -22,6 +22,7 @@
+ #include <dirent.h>
+ #include <regex.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include <errno.h>
+ #include <err.h>
+@@ -49,6 +50,8 @@
+ 	DIR *dir;
+ 	struct stat st;
+ 	char fn[FILENAME_MAX];
++    char mode[] = "0660";
++    int i;
+ 	int res = WALK_OK;
+ 	int len = strlen(dname);
+ 	if (len >= FILENAME_MAX - 1){
+@@ -101,6 +104,9 @@
+ 			 puts(fn);
+ 			/* Change Owner and group to tr069 */
+ 			 chown(fn, SKY_TR069_UID, SKY_TR069_GID);
++			/* Change mode */
++			i = strtol(mode, 0, 8);
++			chmod (fn, i);
+ 		}
+ 	}
+  
+@@ -128,5 +134,6 @@
+ int r;
+ 	r = walk_dir("/opt/cm/", "cmlegacy.??", WS_DEFAULT);
+ 	r = walk_dir("/opt/cm/", "sky_tr69_*", WS_DEFAULT);
++	r = walk_dir("/opt/cm/", "serialnumber.txt", WS_DEFAULT);
+ 	return 0;
+ }
+diff -Naurr diagnostics-1.3_orig/apps/fixmount/main.c diagnostics-1.3_new/apps/fixmount/main.c
+--- diagnostics-1.3_orig/apps/fixmount/main.c	2015-11-11 10:06:13.000000000 +0000
++++ diagnostics-1.3_new/apps/fixmount/main.c	2015-11-12 14:47:34.214871358 +0000
+@@ -17,21 +17,21 @@
+ 	if(NULL == argv[1]){
+ 		/* Don't give any indication of what this program does. */
+         /* fprintf(stderr, "Usage %s <path>\n", argv[0]); */
+-        exit(1);
++        exit(0);
+ 	}
+ 	strncpy(buf, argv[1], strlen(argv[1]));
+ 	/* Only chmod if correct path. */
+ 	if (NULL == strstr(buf, testpath)){
+ 		/* Don't give any indication of what this program does. */
+         /* fprintf(stderr, "%s: error incorrect path (%s)\n", argv[0], buf); */
+-        exit(2);
++        exit(0);
+ 	}
+     i = strtol(mode, 0, 8);
+     if (chmod (buf, i) < 0){
+ 		/* Don't give any indication of what this program does. */
+         /*fprintf(stderr, "%s: error in %s, (%s)\n",
+                 argv[0], buf, strerror(errno)); */
+-        exit(3);
++        exit(0);
+     }
+     return(0);
+ }
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_database_manager.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_database_manager.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_database_manager.c	2015-11-11 10:06:13.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_database_manager.c	2015-11-12 16:28:18.965175550 +0000
+@@ -78,7 +78,9 @@
+ 	iks *root = NULL;
+ 	iks *node = NULL;
+ 	char type[VENDOR_DBM_DATA_TYPE_BUFFER];
+-	
++    char mode[] = "0660";
++    int i;
++
+ 	if (NULL == database) {
+ 		VENDOR_LOG_ERROR("\nInvalid argument in %s\n",__FUNCTION__);
+ 		return EFAIL;
+@@ -118,6 +120,9 @@
+         return EFAIL;
+     }
+ 	iks_delete(root);
++	/* Change mode */
++	i = strtol(mode, 0, 8);
++	chmod (database, i);
+ 	return EOK;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-11-11 10:06:13.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_deviceinfo.c	2015-11-12 16:28:25.187397189 +0000
+@@ -22,6 +22,7 @@
+ #include <sys/ioctl.h>
+ #include <sys/syslog.h>
+ #include <sys/sysinfo.h>
++#include <sys/stat.h>
+ #include <net/if.h>
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+@@ -295,6 +296,8 @@
+ 	char *pInputStr = "Serial Number: ";
+ 	char serialNumber[VENDOR_HOOKS_MAX_RESPONSE_SIZE];
+ 	char hwVersion[BSKYB_DEVICEINFO_HW_VER_SIZE_MAX];
++    char mode[] = "0660";
++    int i;
+ 	
+ 	result = get_deviceinfo_string_variable(pDeviceID, pInputStr, serialNumber, sizeof(serialNumber));
+ 	if (EOK == result) {
+@@ -319,6 +322,9 @@
+ 		if (EOK != access(BSKYB_DEVICEINFO_SERIAL_NUMBER_FILENAME, F_OK)){
+ 			vendor_hook_write_proc_device(BSKYB_DEVICEINFO_SERIAL_NUMBER_FILENAME,
+ 										buf, strlen(buf));
++			/* Change mode */
++			i = strtol(mode, 0, 8);
++			chmod (BSKYB_DEVICEINFO_SERIAL_NUMBER_FILENAME, i);
+ 		}
+ 	} else {
+ 		strncpy(buf, serialNumber, length);
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-11-11 10:06:13.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_temperaturestatus_temperaturesensor.c	2015-11-12 15:54:15.087821618 +0000
+@@ -24,6 +24,7 @@
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
+ #include <sys/syslog.h>
++#include <sys/stat.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdint.h>

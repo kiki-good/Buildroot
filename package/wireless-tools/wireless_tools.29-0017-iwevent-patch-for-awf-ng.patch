@@ -1,0 +1,26 @@
+From 1cff8de7f1e5b65fb4c81a688c97e541e7cafc9c Mon Sep 17 00:00:00 2001
+From: bilal <bilal@airties.com>
+Date: Wed, 22 May 2013 13:50:22 +0300
+Subject: [PATCH 17/26] iwevent patch for awf-ng
+
+Issue:30988
+---
+ iwevent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/iwevent.c b/iwevent.c
+index bac2e09..e8e2d6e 100644
+--- a/iwevent.c
++++ b/iwevent.c
+@@ -621,7 +621,7 @@ print_event_stream(int		ifindex,
+ 	    printf("(Invalid event)\n");
+ 	  /* Push data out *now*, in case we are redirected to a pipe */
+ 	  fflush(stdout);
+-		usleep(200000);	//bilal: awf-ng'nin eventleri sira ile handle edebilmesi icin gerekli!
++		usleep(300000);	//bilal: awf-ng'nin eventleri sira ile handle edebilmesi icin gerekli!
+ 	}
+     }
+   while(ret > 0);
+-- 
+1.9.1
+

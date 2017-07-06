@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBIPDR 
+	bool "libipdr"
+	help
+	 IPDR/XML is an encoding format that directly follows
+	 the W3C’s XML and XML- Schema specification’s rules for
+	 encoding well-formed and valid XML documents. 
+	 And this library is used for TR069 client

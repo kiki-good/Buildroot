@@ -1,0 +1,11 @@
+--- a/src/Makefile	2014-09-30 17:21:20.204506243 +0100
++++ b/src/Makefile	2014-09-30 17:22:28.976508008 +0100
+@@ -34,7 +34,7 @@
+ 
+ install: rhad
+ 	-mkdir -p $(INSTALL)
+-	cp $(BUILD_DIR)/rhad.conf $(INSTALL)/etc/dbus-1/system.d
++	cp $(BUILD_DIR)/rhad.conf $(DBUS_SYS_DIR)
+ 	cp $(BUILD_DIR)/src/rhad $(INSTALL)/usr/bin
+ 
+ .PHONY: all 

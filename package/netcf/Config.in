@@ -1,0 +1,7 @@
+config BR2_PACKAGE_NETCF
+	bool "netcf"
+	select BR2_PACKAGE_AUGEAS
+	help
+	  A library for configuring network interfaces 
+
+	  https://fedorahosted.org/netcf/

@@ -1,0 +1,27 @@
+Fix for the configure script and an issue with the ST toolchain.
+
+It seems that the libvirt configure script doesn't pick up the
+setns() function, which results in the code in virprocess.c thinking
+it needs to supply it.  The problem is that the ST toolchain does
+actually have setns() and therefore we end up with a clash.
+
+The real fix should be in the configure script, however to get things
+moving I've just switched the override to a macro rather than an
+inline function to avoid the clash.
+
+--- a/src/util/virprocess.c	2015-12-23 22:54:18.000000000 +0000
++++ b/src/util/virprocess.c	2016-03-29 21:09:53.665223654 +0100
+@@ -89,10 +89,9 @@
+ #  if defined(__NR_setns)
+ #   include <sys/syscall.h>
+ 
+-static inline int setns(int fd, int nstype)
+-{
+-    return syscall(__NR_setns, fd, nstype);
+-}
++#define setns(fd, nstype) \
++    syscall(__NR_setns, (fd), (nstype))
++
+ #  else /* !__NR_setns */
+ #   error Please determine the syscall number for setns on your architecture
+ #  endif

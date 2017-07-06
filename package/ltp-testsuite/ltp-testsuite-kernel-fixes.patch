@@ -1,0 +1,846 @@
+diff -rupN ltp-full-20070228/testcases/kernel/fs/ftest/ftest01.c ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest01.c
+--- ltp-full-20070228/testcases/kernel/fs/ftest/ftest01.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest01.c	2013-05-24 15:02:48.146035779 +0100
+@@ -137,6 +137,7 @@ int main (ac, av)
+ void
+ setup()
+ {
++	struct sigaction act, oldact ;
+ 
+ 	/*
+ 	 * Make a directory to do this in; ignore error if already exists.
+@@ -165,11 +166,12 @@ setup()
+ 	max_size = K_1 * K_1;
+ 	misc_intvl = 10;
+ 
+-	if ((sigset(SIGTERM, (void (*)())term)) == SIG_ERR) {
+-		tst_resm(TBROK,"sigset failed: %s", strerror(errno));
++	act.sa_handler = (void (*)()) term ;
++	if((sigaction(SIGTERM, &act, &oldact)) == SIG_ERR) {
++		tst_resm(TBROK,"sigaction failed: %s", strerror(errno));
+ 	        tst_exit();
+ 	}
+-
++	
+ 	local_flag = PASSED;
+ }
+ 
+diff -rupN ltp-full-20070228/testcases/kernel/fs/ftest/ftest03.c ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest03.c
+--- ltp-full-20070228/testcases/kernel/fs/ftest/ftest03.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest03.c	2013-05-24 14:59:27.402030625 +0100
+@@ -145,6 +145,7 @@ int main (ac, av)
+ void
+ setup()
+ {
++	struct sigaction act, oldact ;
+ 	char wdbuf[MAXPATHLEN],  *cwd ;
+ 	int term();
+ 
+@@ -181,7 +182,8 @@ setup()
+ 	max_size = K_1 * K_1;
+ 	misc_intvl = 10;
+ 
+-	if (sigset(SIGTERM, (void (*)())term) == SIG_ERR) {
++	act.sa_handler = (void (*)()) term ;
++	if((sigaction(SIGTERM, &act, &oldact)) == SIG_ERR) {
+ 		perror("sigset failed");
+ 		tst_resm(TBROK, " sigset failed: signo = 15") ;
+ 		tst_exit() ;
+diff -rupN ltp-full-20070228/testcases/kernel/fs/ftest/ftest04.c ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest04.c
+--- ltp-full-20070228/testcases/kernel/fs/ftest/ftest04.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest04.c	2013-05-24 15:02:28.194035267 +0100
+@@ -124,6 +124,7 @@ int main (ac, av)
+ void
+ setup()
+ {
++	struct sigaction act, oldact ;
+ 	int fd;
+ 	char wdbuf[MAXPATHLEN];
+ 	int term();
+@@ -155,7 +156,8 @@ setup()
+ 	max_size = K_1 * K_1;
+ 	misc_intvl = 10;
+ 
+-	if (sigset(SIGTERM, (void (*)())term) == SIG_ERR) {
++	act.sa_handler = (void (*)()) term ;
++	if((sigaction(SIGTERM, &act, &oldact)) == SIG_ERR) {
+ 		tst_resm(TFAIL,"first sigset failed");
+ 		tst_exit();
+ 	}
+diff -rupN ltp-full-20070228/testcases/kernel/fs/ftest/ftest05.c ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest05.c
+--- ltp-full-20070228/testcases/kernel/fs/ftest/ftest05.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest05.c	2013-05-24 15:00:29.502032220 +0100
+@@ -142,6 +142,7 @@ void
+ setup()
+ {
+ 
++	struct sigaction act, oldact ;
+ 	/*
+ 	 * Make a directory to do this in; ignore error if already exists.
+ 	 * Save starting directory.
+@@ -171,7 +172,8 @@ setup()
+ 	max_size = K_1 * K_1;
+ 	misc_intvl = 10;
+ 
+-	if ((sigset(SIGTERM, (void (*)())term)) == SIG_ERR) {
++	act.sa_handler = (void (*)()) term ;
++	if((sigaction(SIGTERM, &act, &oldact)) == SIG_ERR) {
+ 		perror("sigset failed");
+ 		exit(3);
+ 	}
+diff -rupN ltp-full-20070228/testcases/kernel/fs/ftest/ftest07.c ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest07.c
+--- ltp-full-20070228/testcases/kernel/fs/ftest/ftest07.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest07.c	2013-05-24 15:01:19.694033508 +0100
+@@ -151,6 +151,7 @@ int main (ac, av)
+ 
+ void setup()
+ {
++	struct sigaction act, oldact ;
+ 	char wdbuf[MAXPATHLEN],  *cwd ;
+ 	int term();
+ 
+@@ -186,7 +187,8 @@ void setup()
+ 	max_size = K_1 * K_1;
+ 	misc_intvl = 10;
+ 
+-	if (sigset(SIGTERM, (void (*)())term) == SIG_ERR) {
++	act.sa_handler = (void (*)()) term ;
++	if((sigaction(SIGTERM, &act, &oldact)) == SIG_ERR) {
+ 		tst_resm(TBROK, " sigset failed: signo = 15") ;
+ 		tst_exit() ;
+ 	}
+diff -rupN ltp-full-20070228/testcases/kernel/fs/ftest/ftest08.c ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest08.c
+--- ltp-full-20070228/testcases/kernel/fs/ftest/ftest08.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/fs/ftest/ftest08.c	2013-05-24 15:01:47.562034224 +0100
+@@ -131,6 +131,7 @@ int main (ac, av)
+ 
+ void init()
+ {
++	struct sigaction act, oldact ;
+ 	int fd;
+ 	char wdbuf[MAXPATHLEN];
+ 
+@@ -160,7 +161,8 @@ void init()
+ 	max_size = K_1 * K_1;
+ 	misc_intvl = 10;
+ 
+-	if (sigset(SIGTERM, (void (*)())term) == SIG_ERR) {
++	act.sa_handler = (void (*)()) term ;
++	if((sigaction(SIGTERM, &act, &oldact)) == SIG_ERR) {
+ 		tst_resm(TBROK,"first sigset failed");
+ 		tst_exit();
+ 	}
+diff -rupN ltp-full-20070228/testcases/kernel/fs/inode/inode02.c ltp-full-20070228_Patched/testcases/kernel/fs/inode/inode02.c
+--- ltp-full-20070228/testcases/kernel/fs/inode/inode02.c	2007-03-01 04:40:39.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/fs/inode/inode02.c	2013-05-24 15:15:45.782055741 +0100
+@@ -122,12 +122,14 @@ int main(argc, argv)
+ 	int count, child;
+ 	register int i;
+ 	int	term();
++	struct sigaction act, oldact ;
+ 
+ 	setup();
+ 
+ 	parent_pid = getpid();
+ 
+-	if (sigset(SIGTERM, (void (*)())term) == SIG_ERR) {
++	act.sa_handler = (void (*)()) term ;
++	if((sigaction(SIGTERM, &act, &oldact)) == SIG_ERR) {
+ 		tst_resm(TBROK, "\tSIGTERM sigset set failed, errno=%d\n", errno);
+ 		exit(1);
+ 	}
+diff -rupN ltp-full-20070228/testcases/kernel/ipc/ipc_stress/pipe_test_02.c ltp-full-20070228_Patched/testcases/kernel/ipc/ipc_stress/pipe_test_02.c
+--- ltp-full-20070228/testcases/kernel/ipc/ipc_stress/pipe_test_02.c	2007-03-01 04:40:34.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/ipc/ipc_stress/pipe_test_02.c	2013-05-23 17:22:10.440032513 +0100
+@@ -95,6 +95,7 @@
+  *  
+  * USAGE: usage statement
+  */
++#define OPEN_MAX		256 // Pavankn
+ #define MB			(1024*1024)
+ #define DEFAULT_PACKETS_TO_SEND 1024
+ #define DEFAULT_NUM_CHILDREN	1
+diff -rupN ltp-full-20070228/testcases/kernel/mem/mmapstress/mmapstress01.c ltp-full-20070228_Patched/testcases/kernel/mem/mmapstress/mmapstress01.c
+--- ltp-full-20070228/testcases/kernel/mem/mmapstress/mmapstress01.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/mem/mmapstress/mmapstress01.c	2013-05-24 16:14:48.454146684 +0100
+@@ -161,6 +161,8 @@ main(int argc, char *argv[])
+ #else /* LARGE_FILE */
+ 	off_t bytes_left;
+ #endif /* LARGE_FILE */
++	sigset_t x;
++	sigset_t y;
+ 
+ 	progname = *argv;
+ 	tst_tmpdir();
+@@ -359,9 +361,12 @@ main(int argc, char *argv[])
+ 		/*
+ 		 *  Block signals while processing child exit.
+ 		 */
+-
+-		if (sighold(SIGALRM) || sighold(SIGINT)) {
+-			perror("sighold error");
++		sigemptyset(&x);
++		sigemptyset(&y);
++		sigaddset(&x, SIGALRM);
++		sigaddset(&y, SIGINT);
++		if((sigprocmask(SIG_BLOCK, &x, NULL)) || sigprocmask(SIG_BLOCK, &y, NULL)) {
++			perror("sigprocmask error");
+ 			goto cleanup;
+ 		}
+ 
+@@ -405,8 +410,8 @@ main(int argc, char *argv[])
+ 				goto cleanup;
+ 			}
+ 		}
+-		if (sigrelse(SIGALRM) || sigrelse(SIGINT)) {
+-			perror("sigrelse error");
++		if((sigprocmask(SIG_UNBLOCK, &x, NULL)) || sigprocmask(SIG_UNBLOCK, &y, NULL)) {
++			perror("sigprocmask error");
+ 			goto cleanup;
+ 		}
+ 	}
+@@ -416,8 +421,10 @@ main(int argc, char *argv[])
+ 	 *  the children and done!.
+ 	 */
+ 
+-	if (sighold(SIGALRM)) {
+-		perror("sighold error");
++	sigemptyset(&x);
++	sigaddset(&x, SIGALRM);
++	if(sigprocmask(SIG_BLOCK, &x, NULL)) {
++		perror("sigprocmask error");
+ 		goto cleanup;
+ 	}
+ 	(void)alarm(0);
+diff -rupN ltp-full-20070228/testcases/kernel/mem/mmapstress/mmapstress09.c ltp-full-20070228_Patched/testcases/kernel/mem/mmapstress/mmapstress09.c
+--- ltp-full-20070228/testcases/kernel/mem/mmapstress/mmapstress09.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/mem/mmapstress/mmapstress09.c	2013-05-24 16:17:15.338150455 +0100
+@@ -130,6 +130,8 @@ main(int argc, char *argv[])
+ 	int no_prob = 0;
+ 	time_t t;
+ 	int wait_stat;
++	sigset_t x;
++	sigset_t y;
+ 
+ 	progname = *argv;
+ 	pagesize = sysconf(_SC_PAGE_SIZE);
+@@ -282,8 +284,12 @@ main(int argc, char *argv[])
+ 		 *  Block signals while processing child exit.
+ 		 */
+ 
+-		if (sighold(SIGALRM) || sighold(SIGINT)) {
+-			perror("sighold error");
++		sigemptyset(&x);
++		sigemptyset(&y);
++		sigaddset(&x, SIGALRM);
++		sigaddset(&y, SIGINT);
++		if((sigprocmask(SIG_BLOCK, &x, NULL)) || sigprocmask(SIG_BLOCK, &y, NULL)) {
++			perror("sigprocmask error");
+ 			goto cleanup;
+ 		}
+ 
+@@ -328,8 +334,8 @@ main(int argc, char *argv[])
+ 				goto cleanup;
+ 			}
+ 		}
+-		if (sigrelse(SIGALRM) || sigrelse(SIGINT)) {
+-			perror("sigrelse error");
++		if((sigprocmask(SIG_UNBLOCK, &x, NULL)) || sigprocmask(SIG_UNBLOCK, &y, NULL)) {
++			perror("sigprocmask error");
+ 			goto cleanup;
+ 		}
+ 	}
+@@ -339,8 +345,10 @@ main(int argc, char *argv[])
+ 	 *  the children and done!.
+ 	 */
+ 
+-	if (sighold(SIGALRM)) {
+-		perror("sighold error");
++	sigemptyset(&x);
++	sigaddset(&x, SIGALRM);
++	if(sigprocmask(SIG_BLOCK, &x, NULL)) {
++		perror("sigprocmask error");
+ 		goto cleanup;
+ 	}
+ 	(void)alarm(0);
+diff -rupN ltp-full-20070228/testcases/kernel/mem/mmapstress/mmapstress10.c ltp-full-20070228_Patched/testcases/kernel/mem/mmapstress/mmapstress10.c
+--- ltp-full-20070228/testcases/kernel/mem/mmapstress/mmapstress10.c	2007-03-01 04:40:40.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/mem/mmapstress/mmapstress10.c	2013-05-24 16:17:13.198150399 +0100
+@@ -182,7 +182,8 @@ main(int argc, char *argv[])
+ #else /* LARGE_FILE */
+ 	off_t bytes_left;
+ #endif /* LARGE_FILE */
+-
++	sigset_t x;
++	sigset_t y;
+ 	progname = *argv;
+ 	tst_tmpdir();
+ 	if (argc < 2) {
+@@ -416,8 +417,12 @@ main(int argc, char *argv[])
+ 		 *  Block signals while processing child exit.
+ 		 */
+ 
+-		if (sighold(SIGALRM) || sighold(SIGINT)) {
+-			perror("sighold error");
++		sigemptyset(&x);
++		sigemptyset(&y);
++		sigaddset(&x, SIGALRM);
++		sigaddset(&y, SIGINT);
++		if((sigprocmask(SIG_BLOCK, &x, NULL)) || sigprocmask(SIG_BLOCK, &y, NULL)) {
++			perror("sigprocmask error");
+ 			goto cleanup;
+ 		}
+ 
+@@ -468,8 +473,8 @@ main(int argc, char *argv[])
+ 				goto cleanup;
+ 			}
+ 		}
+-		if (sigrelse(SIGALRM) || sigrelse(SIGINT)) {
+-			perror("sigrelse error");
++		if((sigprocmask(SIG_UNBLOCK, &x, NULL)) || sigprocmask(SIG_UNBLOCK, &y, NULL)) {
++			perror("sigprocmask error");
+ 			goto cleanup;
+ 		}
+ 	}
+diff -rupN ltp-full-20070228/testcases/kernel/mem/vmtests/data_space.c ltp-full-20070228_Patched/testcases/kernel/mem/vmtests/data_space.c
+--- ltp-full-20070228/testcases/kernel/mem/vmtests/data_space.c	2007-03-01 04:40:41.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/mem/vmtests/data_space.c	2013-05-24 16:56:52.722211481 +0100
+@@ -97,13 +97,40 @@ int usage(prog)
+ 	return(0);
+ }
+ 
++int term()
++{
++#ifdef DEBUG
++	tst_resm(TINFO, "\tterm -[%d]- got sig term.\n", getpid());
++#endif
++
++	if (parent_pid == getpid())
++	{
++		massmurder();
++		return(0);
++	}
++
++	exit(0);
++}
++
++int chld()
++{
++	struct sigaction act, oldact ;
++	act.sa_handler = (void (*)()) chld ;
++	if((sigaction(SIGUSR1, &act, &oldact)) == SIG_ERR) {
++		tst_resm(TBROK,"sigaction failed: %s", strerror(errno));
++	        tst_exit();
++	}
++	chld_flag++;
++	return(0);
++}
++
+ int main(argc, argv)
+ 	int	argc;
+ 	char	*argv[];
+ {
+ 	int i =1;
+-	int term();
+-	int chld();
++//	int term();
++//	int chld();
+ 
+ 	prog = argv[0];
+ 
+@@ -135,16 +162,21 @@ int main(argc, argv)
+ 
+ 	parent_pid = getpid();
+ 
+-	if (sigset(SIGTERM, (void (*)())term) == SIG_ERR)
+-	{
+-		tst_resm(TBROK,"first sigset failed");
+-		tst_exit();
+-	}
+-	if (sigset(SIGUSR1, (void (*)())chld) == SIG_ERR)
++#if 0
++
+ 	{
+-		tst_resm(TBROK,"sigset shichld");
+-		tst_exit();
++	    	struct sigaction act, oldact ;
++		act.sa_handler = (void (*)()) term ;
++		if((sigaction(SIGTERM, &act, &oldact)) == SIG_ERR) {
++			tst_resm(TBROK,"first sigset failed");
++			tst_exit();
++		}
++		if((sigaction(SIGUSR1, &act, &oldact)) == SIG_ERR) {
++			tst_resm(TBROK,"sigset shichld");
++			tst_exit();
++		}
+ 	}
++#endif
+ 
+ 	runtest();
+ 	/**NOT REACHED**/
+@@ -476,31 +508,7 @@ void dumpbits(bits, size)
+  *	Parent - kill kids and return when signal arrives.
+  *	Child - exit.
+  */
+-int term()
+-{
+-#ifdef DEBUG
+-	tst_resm(TINFO, "\tterm -[%d]- got sig term.\n", getpid());
+-#endif
+ 
+-	if (parent_pid == getpid())
+-	{
+-		massmurder();
+-		return(0);
+-	}
+-
+-	exit(0);
+-}
+-
+-int chld()
+-{
+-	if (sigset(SIGUSR1, (void (*)())chld) == SIG_ERR)
+-	{
+-		tst_resm(TBROK,"sigset shichld");
+-		exit(1);
+-	}
+-	chld_flag++;
+-	return(0);
+-}
+ int massmurder()
+ {
+ 	int i;
+@@ -514,8 +522,7 @@ int massmurder()
+ 	return(0);
+ }
+ 
+-int okexit(me)
+-        int me;
++int okexit(int me)
+ {
+         kill(parent_pid, SIGUSR1);
+         tst_resm(TINFO, "\tChild [%d] - cannot malloc buffer - exiting.\n", me);
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/fcntl/fcntl14.c ltp-full-20070228_Patched/testcases/kernel/syscalls/fcntl/fcntl14.c
+--- ltp-full-20070228/testcases/kernel/syscalls/fcntl/fcntl14.c	2007-03-01 04:40:38.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/fcntl/fcntl14.c	2013-05-24 17:14:43.034238958 +0100
+@@ -792,6 +792,7 @@ void dochild()
+ 
+ void run_test(int file_flag, int file_mode, int seek, int start, int end)
+ {
++	sigset_t x;
+ 	extern long time();
+ 
+         /* reset fail to 0 for each run_test call */
+@@ -859,7 +860,9 @@ void run_test(int file_flag, int file_mo
+ 		/*
+ 		 * Mask SIG_USR1 before forking child, to avoid race
+ 		 */
+-		(void)sighold(SIGUSR1);
++		sigemptyset(&x);
++		sigaddset(&x, SIGUSR1);
++		sigprocmask(SIG_BLOCK, &x, NULL);
+ 
+ 		/* flush the stdout to avoid garbled output */
+ 		fflush(stdout);
+@@ -978,6 +981,7 @@ int main(int ac, char **av)
+ {
+ 	int lc;				/* loop counter */
+ 	char *msg;			/* message returned from parse_opts */
++	sigset_t x;
+ 
+ 	/* parse standard options */
+ 	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+@@ -1151,7 +1155,9 @@ int main(int ac, char **av)
+ 		}
+ 
+ 		/* Mask signal to avoid race */
+-		if (sighold(SIGUSR1) < 0) {
++		sigemptyset(&x);
++		sigaddset(&x, SIGUSR1);
++		if (sigprocmask(SIG_BLOCK, &x, NULL)) {
+ 			tst_brkm(TBROK, cleanup, "sighold failed");
+ 			/*NOTREACHED*/
+ 		}
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/fcntl/fcntl17.c ltp-full-20070228_Patched/testcases/kernel/syscalls/fcntl/fcntl17.c
+--- ltp-full-20070228/testcases/kernel/syscalls/fcntl/fcntl17.c	2007-03-01 04:40:38.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/fcntl/fcntl17.c	2013-05-24 17:10:00.106231696 +0100
+@@ -409,7 +409,10 @@ catch_child()
+ void
+ catch_alarm()
+ {
+-    sighold(SIGCHLD);
++	sigset_t x;
++	sigemptyset(&x);
++	sigaddset(&x, SIGCHLD);
++	sigprocmask(SIG_BLOCK, &x, NULL);
+ 	/*
+ 	 * Timer has runout and the children have not detected the deadlock.
+ 	 * Need to kill the kids and exit
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/fork/fork09.c ltp-full-20070228_Patched/testcases/kernel/syscalls/fork/fork09.c
+--- ltp-full-20070228/testcases/kernel/syscalls/fork/fork09.c	2007-03-01 04:40:36.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/fork/fork09.c	2013-05-23 17:29:39.012044026 +0100
+@@ -55,6 +55,11 @@ extern int Tst_count;
+ void setup(void);
+ void cleanup(void);
+ 
++// Added by Pavankn
++#ifndef OPEN_MAX
++#define OPEN_MAX 256
++#endif
++
+ char filname[40], childfile[40];
+ int first;
+ FILE **fildeses;			/* file streams */
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/getdents/getdents01.c ltp-full-20070228_Patched/testcases/kernel/syscalls/getdents/getdents01.c
+--- ltp-full-20070228/testcases/kernel/syscalls/getdents/getdents01.c	2007-03-01 04:40:37.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/getdents/getdents01.c	2013-05-23 17:38:22.816057474 +0100
+@@ -61,7 +61,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <linux/types.h>
+-#include <linux/dirent.h>
++#include <dirent.h>
+ #include <linux/unistd.h>
+ #include <unistd.h>
+ 
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/getdents/getdents02.c ltp-full-20070228_Patched/testcases/kernel/syscalls/getdents/getdents02.c
+--- ltp-full-20070228/testcases/kernel/syscalls/getdents/getdents02.c	2007-03-01 04:40:37.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/getdents/getdents02.c	2013-05-23 17:38:32.824057730 +0100
+@@ -57,7 +57,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <linux/types.h>
+-#include <linux/dirent.h>
++#include <dirent.h>
+ #include <linux/unistd.h>
+ #include <unistd.h>
+ 
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/getdents/getdents03.c ltp-full-20070228_Patched/testcases/kernel/syscalls/getdents/getdents03.c
+--- ltp-full-20070228/testcases/kernel/syscalls/getdents/getdents03.c	2007-03-01 04:40:37.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/getdents/getdents03.c	2013-05-23 17:38:42.616057984 +0100
+@@ -60,7 +60,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <linux/types.h>
+-#include <linux/dirent.h>
++#include <dirent.h>
+ #include <linux/unistd.h>
+ #include <unistd.h>
+ 
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/getdents/getdents04.c ltp-full-20070228_Patched/testcases/kernel/syscalls/getdents/getdents04.c
+--- ltp-full-20070228/testcases/kernel/syscalls/getdents/getdents04.c	2007-03-01 04:40:37.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/getdents/getdents04.c	2013-05-23 17:38:52.220058227 +0100
+@@ -60,7 +60,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <linux/types.h>
+-#include <linux/dirent.h>
++#include <dirent.h>
+ #include <linux/unistd.h>
+ #include <unistd.h>
+ #include <sys/stat.h>
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/ipc/msgctl/msgctl08.c ltp-full-20070228_Patched/testcases/kernel/syscalls/ipc/msgctl/msgctl08.c
+--- ltp-full-20070228/testcases/kernel/syscalls/ipc/msgctl/msgctl08.c	2007-03-01 04:40:35.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/ipc/msgctl/msgctl08.c	2013-06-20 12:55:39.145724076 +0100
+@@ -296,16 +296,20 @@ key_t 	key;
+ int	child_process;
+ {
+ 	int id, pid;
++  sigset_t x ; 
+ 
+-	sighold(SIGTERM);
+-		 TEST(msgget(key, IPC_CREAT | S_IRUSR | S_IWUSR));
++  sigemptyset(&x); 
++  sigaddset(&x, SIGTERM);
++  sigprocmask(SIG_BLOCK, &x, NULL);
++
++	TEST(msgget(key, IPC_CREAT | S_IRUSR | S_IWUSR));
+ 	if (TEST_RETURN < 0)
+ 	{
+                 tst_resm(TFAIL, "Msgget error in child %d, errno = %d", child_process, TEST_ERRNO);
+        	        tst_exit();
+ 	}
+ 	tid = id = TEST_RETURN;
+-	sigrelse(SIGTERM);
++  sigprocmask(SIG_UNBLOCK, &x, NULL);
+ 
+ 	fflush(stdout);
+ 	if ((pid = FORK_OR_VFORK()) < 0) 
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/ipc/msgctl/msgctl09.c ltp-full-20070228_Patched/testcases/kernel/syscalls/ipc/msgctl/msgctl09.c
+--- ltp-full-20070228/testcases/kernel/syscalls/ipc/msgctl/msgctl09.c	2007-03-01 04:40:35.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/ipc/msgctl/msgctl09.c	2013-06-20 13:14:31.801753153 +0100
+@@ -120,6 +120,7 @@ char	*argv[];
+ {
+ 	register int i, j, ok, pid;
+ 	int count, status;
++  struct sigaction  act, oldact ; 
+ 
+ #ifdef UCLINUX
+ 	char *msg;			/* message returned from parse_opts */
+@@ -188,8 +189,9 @@ char	*argv[];
+ 	srand48((unsigned)getpid() + (unsigned)(getppid() << 16));
+ 	tid = -1;
+ 
++  act.sa_handler =  term ; 
+ 	/* Setup signal handleing routine */
+-	if (sigset(SIGTERM, term) == SIG_ERR) 
++  if(sigaction(SIGTERM, &act, &oldact) == SIG_ERR)  
+ 	{
+                 tst_resm(TFAIL, "Sigset SIGTERM failed");
+                 tst_exit();
+@@ -347,15 +349,19 @@ int	child_process;
+ {
+ 	int id, pid;
+ 	int i, count, status, exit_status;
++  sigset_t x ; 
++
++  sigemptyset(&x); 
++  sigaddset(&x, SIGTERM);
++  sigprocmask(SIG_BLOCK, &x, NULL);
+ 
+-	sighold(SIGTERM);
+ 		 if ((id = msgget(key, IPC_CREAT | S_IRUSR | S_IWUSR )) < 0)
+ 	{
+                 tst_resm(TFAIL, "Msgget error in child %d, errno = %d", child_process, errno);
+                 tst_exit();
+ 	}
+ 	tid = id;
+-	sigrelse(SIGTERM);
++  sigprocmask(SIG_UNBLOCK, &x, NULL);
+ 
+ 	exit_status = PASS;
+ 
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/kill/kill11.c ltp-full-20070228_Patched/testcases/kernel/syscalls/kill/kill11.c
+--- ltp-full-20070228/testcases/kernel/syscalls/kill/kill11.c	2007-03-01 04:40:39.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/kill/kill11.c	2013-06-20 13:25:18.997769766 +0100
+@@ -115,12 +115,14 @@ int main(int argc, char **argv)				/****
+ 	unlink("core");
+ 
+ 	for(j = 1; j < sizeof(signum)/sizeof(*signum); j++) {
++    struct sigaction  act, oldact ; 
+ 		sig=signum[j];
+ 		if (sig != SIGKILL )
+ #ifndef BCS
+ 		    if( sig != SIGSTOP)
+ #endif
+-			if (sigset(sig, SIG_DFL) == SIG_ERR) {
++      act.sa_handler =  SIG_DFL ; 
++      if (sigaction(sig, &act, &oldact) == SIG_ERR) {   
+ 				fprintf(temp, "\tsigset(%d,,) fails\n", sig);
+ 				local_flag = FAILED;
+ 				fail_exit();
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/kill/kill12.c ltp-full-20070228_Patched/testcases/kernel/syscalls/kill/kill12.c
+--- ltp-full-20070228/testcases/kernel/syscalls/kill/kill12.c	2007-03-01 04:40:39.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/kill/kill12.c	2013-06-20 13:35:18.453785154 +0100
+@@ -90,6 +90,7 @@ int main(int argc, char **argv)				/****
+ 	int ret_val = 0;
+ 	int core;
+ 	void chsig();
++  struct sigaction  act, oldact ; 
+ 
+ #ifdef UCLINUX
+ 	char *msg;
+@@ -109,7 +110,8 @@ int main(int argc, char **argv)				/****
+ 
+ 	exno = 1;
+ 
+-	if (sigset(SIGCLD, chsig) == SIG_ERR) {
++  act.sa_handler =  chsig ; 
++  if (sigaction(SIGCLD, &act, &oldact) == SIG_ERR) {   
+ 		fprintf(temp, "\tsigset failed, errno = %d\n", errno);
+ 		fail_exit();
+ 	}
+@@ -232,16 +234,19 @@ int anyfail()
+ void
+ do_child()
+ {
++  struct sigaction  act, oldact ; 
+ 	int exno = 1;
+ 
+ #ifdef UCLINUX
+-	if (sigset(SIGCLD, chsig) == SIG_ERR) {
++  act.sa_handler =  chsig ; 
++  if (sigaction(SIGCLD, &act, &oldact) == SIG_ERR) {   
+ 		fprintf(temp, "\tsigset failed, errno = %d\n", errno);
+ 		fail_exit();
+ 	}
+ #endif
+ 
+-	sigset(sig, SIG_IGN);		/* set to ignore signal */
++  act.sa_handler =  SIG_IGN; 
++  sigaction(sig, &act, &oldact);
+ 	kill(getppid(), SIGCLD);	/* tell parent we are ready */
+ 	while (!chflag)
+ 		sleep(1);		/* wait for parent */
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/sighold/sighold02.c ltp-full-20070228_Patched/testcases/kernel/syscalls/sighold/sighold02.c
+--- ltp-full-20070228/testcases/kernel/syscalls/sighold/sighold02.c	2007-03-01 04:40:38.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/sighold/sighold02.c	2013-06-20 13:48:46.217805890 +0100
+@@ -105,7 +105,7 @@
+ 
+ #ifdef __linux__
+ /* glibc2.2 definition needs -D_XOPEN_SOURCE, which breaks other things. */
+-extern int sighold (int __sig);
++//extern int sighold (int __sig);
+ #endif
+ 
+ /* ensure NUMSIGS is defined */
+@@ -342,6 +342,8 @@ do_child()
+     int rv;		/* function return value */
+     int sig;		/* current signal */
+     int cnt;
++    sigset_t x ; 
++    sigemptyset(&x);
+ 
+     p_p.result=TPASS;
+ 	
+@@ -366,7 +368,9 @@ do_child()
+ 		) {
+ 
+ 		cnt++;
+-		TEST( sighold(sig) );
++    sigaddset(&x, sig);
++    sigprocmask(SIG_BLOCK, &x, NULL);
++		TEST(sigprocmask(SIG_BLOCK, &x, NULL) );
+ 		rv = TEST_RETURN;
+ 		if (rv != 0) {
+ 		    /* THEY say sighold ALWAYS returns 0 */
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/sigrelse/sigrelse01.c ltp-full-20070228_Patched/testcases/kernel/syscalls/sigrelse/sigrelse01.c
+--- ltp-full-20070228/testcases/kernel/syscalls/sigrelse/sigrelse01.c	2007-03-01 04:40:38.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/sigrelse/sigrelse01.c	2013-06-20 14:03:31.105828606 +0100
+@@ -113,8 +113,8 @@
+ 
+ #ifdef __linux__
+ /* glibc2.2 definition needs -D_XOPEN_SOURCE, which breaks other things. */
+-extern int sighold (int __sig);
+-extern int sigrelse (int __sig);
++//extern int sighold (int __sig);
++//extern int sigrelse (int __sig);
+ #endif
+ 
+ /* Needed for NPTL */
+@@ -419,6 +419,9 @@ child()
+     int exit_val;		/* exit value to send to parent */
+     char note[MAXMESG];		/* message buffer for pipe */
+     char *str;
++    sigset_t x ; 
++
++    sigemptyset(&x); 
+ 
+     phase = 1;	/* tell handler that we do not want to catch signals */
+ 
+@@ -439,7 +442,8 @@ child()
+ 
+ 	for (sig = 1; sig < NUMSIGS; sig++) {
+ 	    if ( choose_sig(sig) ) {
+-		if ((rv = sighold(sig)) != 0) {
++        sigaddset(&x, sig);
++		if ((rv = sigprocmask(SIG_BLOCK, &x, NULL) != 0)) {
+ 		    /* THEY say sighold ALWAYS returns 0 */
+ 		    (void) sprintf(note,
+ 			"sighold did not return 0. rv:%d", rv);
+@@ -513,7 +517,8 @@ printf("child: didn't proper ready messa
+ #if DEBUG > 1
+ 	    printf("child: releasing sig %d...\n", sig);
+ #endif
+-	    if ((rv = sigrelse(sig)) != 0) {
++      sigaddset(&x, sig);
++      if ((rv = sigprocmask(SIG_UNBLOCK, &x, NULL)) !=0) {
+ 		/* THEY say sigrelse ALWAYS returns 0 */
+ 		(void) sprintf(note, "sigrelse did not return 0. rv:%d", rv);
+ 		exit_val = TBROK;
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/ustat/ustat01.c ltp-full-20070228_Patched/testcases/kernel/syscalls/ustat/ustat01.c
+--- ltp-full-20070228/testcases/kernel/syscalls/ustat/ustat01.c	2007-03-01 04:40:36.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/ustat/ustat01.c	2013-05-23 18:08:32.576103933 +0100
+@@ -68,9 +68,17 @@
+ #include <errno.h>
+ #include <sys/types.h>
+ #include <unistd.h>    /* libc[45] */
+-#include <ustat.h>     /* glibc2 */
++//#include <ustat.h>     /* glibc2 */
+ #include <sys/stat.h>
+ 
++
++int 
++main(int argc, char *argv[])
++{
++  return -1;
++}
++
++#if 0
+ static void setup();
+ static void cleanup();
+ 
+@@ -170,3 +178,5 @@ cleanup()
+ 	/* exit with return code appropriate for results */
+ 	tst_exit();
+ }
++#endif
++
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/ustat/ustat02.c ltp-full-20070228_Patched/testcases/kernel/syscalls/ustat/ustat02.c
+--- ltp-full-20070228/testcases/kernel/syscalls/ustat/ustat02.c	2007-03-01 04:40:36.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/ustat/ustat02.c	2013-05-23 18:09:28.944105378 +0100
+@@ -72,9 +72,16 @@
+ #include "usctest.h"
+ #include <sys/types.h>
+ #include <unistd.h>    /* libc[45] */
+-#include <ustat.h>     /* glibc2 */
++//#include <ustat.h>     /* glibc2 */
+ #include <sys/stat.h>
+ 
++int
++main(int argc, char **av)
++{
++ return -1;
++}
++
++#if 0
+ static void setup();
+ static void cleanup();
+ 
+@@ -209,3 +216,4 @@ cleanup()
+ 	/* exit with return code appropriate for results */
+ 	tst_exit();
+ }	/* End cleanup() */
++#endif
+diff -rupN ltp-full-20070228/testcases/kernel/syscalls/vfork/vfork02.c ltp-full-20070228_Patched/testcases/kernel/syscalls/vfork/vfork02.c
+--- ltp-full-20070228/testcases/kernel/syscalls/vfork/vfork02.c	2007-03-01 04:40:36.000000000 +0000
++++ ltp-full-20070228_Patched/testcases/kernel/syscalls/vfork/vfork02.c	2013-06-20 14:18:40.425851949 +0100
+@@ -193,6 +193,7 @@ void
+ setup()
+ {
+ 	sigset_t PendSig;		/* variable to hold pending signal */
++  sigset_t x ; 
+ 	/* capture signals */
+ 	tst_sig(FORK, DEF_HANDLER, cleanup);
+ 
+@@ -205,8 +206,10 @@ setup()
+ 			 "Fails to catch the signal SIGUSR1");
+ 	}
+ 
++  sigemptyset(&x); 
++  sigaddset(&x, SIGUSR1);
+ 	/* Hold the signal SIGUSR1 */
+-	if (sighold(SIGUSR1) == -1) {
++  if (sigprocmask(SIG_BLOCK, &x, NULL) == -1) {
+ 		tst_brkm(TBROK, cleanup,
+ 			 "sighold failed to hold the signal SIGUSR1");
+ 	}
+@@ -251,14 +254,17 @@ sig_handler()
+ void 
+ cleanup()
+ {
++  sigset_t x ; 
+ 	/*
+ 	 * print timing stats if that option was specified.
+ 	 * print errno log if that option was specified.
+ 	 */
+ 	TEST_CLEANUP;
+ 
++  sigemptyset(&x); 
++  sigaddset(&x, SIGUSR1);
+ 	/* Release the signal 'SIGUSR1' if in pending state */
+-	if (sigrelse(SIGUSR1) == -1) {
++  if (sigprocmask(SIG_UNBLOCK, &x, NULL) == -1) {
+ 		tst_brkm(TBROK, NULL,
+ 			 "Failed to release 'SIGUSR1' in cleanup");
+ 	}

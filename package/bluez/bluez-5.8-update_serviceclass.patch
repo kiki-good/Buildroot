@@ -1,0 +1,75 @@
+diff -u -x 'config*' -x Makefile -r bluez-5.8-orig/lib/sdp.c bluez-5.8/lib/sdp.c
+--- bluez-5.8-orig/lib/sdp.c	2013-08-08 02:43:24.000000000 +0100
++++ bluez-5.8/lib/sdp.c	2015-05-15 10:27:17.938587122 +0100
+@@ -125,7 +125,7 @@
+ 	{ AV_REMOTE_TARGET_SVCLASS_ID,		"AV Remote Target"		},
+ 	{ ADVANCED_AUDIO_SVCLASS_ID,		"Advanced Audio"		},
+ 	{ AV_REMOTE_SVCLASS_ID,			"AV Remote"			},
+-	{ VIDEO_CONF_SVCLASS_ID,		"Video Conferencing"		},
++//	{ VIDEO_CONF_SVCLASS_ID,		"Video Conferencing"		},
+ 	{ INTERCOM_SVCLASS_ID,			"Intercom"			},
+ 	{ FAX_SVCLASS_ID,			"Fax"				},
+ 	{ HEADSET_AGW_SVCLASS_ID,		"Headset Audio Gateway"		},
+@@ -180,6 +180,7 @@
+ 	{ HDP_SINK_SVCLASS_ID,			"HDP Sink"			},
+ 	{ APPLE_AGENT_SVCLASS_ID,		"Apple Agent"			},
+ 	{ GENERIC_ATTRIB_SVCLASS_ID,		"Generic Attribute"		},
++	{ AV_REMOTE_CONTROLLER_SVCLASS_ID,	"AV Remote Controller"		},
+ 	{ 0 }
+ };
+ 
+@@ -936,6 +937,7 @@
+ 	}
+ 
+ 	d->attrId = attr;
++
+ 	rec->attrlist = sdp_list_insert_sorted(rec->attrlist, d, sdp_attrid_comp_func);
+ 
+ 	if (attr == SDP_ATTR_SVCLASS_ID_LIST)
+diff -u -x 'config*' -x Makefile -r bluez-5.8-orig/lib/sdp.h bluez-5.8/lib/sdp.h
+--- bluez-5.8-orig/lib/sdp.h	2013-05-14 02:04:08.000000000 +0100
++++ bluez-5.8/lib/sdp.h	2015-05-15 10:20:17.714595697 +0100
+@@ -95,7 +95,9 @@
+ #define AV_REMOTE_TARGET_SVCLASS_ID	0x110c
+ #define ADVANCED_AUDIO_SVCLASS_ID	0x110d
+ #define AV_REMOTE_SVCLASS_ID		0x110e
+-#define VIDEO_CONF_SVCLASS_ID		0x110f
++#define AV_REMOTE_CONTROLLER_SVCLASS_ID	0x110f
++//#define VIDEO_CONF_SVCLASS_ID		0x110f
++
+ #define INTERCOM_SVCLASS_ID		0x1110
+ #define FAX_SVCLASS_ID			0x1111
+ #define HEADSET_AGW_SVCLASS_ID		0x1112
+diff -u -x 'config*' -x Makefile -r bluez-5.8-orig/profiles/audio/avrcp.c bluez-5.8/profiles/audio/avrcp.c
+--- bluez-5.8-orig/profiles/audio/avrcp.c	2013-08-08 02:43:25.000000000 +0100
++++ bluez-5.8/profiles/audio/avrcp.c	2015-05-15 10:22:00.026593609 +0100
+@@ -263,7 +263,7 @@
+ static sdp_record_t *avrcp_ct_record(void)
+ {
+ 	sdp_list_t *svclass_id, *pfseq, *apseq, *apseq1, *root;
+-	uuid_t root_uuid, l2cap, avctp, avrct;
++	uuid_t root_uuid, l2cap, avctp, avrct, avrctr;
+ 	sdp_profile_desc_t profile[1];
+ 	sdp_list_t *aproto, *aproto1, *proto[2], *proto1[2];
+ 	sdp_record_t *record;
+@@ -287,6 +287,8 @@
+ 	/* Service Class ID List */
+ 	sdp_uuid16_create(&avrct, AV_REMOTE_SVCLASS_ID);
+ 	svclass_id = sdp_list_append(0, &avrct);
++	sdp_uuid16_create(&avrctr, AV_REMOTE_CONTROLLER_SVCLASS_ID);
++	svclass_id = sdp_list_append(svclass_id, &avrctr);
+ 	sdp_set_service_classes(record, svclass_id);
+ 
+ 	/* Protocol Descriptor List */
+diff -u -x 'config*' -x Makefile -r bluez-5.8-orig/src/glib-helper.c bluez-5.8/src/glib-helper.c
+--- bluez-5.8-orig/src/glib-helper.c	2013-01-11 18:01:44.000000000 +0000
++++ bluez-5.8/src/glib-helper.c	2015-05-15 10:22:39.770592798 +0100
+@@ -103,7 +103,7 @@
+ 	const char	*name;
+ 	uint16_t	class;
+ } bt_services[] = {
+-	{ "vcp",	VIDEO_CONF_SVCLASS_ID		},
++	//{ "vcp",	VIDEO_CONF_SVCLASS_ID		},
+ 	{ "pbap",	PBAP_SVCLASS_ID			},
+ 	{ "sap",	SAP_SVCLASS_ID			},
+ 	{ "ftp",	OBEX_FILETRANS_SVCLASS_ID	},

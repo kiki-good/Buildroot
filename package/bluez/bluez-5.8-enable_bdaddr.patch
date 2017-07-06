@@ -1,0 +1,108 @@
+--- a/Makefile.in	2015-02-25 17:23:33.170088395 +0000
++++ b/Makefile.in	2015-02-25 17:28:24.802095883 +0000
+@@ -127,17 +127,17 @@
+ @TOOLS_TRUE@am__append_19 = tools/hciattach.1 tools/hciconfig.1 \
+ @TOOLS_TRUE@			tools/hcitool.1 tools/hcidump.1 \
+ @TOOLS_TRUE@			tools/rfcomm.1 tools/rctest.1 tools/l2ping.1 \
+-@TOOLS_TRUE@			tools/sdptool.1 tools/ciptool.1 tools/bccmd.1
++@TOOLS_TRUE@			tools/sdptool.1 tools/ciptool.1 tools/bccmd.1 \
+ 
+ @TOOLS_FALSE@am__append_20 = tools/hciattach.1 tools/hciconfig.1 \
+ @TOOLS_FALSE@			tools/hcitool.1 tools/hcidump.1 \
+ @TOOLS_FALSE@			tools/rfcomm.1 tools/rctest.1 tools/l2ping.1 \
+-@TOOLS_FALSE@			tools/sdptool.1 tools/ciptool.1 tools/bccmd.1
++@TOOLS_FALSE@			tools/sdptool.1 tools/ciptool.1 tools/bccmd.1 \
+ 
+ @HID2HCI_TRUE@udev_PROGRAMS = tools/hid2hci$(EXEEXT)
+ @HID2HCI_TRUE@am__append_21 = tools/hid2hci.1
+ @HID2HCI_FALSE@am__append_22 = tools/hid2hci.1
+-@EXPERIMENTAL_TRUE@am__append_23 = tools/bdaddr.1
++@TOOLS_TRUE@am__append_23 = tools/bdaddr.1
+ @READLINE_TRUE@am__append_24 = attrib/gatttool \
+ @READLINE_TRUE@			tools/obex-client-tool tools/obex-server-tool
+ 
+@@ -266,14 +266,15 @@
+ @TOOLS_TRUE@	tools/hcidump$(EXEEXT) tools/rfcomm$(EXEEXT) \
+ @TOOLS_TRUE@	tools/rctest$(EXEEXT) tools/l2test$(EXEEXT) \
+ @TOOLS_TRUE@	tools/l2ping$(EXEEXT) tools/sdptool$(EXEEXT) \
+-@TOOLS_TRUE@	tools/ciptool$(EXEEXT) tools/bccmd$(EXEEXT)
++@TOOLS_TRUE@	tools/ciptool$(EXEEXT) tools/bccmd$(EXEEXT) \
++@TOOLS_TRUE@	tools/bdaddr$(EXEEXT)
+ @EXPERIMENTAL_TRUE@am__EXEEXT_4 = emulator/btvirt$(EXEEXT) \
+ @EXPERIMENTAL_TRUE@	emulator/b1ee$(EXEEXT) \
+ @EXPERIMENTAL_TRUE@	tools/mgmt-tester$(EXEEXT) \
+ @EXPERIMENTAL_TRUE@	tools/gap-tester$(EXEEXT) \
+ @EXPERIMENTAL_TRUE@	tools/l2cap-tester$(EXEEXT) \
+ @EXPERIMENTAL_TRUE@	tools/sco-tester$(EXEEXT) \
+-@EXPERIMENTAL_TRUE@	tools/bdaddr$(EXEEXT) tools/avinfo$(EXEEXT) \
++@EXPERIMENTAL_TRUE@	tools/avinfo$(EXEEXT) \
+ @EXPERIMENTAL_TRUE@	tools/avtest$(EXEEXT) \
+ @EXPERIMENTAL_TRUE@	tools/scotest$(EXEEXT) \
+ @EXPERIMENTAL_TRUE@	tools/hcieventmask$(EXEEXT) \
+@@ -630,11 +631,11 @@
+ @TOOLS_TRUE@tools_bccmd_DEPENDENCIES = lib/libbluetooth-internal.la \
+ @TOOLS_TRUE@	$(am__DEPENDENCIES_1)
+ am__tools_bdaddr_SOURCES_DIST = tools/bdaddr.c src/oui.h src/oui.c
+-@EXPERIMENTAL_TRUE@am_tools_bdaddr_OBJECTS = tools/bdaddr.$(OBJEXT) \
+-@EXPERIMENTAL_TRUE@	src/oui.$(OBJEXT)
++@TOOLS_TRUE@am_tools_bdaddr_OBJECTS = tools/bdaddr.$(OBJEXT) \
++@TOOLS_TRUE@	src/oui.$(OBJEXT)
+ tools_bdaddr_OBJECTS = $(am_tools_bdaddr_OBJECTS)
+-@EXPERIMENTAL_TRUE@tools_bdaddr_DEPENDENCIES =  \
+-@EXPERIMENTAL_TRUE@	lib/libbluetooth-internal.la
++@TOOLS_TRUE@tools_bdaddr_DEPENDENCIES =  \
++@TOOLS_TRUE@	lib/libbluetooth-internal.la
+ am__tools_bluetooth_player_SOURCES_DIST = tools/bluetooth-player.c \
+ 	client/display.h client/display.c
+ @EXPERIMENTAL_TRUE@am_tools_bluetooth_player_OBJECTS =  \
+@@ -1476,8 +1477,8 @@
+ @TOOLS_TRUE@	$(am__append_18)
+ @HID2HCI_TRUE@udevdir = @UDEV_DIR@
+ @HID2HCI_TRUE@tools_hid2hci_LDADD = @USB_LIBS@ @UDEV_LIBS@
+-@EXPERIMENTAL_TRUE@tools_bdaddr_SOURCES = tools/bdaddr.c src/oui.h src/oui.c
+-@EXPERIMENTAL_TRUE@tools_bdaddr_LDADD = lib/libbluetooth-internal.la @UDEV_LIBS@
++@TOOLS_TRUE@tools_bdaddr_SOURCES = tools/bdaddr.c src/oui.h src/oui.c
++@TOOLS_TRUE@tools_bdaddr_LDADD = lib/libbluetooth-internal.la @UDEV_LIBS@
+ @EXPERIMENTAL_TRUE@tools_avinfo_LDADD = lib/libbluetooth-internal.la
+ @EXPERIMENTAL_TRUE@tools_avtest_LDADD = lib/libbluetooth-internal.la
+ @EXPERIMENTAL_TRUE@tools_scotest_LDADD = lib/libbluetooth-internal.la
+--- a/Makefile.tools	2015-02-25 17:23:27.842088259 +0000
++++ b/Makefile.tools	2015-02-25 17:30:18.450098801 +0000
+@@ -78,7 +78,7 @@
+ if TOOLS
+ bin_PROGRAMS += tools/hciattach tools/hciconfig tools/hcitool tools/hcidump \
+ 			tools/rfcomm tools/rctest tools/l2test tools/l2ping \
+-			tools/sdptool tools/ciptool tools/bccmd
++			tools/sdptool tools/ciptool tools/bccmd tools/bdaddr
+ 
+ tools_hciattach_SOURCES = tools/hciattach.c tools/hciattach.h \
+ 						tools/hciattach_st.c \
+@@ -140,6 +140,9 @@
+ 			tools/csr_bcsp.c tools/ubcsp.h tools/ubcsp.c
+ tools_bccmd_LDADD = lib/libbluetooth-internal.la
+ 
++tools_bdaddr_SOURCES = tools/bdaddr.c src/oui.h src/oui.c
++tools_bdaddr_LDADD = lib/libbluetooth-internal.la @UDEV_LIBS@
++
+ if USB
+ tools_bccmd_SOURCES += tools/csr_usb.c
+ tools_bccmd_LDADD += @USB_LIBS@
+@@ -153,7 +156,8 @@
+ EXTRA_DIST += tools/hciattach.1 tools/hciconfig.1 \
+ 			tools/hcitool.1 tools/hcidump.1 \
+ 			tools/rfcomm.1 tools/rctest.1 tools/l2ping.1 \
+-			tools/sdptool.1 tools/ciptool.1 tools/bccmd.1
++			tools/sdptool.1 tools/ciptool.1 tools/bccmd.1 \
++			tools/bdaddr.1
+ endif
+ 
+ if HID2HCI
+@@ -169,7 +173,7 @@
+ endif
+ 
+ if EXPERIMENTAL
+-noinst_PROGRAMS += tools/bdaddr tools/avinfo tools/avtest tools/scotest \
++noinst_PROGRAMS += tools/avinfo tools/avtest tools/scotest \
+ 			tools/hcieventmask tools/hcisecfilter tools/hwdb \
+ 			tools/btmgmt tools/btattach tools/btsnoop \
+ 			tools/btiotest tools/mpris-player \

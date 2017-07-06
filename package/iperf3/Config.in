@@ -1,0 +1,7 @@
+config BR2_PACKAGE_IPERF3
+	bool "iperf3"
+	help
+	  Internet Protocol bandwidth measuring tool for measuring
+	  TCP/UDP performance.
+
+	  http://dast.nlanr.net/projects/iperf/

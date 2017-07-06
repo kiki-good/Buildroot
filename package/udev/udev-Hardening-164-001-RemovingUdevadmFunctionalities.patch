@@ -1,0 +1,1249 @@
+diff -Naur udev-164/Makefile.am udev-164_mod/Makefile.am
+--- udev-164/Makefile.am	2010-10-22 12:56:16.000000000 +0100
++++ udev-164_mod/Makefile.am	2015-09-04 16:59:20.015188622 +0100
+@@ -158,11 +158,7 @@
+ udev_udevadm_SOURCES = \
+ 	$(udev_common_sources) \
+ 	udev/udevadm.c \
+-	udev/udevadm-info.c \
+ 	udev/udevadm-control.c \
+-	udev/udevadm-test.c \
+-	udev/udevadm-monitor.c \
+-	udev/udevadm-settle.c \
+ 	udev/udevadm-trigger.c
+ udev_udevadm_LDADD = libudev/libudev-private.la
+ 
+diff -Naur udev-164/Makefile.in udev-164_mod/Makefile.in
+--- udev-164/Makefile.in	2010-10-23 14:14:21.000000000 +0100
++++ udev-164_mod/Makefile.in	2015-09-04 16:58:59.143188084 +0100
+@@ -338,9 +338,8 @@
+ udev_test_udev_OBJECTS = $(am_udev_test_udev_OBJECTS)
+ udev_test_udev_DEPENDENCIES = libudev/libudev-private.la
+ am_udev_udevadm_OBJECTS = $(am__objects_3) udev/udevadm.$(OBJEXT) \
+-	udev/udevadm-info.$(OBJEXT) udev/udevadm-control.$(OBJEXT) \
+-	udev/udevadm-test.$(OBJEXT) udev/udevadm-monitor.$(OBJEXT) \
+-	udev/udevadm-settle.$(OBJEXT) udev/udevadm-trigger.$(OBJEXT)
++	udev/udevadm-control.$(OBJEXT) \
++	udev/udevadm-trigger.$(OBJEXT)
+ udev_udevadm_OBJECTS = $(am_udev_udevadm_OBJECTS)
+ udev_udevadm_DEPENDENCIES = libudev/libudev-private.la
+ am_udev_udevd_OBJECTS = $(am__objects_3) udev/udevd.$(OBJEXT) \
+@@ -814,11 +813,7 @@
+ udev_udevadm_SOURCES = \
+ 	$(udev_common_sources) \
+ 	udev/udevadm.c \
+-	udev/udevadm-info.c \
+ 	udev/udevadm-control.c \
+-	udev/udevadm-test.c \
+-	udev/udevadm-monitor.c \
+-	udev/udevadm-settle.c \
+ 	udev/udevadm-trigger.c
+ 
+ udev_udevadm_LDADD = libudev/libudev-private.la
+@@ -1738,10 +1733,7 @@
+ 	-rm -f udev/udev-rules.$(OBJEXT)
+ 	-rm -f udev/udev-watch.$(OBJEXT)
+ 	-rm -f udev/udevadm-control.$(OBJEXT)
+-	-rm -f udev/udevadm-info.$(OBJEXT)
+ 	-rm -f udev/udevadm-monitor.$(OBJEXT)
+-	-rm -f udev/udevadm-settle.$(OBJEXT)
+-	-rm -f udev/udevadm-test.$(OBJEXT)
+ 	-rm -f udev/udevadm-trigger.$(OBJEXT)
+ 	-rm -f udev/udevadm.$(OBJEXT)
+ 	-rm -f udev/udevd.$(OBJEXT)
+@@ -1796,10 +1788,6 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udev-rules.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udev-watch.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udevadm-control.Po@am__quote@
+-@AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udevadm-info.Po@am__quote@
+-@AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udevadm-monitor.Po@am__quote@
+-@AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udevadm-settle.Po@am__quote@
+-@AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udevadm-test.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udevadm-trigger.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udevadm.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@udev/$(DEPDIR)/udevd.Po@am__quote@
+diff -Naur udev-164/udev/udevadm.c udev-164_mod/udev/udevadm.c
+--- udev-164/udev/udevadm.c	2010-05-27 14:10:26.000000000 +0100
++++ udev-164_mod/udev/udevadm.c	2015-09-04 17:21:07.243222179 +0100
+@@ -63,7 +63,7 @@
+ {
+ 	const struct command *cmd;
+ 
+-	printf("Usage: udevadm [--help] [--version] [--debug] COMMAND [COMMAND OPTIONS]\n");
++	printf("Usage: udevadm COMMAND [COMMAND OPTIONS]\n");
+ 	for (cmd = cmds; cmd->name != NULL; cmd++)
+ 		if (cmd->help != NULL)
+ 			printf("  %-12s %s\n", cmd->name, cmd->help);
+@@ -73,44 +73,15 @@
+ 
+ static const struct command cmds[] = {
+ 	{
+-		.name = "info",
+-		.cmd = udevadm_info,
+-		.help = "query sysfs or the udev database",
+-	},
+-	{
+ 		.name = "trigger",
+ 		.cmd = udevadm_trigger,
+ 		.help = "request events from the kernel",
+ 	},
+ 	{
+-		.name = "settle",
+-		.cmd = udevadm_settle,
+-		.help = "wait for the event queue to finish",
+-	},
+-	{
+ 		.name = "control",
+ 		.cmd = udevadm_control,
+ 		.help = "control the udev daemon",
+ 	},
+-	{
+-		.name = "monitor",
+-		.cmd = udevadm_monitor,
+-		.help = "listen to kernel and udev events",
+-	},
+-	{
+-		.name = "test",
+-		.cmd = udevadm_test,
+-		.help = "simulation run",
+-		.debug = 1,
+-	},
+-	{
+-		.name = "version",
+-		.cmd = version,
+-	},
+-	{
+-		.name = "help",
+-		.cmd = help,
+-	},
+ 	{}
+ };
+ 
+@@ -146,29 +117,6 @@
+ 	udev_set_log_fn(udev, log_fn);
+ 	udev_selinux_init(udev);
+ 
+-	for (;;) {
+-		int option;
+-
+-		option = getopt_long(argc, argv, "+dhV", options, NULL);
+-		if (option == -1)
+-			break;
+-
+-		switch (option) {
+-		case 'd':
+-			debug = 1;
+-			if (udev_get_log_priority(udev) < LOG_INFO)
+-				udev_set_log_priority(udev, LOG_INFO);
+-			break;
+-		case 'h':
+-			rc = help(udev, argc, argv);
+-			goto out;
+-		case 'V':
+-			rc = version(udev, argc, argv);
+-			goto out;
+-		default:
+-			goto out;
+-		}
+-	}
+ 	command = argv[optind];
+ 
+ 	if (command != NULL)
+diff -Naur udev-164/udev/udevadm-info.c udev-164_mod/udev/udevadm-info.c
+--- udev-164/udev/udevadm-info.c	2010-07-28 05:51:07.000000000 +0100
++++ udev-164_mod/udev/udevadm-info.c	1970-01-01 01:00:00.000000000 +0100
+@@ -1,456 +0,0 @@
+-/*
+- * Copyright (C) 2004-2009 Kay Sievers <kay.sievers@vrfy.org>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stddef.h>
+-#include <ctype.h>
+-#include <stdarg.h>
+-#include <unistd.h>
+-#include <dirent.h>
+-#include <errno.h>
+-#include <getopt.h>
+-#include <fcntl.h>
+-#include <sys/stat.h>
+-#include <sys/types.h>
+-
+-#include "udev.h"
+-
+-static void print_all_attributes(struct udev_device *device, const char *key)
+-{
+-	struct udev *udev = udev_device_get_udev(device);
+-	DIR *dir;
+-	struct dirent *dent;
+-
+-	dir = opendir(udev_device_get_syspath(device));
+-	if (dir != NULL) {
+-		for (dent = readdir(dir); dent != NULL; dent = readdir(dir)) {
+-			struct stat statbuf;
+-			const char *value;
+-			size_t len;
+-
+-			if (dent->d_name[0] == '.')
+-				continue;
+-
+-			if (strcmp(dent->d_name, "uevent") == 0)
+-				continue;
+-			if (strcmp(dent->d_name, "dev") == 0)
+-				continue;
+-
+-			if (fstatat(dirfd(dir), dent->d_name, &statbuf, AT_SYMLINK_NOFOLLOW) != 0)
+-				continue;
+-			if (S_ISLNK(statbuf.st_mode))
+-				continue;
+-
+-			value = udev_device_get_sysattr_value(device, dent->d_name);
+-			if (value == NULL)
+-				continue;
+-			dbg(udev, "attr '%s'='%s'\n", dent->d_name, value);
+-
+-			/* skip nonprintable attributes */
+-			len = strlen(value);
+-			while (len > 0 && isprint(value[len-1]))
+-				len--;
+-			if (len > 0) {
+-				dbg(udev, "attribute value of '%s' non-printable, skip\n", dent->d_name);
+-				continue;
+-			}
+-
+-			printf("    %s{%s}==\"%s\"\n", key, dent->d_name, value);
+-		}
+-		closedir(dir);
+-	}
+-	printf("\n");
+-}
+-
+-static int print_device_chain(struct udev_device *device)
+-{
+-	struct udev_device *device_parent;
+-	const char *str;
+-
+-	printf("\n"
+-	       "Udevadm info starts with the device specified by the devpath and then\n"
+-	       "walks up the chain of parent devices. It prints for every device\n"
+-	       "found, all possible attributes in the udev rules key format.\n"
+-	       "A rule to match, can be composed by the attributes of the device\n"
+-	       "and the attributes from one single parent device.\n"
+-	       "\n");
+-
+-	printf("  looking at device '%s':\n", udev_device_get_devpath(device));
+-	printf("    KERNEL==\"%s\"\n", udev_device_get_sysname(device));
+-	str = udev_device_get_subsystem(device);
+-	if (str == NULL)
+-		str = "";
+-	printf("    SUBSYSTEM==\"%s\"\n", str);
+-	str = udev_device_get_driver(device);
+-	if (str == NULL)
+-		str = "";
+-	printf("    DRIVER==\"%s\"\n", str);
+-	print_all_attributes(device, "ATTR");
+-
+-	device_parent = device;
+-	do {
+-		device_parent = udev_device_get_parent(device_parent);
+-		if (device_parent == NULL)
+-			break;
+-		printf("  looking at parent device '%s':\n", udev_device_get_devpath(device_parent));
+-		printf("    KERNELS==\"%s\"\n", udev_device_get_sysname(device_parent));
+-		str = udev_device_get_subsystem(device_parent);
+-		if (str == NULL)
+-			str = "";
+-		printf("    SUBSYSTEMS==\"%s\"\n", str);
+-		str = udev_device_get_driver(device_parent);
+-		if (str == NULL)
+-			str = "";
+-		printf("    DRIVERS==\"%s\"\n", str);
+-		print_all_attributes(device_parent, "ATTRS");
+-	} while (device_parent != NULL);
+-
+-	return 0;
+-}
+-
+-static void print_record(struct udev_device *device)
+-{
+-	size_t len;
+-	const char *str;
+-	int i;
+-	struct udev_list_entry *list_entry;
+-
+-	printf("P: %s\n", udev_device_get_devpath(device));
+-
+-	len = strlen(udev_get_dev_path(udev_device_get_udev(device)));
+-	str = udev_device_get_devnode(device);
+-	if (str != NULL)
+-		printf("N: %s\n", &str[len+1]);
+-
+-	i = udev_device_get_devlink_priority(device);
+-	if (i != 0)
+-		printf("L: %i\n", i);
+-
+-	udev_list_entry_foreach(list_entry, udev_device_get_devlinks_list_entry(device)) {
+-		len = strlen(udev_get_dev_path(udev_device_get_udev(device)));
+-		printf("S: %s\n", &udev_list_entry_get_name(list_entry)[len+1]);
+-	}
+-
+-	udev_list_entry_foreach(list_entry, udev_device_get_properties_list_entry(device))
+-		printf("E: %s=%s\n",
+-		       udev_list_entry_get_name(list_entry),
+-		       udev_list_entry_get_value(list_entry));
+-	printf("\n");
+-}
+-
+-static int stat_device(const char *name, int export, const char *prefix)
+-{
+-	struct stat statbuf;
+-
+-	if (stat(name, &statbuf) != 0)
+-		return -1;
+-
+-	if (export) {
+-		if (prefix == NULL)
+-			prefix = "INFO_";
+-		printf("%sMAJOR=%d\n"
+-		       "%sMINOR=%d\n",
+-		       prefix, major(statbuf.st_dev),
+-		       prefix, minor(statbuf.st_dev));
+-	} else
+-		printf("%d:%d\n", major(statbuf.st_dev), minor(statbuf.st_dev));
+-	return 0;
+-}
+-
+-static int export_devices(struct udev *udev)
+-{
+-	struct udev_enumerate *udev_enumerate;
+-	struct udev_list_entry *list_entry;
+-
+-	udev_enumerate = udev_enumerate_new(udev);
+-	if (udev_enumerate == NULL)
+-		return -1;
+-	udev_enumerate_scan_devices(udev_enumerate);
+-	udev_list_entry_foreach(list_entry, udev_enumerate_get_list_entry(udev_enumerate)) {
+-		struct udev_device *device;
+-
+-		device = udev_device_new_from_syspath(udev, udev_list_entry_get_name(list_entry));
+-		if (device != NULL) {
+-			print_record(device);
+-			udev_device_unref(device);
+-		}
+-	}
+-	udev_enumerate_unref(udev_enumerate);
+-	return 0;
+-}
+-
+-int udevadm_info(struct udev *udev, int argc, char *argv[])
+-{
+-	struct udev_device *device = NULL;
+-	int root = 0;
+-	int export = 0;
+-	const char *export_prefix = NULL;
+-	char path[UTIL_PATH_SIZE];
+-	char name[UTIL_PATH_SIZE];
+-	struct udev_list_entry *list_entry;
+-	int rc = 0;
+-
+-	static const struct option options[] = {
+-		{ "name", required_argument, NULL, 'n' },
+-		{ "path", required_argument, NULL, 'p' },
+-		{ "query", required_argument, NULL, 'q' },
+-		{ "attribute-walk", no_argument, NULL, 'a' },
+-		{ "export-db", no_argument, NULL, 'e' },
+-		{ "root", no_argument, NULL, 'r' },
+-		{ "device-id-of-file", required_argument, NULL, 'd' },
+-		{ "export", no_argument, NULL, 'x' },
+-		{ "export-prefix", required_argument, NULL, 'P' },
+-		{ "version", no_argument, NULL, 'V' },
+-		{ "help", no_argument, NULL, 'h' },
+-		{}
+-	};
+-
+-	enum action_type {
+-		ACTION_NONE,
+-		ACTION_QUERY,
+-		ACTION_ATTRIBUTE_WALK,
+-		ACTION_ROOT,
+-		ACTION_DEVICE_ID_FILE,
+-	} action = ACTION_NONE;
+-
+-	enum query_type {
+-		QUERY_NONE,
+-		QUERY_NAME,
+-		QUERY_PATH,
+-		QUERY_SYMLINK,
+-		QUERY_PROPERTY,
+-		QUERY_ALL,
+-	} query = QUERY_NONE;
+-
+-	for (;;) {
+-		int option;
+-		struct stat statbuf;
+-
+-		option = getopt_long(argc, argv, "aed:n:p:q:rxP:Vh", options, NULL);
+-		if (option == -1)
+-			break;
+-
+-		dbg(udev, "option '%c'\n", option);
+-		switch (option) {
+-		case 'n':
+-			if (device != NULL) {
+-				fprintf(stderr, "device already specified\n");
+-				rc = 2;
+-				goto exit;
+-			}
+-			/* remove /dev if given */
+-			if (strncmp(optarg, udev_get_dev_path(udev), strlen(udev_get_dev_path(udev))) != 0)
+-				util_strscpyl(name, sizeof(name), udev_get_dev_path(udev), "/", optarg, NULL);
+-			else
+-				util_strscpy(name, sizeof(name), optarg);
+-			util_remove_trailing_chars(name, '/');
+-			if (stat(name, &statbuf) < 0) {
+-				fprintf(stderr, "device node not found\n");
+-				rc = 2;
+-				goto exit;
+-			} else {
+-				char type;
+-
+-				if (S_ISBLK(statbuf.st_mode)) {
+-					type = 'b';
+-				} else if (S_ISCHR(statbuf.st_mode)) {
+-					type = 'c';
+-				} else {
+-					fprintf(stderr, "device node has wrong file type\n");
+-					rc = 2;
+-					goto exit;
+-				}
+-				device = udev_device_new_from_devnum(udev, type, statbuf.st_rdev);
+-				if (device == NULL) {
+-					fprintf(stderr, "device node not found\n");
+-					rc = 2;
+-					goto exit;
+-				}
+-			}
+-			break;
+-		case 'p':
+-			if (device != NULL) {
+-				fprintf(stderr, "device already specified\n");
+-				rc = 2;
+-				goto exit;
+-			}
+-			/* add sys dir if needed */
+-			if (strncmp(optarg, udev_get_sys_path(udev), strlen(udev_get_sys_path(udev))) != 0)
+-				util_strscpyl(path, sizeof(path), udev_get_sys_path(udev), optarg, NULL);
+-			else
+-				util_strscpy(path, sizeof(path), optarg);
+-			util_remove_trailing_chars(path, '/');
+-			device = udev_device_new_from_syspath(udev, path);
+-			if (device == NULL) {
+-				fprintf(stderr, "device path not found\n");
+-				rc = 2;
+-				goto exit;
+-			}
+-			break;
+-		case 'q':
+-			action = ACTION_QUERY;
+-			if (strcmp(optarg, "property") == 0 || strcmp(optarg, "env") == 0) {
+-				query = QUERY_PROPERTY;
+-			} else if (strcmp(optarg, "name") == 0) {
+-				query = QUERY_NAME;
+-			} else if (strcmp(optarg, "symlink") == 0) {
+-				query = QUERY_SYMLINK;
+-			} else if (strcmp(optarg, "path") == 0) {
+-				query = QUERY_PATH;
+-			} else if (strcmp(optarg, "all") == 0) {
+-				query = QUERY_ALL;
+-			} else {
+-				fprintf(stderr, "unknown query type\n");
+-				rc = 3;
+-				goto exit;
+-			}
+-			break;
+-		case 'r':
+-			if (action == ACTION_NONE)
+-				action = ACTION_ROOT;
+-			root = 1;
+-			break;
+-		case 'd':
+-			action = ACTION_DEVICE_ID_FILE;
+-			util_strscpy(name, sizeof(name), optarg);
+-			break;
+-		case 'a':
+-			action = ACTION_ATTRIBUTE_WALK;
+-			break;
+-		case 'e':
+-			export_devices(udev);
+-			goto exit;
+-		case 'x':
+-			export = 1;
+-			break;
+-		case 'P':
+-			export_prefix = optarg;
+-			break;
+-		case 'V':
+-			printf("%s\n", VERSION);
+-			goto exit;
+-		case 'h':
+-			printf("Usage: udevadm info OPTIONS\n"
+-			       "  --query=<type>             query device information:\n"
+-			       "      name                     name of device node\n"
+-			       "      symlink                  pointing to node\n"
+-			       "      path                     sys device path\n"
+-			       "      property                 the device properties\n"
+-			       "      all                      all values\n"
+-			       "  --path=<syspath>           sys device path used for query or attribute walk\n"
+-			       "  --name=<name>              node or symlink name used for query or attribute walk\n"
+-			       "  --root                     prepend dev directory to path names\n"
+-			       "  --attribute-walk           print all key matches while walking along the chain\n"
+-			       "                             of parent devices\n"
+-			       "  --device-id-of-file=<file> print major:minor of device containing this file\n"
+-			       "  --export-db                export the content of the udev database\n"
+-			       "  --help\n\n");
+-			goto exit;
+-		default:
+-			goto exit;
+-		}
+-	}
+-
+-	switch (action) {
+-	case ACTION_QUERY:
+-		if (device == NULL) {
+-			fprintf(stderr, "query needs a valid device specified by --path= or --name=\n");
+-			rc = 4;
+-			goto exit;
+-		}
+-
+-		switch(query) {
+-		case QUERY_NAME: {
+-			const char *node = udev_device_get_devnode(device);
+-
+-			if (node == NULL) {
+-				fprintf(stderr, "no device node found\n");
+-				rc = 5;
+-				goto exit;
+-			}
+-
+-			if (root) {
+-				printf("%s\n", udev_device_get_devnode(device));
+-			} else {
+-				size_t len = strlen(udev_get_dev_path(udev));
+-
+-				printf("%s\n", &udev_device_get_devnode(device)[len+1]);
+-			}
+-			break;
+-		}
+-		case QUERY_SYMLINK:
+-			list_entry = udev_device_get_devlinks_list_entry(device);
+-			while (list_entry != NULL) {
+-				if (root) {
+-					printf("%s", udev_list_entry_get_name(list_entry));
+-				} else {
+-					size_t len;
+-
+-					len = strlen(udev_get_dev_path(udev_device_get_udev(device)));
+-					printf("%s", &udev_list_entry_get_name(list_entry)[len+1]);
+-				}
+-				list_entry = udev_list_entry_get_next(list_entry);
+-				if (list_entry != NULL)
+-					printf(" ");
+-			}
+-			printf("\n");
+-			break;
+-		case QUERY_PATH:
+-			printf("%s\n", udev_device_get_devpath(device));
+-			goto exit;
+-		case QUERY_PROPERTY:
+-			list_entry = udev_device_get_properties_list_entry(device);
+-			while (list_entry != NULL) {
+-				printf("%s=%s\n", udev_list_entry_get_name(list_entry), udev_list_entry_get_value(list_entry));
+-				list_entry = udev_list_entry_get_next(list_entry);
+-			}
+-			break;
+-		case QUERY_ALL:
+-			print_record(device);
+-			break;
+-		default:
+-			fprintf(stderr, "unknown query type\n");
+-			break;
+-		}
+-		break;
+-	case ACTION_ATTRIBUTE_WALK:
+-		if (device == NULL) {
+-			fprintf(stderr, "query needs a valid device specified by --path= or --name=\n");
+-			rc = 4;
+-			goto exit;
+-		}
+-		print_device_chain(device);
+-		break;
+-	case ACTION_DEVICE_ID_FILE:
+-		if (stat_device(name, export, export_prefix) != 0)
+-			rc = 1;
+-		break;
+-	case ACTION_ROOT:
+-		printf("%s\n", udev_get_dev_path(udev));
+-		break;
+-	default:
+-		fprintf(stderr, "missing option\n");
+-		rc = 1;
+-		break;
+-	}
+-
+-exit:
+-	udev_device_unref(device);
+-	return rc;
+-}
+diff -Naur udev-164/udev/udevadm-monitor.c udev-164_mod/udev/udevadm-monitor.c
+--- udev-164/udev/udevadm-monitor.c	2010-05-27 14:10:26.000000000 +0100
++++ udev-164_mod/udev/udevadm-monitor.c	1970-01-01 01:00:00.000000000 +0100
+@@ -1,263 +0,0 @@
+-/*
+- * Copyright (C) 2004-2010 Kay Sievers <kay.sievers@vrfy.org>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-#include <unistd.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <stddef.h>
+-#include <string.h>
+-#include <fcntl.h>
+-#include <errno.h>
+-#include <signal.h>
+-#include <getopt.h>
+-#include <sys/time.h>
+-#include <sys/socket.h>
+-#include <sys/un.h>
+-#include <sys/select.h>
+-#include <linux/types.h>
+-#include <linux/netlink.h>
+-
+-#include "udev.h"
+-
+-static int udev_exit;
+-
+-static void sig_handler(int signum)
+-{
+-	if (signum == SIGINT || signum == SIGTERM)
+-		udev_exit = 1;
+-}
+-
+-static void print_device(struct udev_device *device, const char *source, int prop)
+-{
+-	struct timeval tv;
+-	struct timezone tz;
+-
+-	gettimeofday(&tv, &tz);
+-	printf("%-6s[%llu.%06u] %-8s %s (%s)\n",
+-	       source,
+-	       (unsigned long long) tv.tv_sec, (unsigned int) tv.tv_usec,
+-	       udev_device_get_action(device),
+-	       udev_device_get_devpath(device),
+-	       udev_device_get_subsystem(device));
+-	if (prop) {
+-		struct udev_list_entry *list_entry;
+-
+-		udev_list_entry_foreach(list_entry, udev_device_get_properties_list_entry(device))
+-			printf("%s=%s\n",
+-			       udev_list_entry_get_name(list_entry),
+-			       udev_list_entry_get_value(list_entry));
+-		printf("\n");
+-	}
+-}
+-
+-int udevadm_monitor(struct udev *udev, int argc, char *argv[])
+-{
+-	struct sigaction act;
+-	sigset_t mask;
+-	int option;
+-	int prop = 0;
+-	int print_kernel = 0;
+-	int print_udev = 0;
+-	struct udev_list_node subsystem_match_list;
+-	struct udev_list_node tag_match_list;
+-	struct udev_monitor *udev_monitor = NULL;
+-	struct udev_monitor *kernel_monitor = NULL;
+-	fd_set readfds;
+-	int rc = 0;
+-
+-	static const struct option options[] = {
+-		{ "property", no_argument, NULL, 'p' },
+-		{ "environment", no_argument, NULL, 'e' },
+-		{ "kernel", no_argument, NULL, 'k' },
+-		{ "udev", no_argument, NULL, 'u' },
+-		{ "subsystem-match", required_argument, NULL, 's' },
+-		{ "tag-match", required_argument, NULL, 't' },
+-		{ "help", no_argument, NULL, 'h' },
+-		{}
+-	};
+-
+-	udev_list_init(&subsystem_match_list);
+-	udev_list_init(&tag_match_list);
+-	for (;;) {
+-		option = getopt_long(argc, argv, "pekus:t:h", options, NULL);
+-		if (option == -1)
+-			break;
+-
+-		switch (option) {
+-		case 'p':
+-		case 'e':
+-			prop = 1;
+-			break;
+-		case 'k':
+-			print_kernel = 1;
+-			break;
+-		case 'u':
+-			print_udev = 1;
+-			break;
+-		case 's':
+-			{
+-				char subsys[UTIL_NAME_SIZE];
+-				char *devtype;
+-
+-				util_strscpy(subsys, sizeof(subsys), optarg);
+-				devtype = strchr(subsys, '/');
+-				if (devtype != NULL) {
+-					devtype[0] = '\0';
+-					devtype++;
+-				}
+-				udev_list_entry_add(udev, &subsystem_match_list, subsys, devtype, 0, 0);
+-				break;
+-			}
+-		case 't':
+-			udev_list_entry_add(udev, &tag_match_list, optarg, NULL, 0, 0);
+-			break;
+-		case 'h':
+-			printf("Usage: udevadm monitor [--property] [--kernel] [--udev] [--help]\n"
+-			       "  --property                              print the event properties\n"
+-			       "  --kernel                                print kernel uevents\n"
+-			       "  --udev                                  print udev events\n"
+-			       "  --subsystem-match=<subsystem[/devtype]> filter events by subsystem\n"
+-			       "  --tag-match=<tag>                       filter events by tag\n"
+-			       "  --help\n\n");
+-		default:
+-			goto out;
+-		}
+-	}
+-
+-	if (!print_kernel && !print_udev) {
+-		print_kernel = 1;
+-		print_udev =1;
+-	}
+-
+-	/* set signal handlers */
+-	memset(&act, 0x00, sizeof(struct sigaction));
+-	act.sa_handler = sig_handler;
+-	sigemptyset(&act.sa_mask);
+-	act.sa_flags = SA_RESTART;
+-	sigaction(SIGINT, &act, NULL);
+-	sigaction(SIGTERM, &act, NULL);
+-	sigemptyset(&mask);
+-	sigaddset(&mask, SIGINT);
+-	sigaddset(&mask, SIGTERM);
+-	sigprocmask(SIG_UNBLOCK, &mask, NULL);
+-
+-	printf("monitor will print the received events for:\n");
+-	if (print_udev) {
+-		struct udev_list_entry *entry;
+-
+-		udev_monitor = udev_monitor_new_from_netlink(udev, "udev");
+-		if (udev_monitor == NULL) {
+-			fprintf(stderr, "error: unable to create netlink socket\n");
+-			rc = 1;
+-			goto out;
+-		}
+-		udev_monitor_set_receive_buffer_size(udev_monitor, 128*1024*1024);
+-
+-		udev_list_entry_foreach(entry, udev_list_get_entry(&subsystem_match_list)) {
+-			const char *subsys = udev_list_entry_get_name(entry);
+-			const char *devtype = udev_list_entry_get_value(entry);
+-
+-			if (udev_monitor_filter_add_match_subsystem_devtype(udev_monitor, subsys, devtype) < 0)
+-				fprintf(stderr, "error: unable to apply subsystem filter '%s'\n", subsys);
+-		}
+-
+-		udev_list_entry_foreach(entry, udev_list_get_entry(&tag_match_list)) {
+-			const char *tag = udev_list_entry_get_name(entry);
+-
+-			if (udev_monitor_filter_add_match_tag(udev_monitor, tag) < 0)
+-				fprintf(stderr, "error: unable to apply tag filter '%s'\n", tag);
+-		}
+-
+-		if (udev_monitor_enable_receiving(udev_monitor) < 0) {
+-			fprintf(stderr, "error: unable to subscribe to udev events\n");
+-			rc = 2;
+-			goto out;
+-		}
+-		printf("UDEV - the event which udev sends out after rule processing\n");
+-	}
+-	if (print_kernel) {
+-		struct udev_list_entry *entry;
+-
+-		kernel_monitor = udev_monitor_new_from_netlink(udev, "kernel");
+-		if (kernel_monitor == NULL) {
+-			fprintf(stderr, "error: unable to create netlink socket\n");
+-			rc = 3;
+-			goto out;
+-		}
+-		udev_monitor_set_receive_buffer_size(kernel_monitor, 128*1024*1024);
+-
+-		udev_list_entry_foreach(entry, udev_list_get_entry(&subsystem_match_list)) {
+-			const char *subsys = udev_list_entry_get_name(entry);
+-
+-			if (udev_monitor_filter_add_match_subsystem_devtype(kernel_monitor, subsys, NULL) < 0)
+-				fprintf(stderr, "error: unable to apply subsystem filter '%s'\n", subsys);
+-		}
+-
+-		if (udev_monitor_enable_receiving(kernel_monitor) < 0) {
+-			fprintf(stderr, "error: unable to subscribe to kernel events\n");
+-			rc = 4;
+-			goto out;
+-		}
+-		printf("KERNEL - the kernel uevent\n");
+-	}
+-	printf("\n");
+-
+-	while (!udev_exit) {
+-		int fdcount;
+-
+-		FD_ZERO(&readfds);
+-		if (kernel_monitor != NULL)
+-			FD_SET(udev_monitor_get_fd(kernel_monitor), &readfds);
+-		if (udev_monitor != NULL)
+-			FD_SET(udev_monitor_get_fd(udev_monitor), &readfds);
+-
+-		fdcount = select(MAX(udev_monitor_get_fd(kernel_monitor), udev_monitor_get_fd(udev_monitor))+1,
+-				 &readfds, NULL, NULL, NULL);
+-		if (fdcount < 0) {
+-			if (errno != EINTR)
+-				fprintf(stderr, "error receiving uevent message: %m\n");
+-			continue;
+-		}
+-
+-		if ((kernel_monitor != NULL) && FD_ISSET(udev_monitor_get_fd(kernel_monitor), &readfds)) {
+-			struct udev_device *device;
+-
+-			device = udev_monitor_receive_device(kernel_monitor);
+-			if (device == NULL)
+-				continue;
+-			print_device(device, "KERNEL", prop);
+-			udev_device_unref(device);
+-		}
+-
+-		if ((udev_monitor != NULL) && FD_ISSET(udev_monitor_get_fd(udev_monitor), &readfds)) {
+-			struct udev_device *device;
+-
+-			device = udev_monitor_receive_device(udev_monitor);
+-			if (device == NULL)
+-				continue;
+-			print_device(device, "UDEV", prop);
+-			udev_device_unref(device);
+-		}
+-	}
+-
+-out:
+-	udev_monitor_unref(udev_monitor);
+-	udev_monitor_unref(kernel_monitor);
+-	udev_list_cleanup_entries(udev, &subsystem_match_list);
+-	udev_list_cleanup_entries(udev, &tag_match_list);
+-	return rc;
+-}
+diff -Naur udev-164/udev/udevadm-settle.c udev-164_mod/udev/udevadm-settle.c
+--- udev-164/udev/udevadm-settle.c	2010-05-27 14:10:26.000000000 +0100
++++ udev-164_mod/udev/udevadm-settle.c	1970-01-01 01:00:00.000000000 +0100
+@@ -1,229 +0,0 @@
+-/*
+- * Copyright (C) 2006-2009 Kay Sievers <kay@vrfy.org>
+- * Copyright (C) 2009 Canonical Ltd.
+- * Copyright (C) 2009 Scott James Remnant <scott@netsplit.com>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-#include <stdlib.h>
+-#include <stddef.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <unistd.h>
+-#include <errno.h>
+-#include <dirent.h>
+-#include <fcntl.h>
+-#include <syslog.h>
+-#include <getopt.h>
+-#include <signal.h>
+-#include <time.h>
+-#include <sys/stat.h>
+-#include <sys/types.h>
+-
+-#include "udev.h"
+-
+-#define DEFAULT_TIMEOUT			180
+-#define LOOP_PER_SECOND			20
+-
+-static volatile sig_atomic_t is_timeout;
+-
+-static void sig_handler(int signum)
+-{
+-	switch (signum) {
+-		case SIGALRM:
+-			is_timeout = 1;
+-		case SIGUSR1:
+-			;
+-	}
+-}
+-
+-int udevadm_settle(struct udev *udev, int argc, char *argv[])
+-{
+-	static const struct option options[] = {
+-		{ "seq-start", required_argument, NULL, 's' },
+-		{ "seq-end", required_argument, NULL, 'e' },
+-		{ "timeout", required_argument, NULL, 't' },
+-		{ "exit-if-exists", required_argument, NULL, 'E' },
+-		{ "quiet", no_argument, NULL, 'q' },
+-		{ "help", no_argument, NULL, 'h' },
+-		{}
+-	};
+-	unsigned long long start = 0;
+-	unsigned long long end = 0;
+-	int quiet = 0;
+-	const char *exists = NULL;
+-	int timeout = DEFAULT_TIMEOUT;
+-	struct sigaction act;
+-	sigset_t mask;
+-	struct udev_queue *udev_queue = NULL;
+-	int rc = 1;
+-
+-	dbg(udev, "version %s\n", VERSION);
+-
+-	/* set signal handlers */
+-	memset(&act, 0x00, sizeof(act));
+-	act.sa_handler = sig_handler;
+-	sigemptyset (&act.sa_mask);
+-	act.sa_flags = 0;
+-	sigaction(SIGALRM, &act, NULL);
+-	sigaction(SIGUSR1, &act, NULL);
+-	sigemptyset(&mask);
+-	sigaddset(&mask, SIGUSR1);
+-	sigaddset(&mask, SIGALRM);
+-	sigprocmask(SIG_UNBLOCK, &mask, NULL);
+-
+-	for (;;) {
+-		int option;
+-		int seconds;
+-
+-		option = getopt_long(argc, argv, "s:e:t:E:qh", options, NULL);
+-		if (option == -1)
+-			break;
+-
+-		switch (option) {
+-		case 's':
+-			start = strtoull(optarg, NULL, 0);
+-			break;
+-		case 'e':
+-			end = strtoull(optarg, NULL, 0);
+-			break;
+-		case 't':
+-			seconds = atoi(optarg);
+-			if (seconds >= 0)
+-				timeout = seconds;
+-			else
+-				fprintf(stderr, "invalid timeout value\n");
+-			dbg(udev, "timeout=%i\n", timeout);
+-			break;
+-		case 'q':
+-			quiet = 1;
+-			break;
+-		case 'E':
+-			exists = optarg;
+-			break;
+-		case 'h':
+-			printf("Usage: udevadm settle OPTIONS\n"
+-			       "  --timeout=<seconds>     maximum time to wait for events\n"
+-			       "  --seq-start=<seqnum>    first seqnum to wait for\n"
+-			       "  --seq-end=<seqnum>      last seqnum to wait for\n"
+-			       "  --exit-if-exists=<file> stop waiting if file exists\n"
+-			       "  --quiet                 do not print list after timeout\n"
+-			       "  --help\n\n");
+-			exit(0);
+-		}
+-	}
+-
+-	if (timeout > 0)
+-		alarm(timeout);
+-	else
+-		is_timeout = 1;
+-
+-	udev_queue = udev_queue_new(udev);
+-	if (udev_queue == NULL)
+-		exit(2);
+-
+-	if (start > 0) {
+-		unsigned long long kernel_seq;
+-
+-		kernel_seq = udev_queue_get_kernel_seqnum(udev_queue);
+-
+-		/* unless specified, the last event is the current kernel seqnum */
+-		if (end == 0)
+-			end = udev_queue_get_kernel_seqnum(udev_queue);
+-
+-		if (start > end) {
+-			err(udev, "seq-start larger than seq-end, ignoring\n");
+-			start = 0;
+-			end = 0;
+-		}
+-
+-		if (start > kernel_seq || end > kernel_seq) {
+-			err(udev, "seq-start or seq-end larger than current kernel value, ignoring\n");
+-			start = 0;
+-			end = 0;
+-		}
+-		info(udev, "start=%llu end=%llu current=%llu\n", start, end, kernel_seq);
+-	} else {
+-		if (end > 0) {
+-			err(udev, "seq-end needs seq-start parameter, ignoring\n");
+-			end = 0;
+-		}
+-	}
+-
+-	/* guarantee that the udev daemon isn't pre-processing */
+-	if (getuid() == 0) {
+-		struct udev_ctrl *uctrl;
+-
+-		uctrl = udev_ctrl_new_from_socket(udev, UDEV_CTRL_SOCK_PATH);
+-		if (uctrl != NULL) {
+-			sigset_t oldmask;
+-
+-			sigemptyset(&mask);
+-			sigaddset(&mask, SIGUSR1);
+-			sigaddset(&mask, SIGALRM);
+-			sigprocmask(SIG_BLOCK, &mask, &oldmask);
+-			if (udev_ctrl_send_settle(uctrl) > 0)
+-				sigsuspend(&oldmask);
+-			sigprocmask(SIG_SETMASK, &oldmask, NULL);
+-			udev_ctrl_unref(uctrl);
+-		}
+-	}
+-
+-	for (;;) {
+-		struct stat statbuf;
+-		const struct timespec duration = { 0 , 1000 * 1000 * 1000 / LOOP_PER_SECOND };
+-
+-		if (exists != NULL && stat(exists, &statbuf) == 0) {
+-			rc = 0;
+-			break;
+-		}
+-
+-		if (start > 0) {
+-			/* if asked for, wait for a specific sequence of events */
+-			if (udev_queue_get_seqnum_sequence_is_finished(udev_queue, start, end) == 1) {
+-				rc = 0;
+-				break;
+-			}
+-		} else {
+-			/* exit if queue is empty */
+-			if (udev_queue_get_queue_is_empty(udev_queue)) {
+-				rc = 0;
+-				break;
+-			}
+-		}
+-
+-		if (is_timeout)
+-			break;
+-
+-		nanosleep(&duration, NULL);
+-	}
+-
+-	/* if we reached the timeout, print the list of remaining events */
+-	if (is_timeout) {
+-		struct udev_list_entry *list_entry;
+-
+-		if (!quiet && udev_queue_get_queued_list_entry(udev_queue) != NULL) {
+-			info(udev, "timeout waiting for udev queue\n");
+-			printf("\nudevadm settle - timeout of %i seconds reached, the event queue contains:\n", timeout);
+-			udev_list_entry_foreach(list_entry, udev_queue_get_queued_list_entry(udev_queue))
+-				printf("  %s (%s)\n",
+-				       udev_list_entry_get_name(list_entry),
+-				       udev_list_entry_get_value(list_entry));
+-		}
+-	}
+-
+-	udev_queue_unref(udev_queue);
+-	return rc;
+-}
+diff -Naur udev-164/udev/udevadm-test.c udev-164_mod/udev/udevadm-test.c
+--- udev-164/udev/udevadm-test.c	2010-05-27 14:10:26.000000000 +0100
++++ udev-164_mod/udev/udevadm-test.c	1970-01-01 01:00:00.000000000 +0100
+@@ -1,134 +0,0 @@
+-/*
+- * Copyright (C) 2003-2004 Greg Kroah-Hartman <greg@kroah.com>
+- * Copyright (C) 2004-2008 Kay Sievers <kay.sievers@vrfy.org>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stddef.h>
+-#include <unistd.h>
+-#include <errno.h>
+-#include <ctype.h>
+-#include <fcntl.h>
+-#include <signal.h>
+-#include <syslog.h>
+-#include <getopt.h>
+-
+-#include "udev.h"
+-
+-int udevadm_test(struct udev *udev, int argc, char *argv[])
+-{
+-	char filename[UTIL_PATH_SIZE];
+-	const char *action = "add";
+-	const char *syspath = NULL;
+-	struct udev_event *event;
+-	struct udev_device *dev;
+-	struct udev_rules *rules = NULL;
+-	struct udev_list_entry *entry;
+-	int err;
+-	int rc = 0;
+-
+-	static const struct option options[] = {
+-		{ "action", required_argument, NULL, 'a' },
+-		{ "help", no_argument, NULL, 'h' },
+-		{}
+-	};
+-
+-	info(udev, "version %s\n", VERSION);
+-
+-	for (;;) {
+-		int option;
+-
+-		option = getopt_long(argc, argv, "a:s:fh", options, NULL);
+-		if (option == -1)
+-			break;
+-
+-		dbg(udev, "option '%c'\n", option);
+-		switch (option) {
+-		case 'a':
+-			action = optarg;
+-			break;
+-		case 'h':
+-			printf("Usage: udevadm test OPTIONS <syspath>\n"
+-			       "  --action=<string>     set action string\n"
+-			       "  --help\n\n");
+-			exit(0);
+-		default:
+-			exit(1);
+-		}
+-	}
+-	syspath = argv[optind];
+-
+-	if (syspath == NULL) {
+-		fprintf(stderr, "syspath parameter missing\n");
+-		rc = 1;
+-		goto exit;
+-	}
+-
+-	printf("This program is for debugging only, it does not run any program,\n"
+-	       "specified by a RUN key. It may show incorrect results, because\n"
+-	       "some values may be different, or not available at a simulation run.\n"
+-	       "\n");
+-
+-	rules = udev_rules_new(udev, 1);
+-	if (rules == NULL) {
+-		fprintf(stderr, "error reading rules\n");
+-		rc = 1;
+-		goto exit;
+-	}
+-
+-	/* add /sys if needed */
+-	if (strncmp(syspath, udev_get_sys_path(udev), strlen(udev_get_sys_path(udev))) != 0)
+-		util_strscpyl(filename, sizeof(filename), udev_get_sys_path(udev), syspath, NULL);
+-	else
+-		util_strscpy(filename, sizeof(filename), syspath);
+-	util_remove_trailing_chars(filename, '/');
+-
+-	dev = udev_device_new_from_syspath(udev, filename);
+-	if (dev == NULL) {
+-		fprintf(stderr, "unable to open device '%s'\n", filename);
+-		rc = 2;
+-		goto exit;
+-	}
+-
+-	/* skip reading of db, but read kernel parameters */
+-	udev_device_set_info_loaded(dev);
+-	udev_device_read_uevent_file(dev);
+-
+-	udev_device_set_action(dev, action);
+-	event = udev_event_new(dev);
+-	err = udev_event_execute_rules(event, rules);
+-
+-	if (udev_device_get_event_timeout(dev) >= 0)
+-		info(udev, "custom event timeout: %i\n", udev_device_get_event_timeout(dev));
+-
+-	udev_list_entry_foreach(entry, udev_device_get_properties_list_entry(dev))
+-		info(udev, "%s=%s\n", udev_list_entry_get_name(entry), udev_list_entry_get_value(entry));
+-
+-	if (err == 0)
+-		udev_list_entry_foreach(entry, udev_list_get_entry(&event->run_list)) {
+-			char program[UTIL_PATH_SIZE];
+-
+-			udev_event_apply_format(event, udev_list_entry_get_name(entry), program, sizeof(program));
+-			info(udev, "run: '%s'\n", program);
+-		}
+-	udev_event_unref(event);
+-	udev_device_unref(dev);
+-exit:
+-	udev_rules_unref(rules);
+-	return rc;
+-}

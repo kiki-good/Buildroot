@@ -1,0 +1,341 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/Makefile.am diagnostics-1.3_new/apps/mifd/Makefile.am
+--- diagnostics-1.3_orig/apps/mifd/Makefile.am	2015-08-04 13:10:35.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/Makefile.am	2015-08-05 09:11:24.527501681 +0100
+@@ -11,7 +11,7 @@
+ mifd_SOURCES = mifd.c mifd_rpc.c mifd_stats.c
+ 
+ #mifd_LDFLAGS = -lpthread -lrt -lm -lcrypto
+-mifd_LDFLAGS = -lpthread -lrt -lm -latasmart -lresolv -liksemel
++mifd_LDFLAGS = -lpthread -lrt -lm -lresolv -liksemel
+ # Needs airties library to be manually located under ./mgmtif/sky_cli directory
+ # The library is not availabel in SPK now, when it is there, this should  be changed.
+ # mifd_LDFLAGS += -L./mgmtif/sky_cli -lsky_cli -laci
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/dslf_storageservice.xml diagnostics-1.3_new/apps/mifd/mgmtif/dslf_storageservice.xml
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/dslf_storageservice.xml	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/dslf_storageservice.xml	2015-08-04 17:13:48.654964464 +0100
+@@ -115,7 +115,7 @@
+     <status>mandatory</status>
+     <access>read-only</access>
+     <description>Time since boot in hours. This MAY reflect S.M.A.R.T. PowerOnHours.</description>
+-    <syntax type="uint" />
++    <syntax type="string" />
+   </attribute>
+   <attribute name="SMARTCapable">
+     <nodeid>Device.Services.StorageService.PhysicalMedium</nodeid>
+@@ -257,4 +257,4 @@
+ ID 232 [0xE8] :: Lower percentages are better.</description>
+     <syntax type="uint" />
+   </attribute>
+-</tns:mgmtns>
+\ No newline at end of file
++</tns:mgmtns>
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_storageservice_physicalmedium.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_storageservice_physicalmedium.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_services_storageservice_physicalmedium.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_services_storageservice_physicalmedium.c	2015-08-04 17:15:07.162108610 +0100
+@@ -248,15 +248,15 @@
+ 		case IGD_PHYSICALMEDIUM(UPTIME):
+ 		{
+ 		  /* Initial Version has 1 hard drive */
+-		   result = bskyb_physical_medium_get_int32_variable(
+-				   &deviceId,
+-				   BSKYB_PHYSICAL_MEDIUM_UPTIME,
+-				   &intValue );
+-		   if ( EOK != result ){
+-			 break;
+-		   }
+-		   value = (unsigned int ) intValue;
+-		   result=mif_request_set_value(req, id, &value, sizeof(unsigned int));
++			result = bskyb_physical_medium_get_string_variable(
++					&deviceId,
++					BSKYB_PHYSICAL_MEDIUM_UPTIME,
++					&buf[0],
++					sizeof(buf) );
++			if ( EOK != result ){
++			  break;
++			}
++			result=mif_request_set_value(req, id, &buf[0], strlen(buf) + NULL_LENGTH);
+ 		}
+ 		break;
+ 		case IGD_PHYSICALMEDIUM(SMARTCAPABLE):
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_physicalmedium.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_physicalmedium.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_physicalmedium.c	2015-08-04 13:10:35.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_physicalmedium.c	2015-08-04 17:20:35.970854493 +0100
+@@ -108,7 +108,7 @@
+ {
+   int32_t result = VENDOR_STATUS_UNSUPPORTED;
+   bskyb_smart_string_variable_t smartVar = BSKYB_SMART_VARIABLE_STRING_LIST_END;
+-  unsigned char buf[] = { BSKYB_SMART_CHECK_POWER_MODE, 0, 0, 0 };
++  char buffer[PROCPROXY_BUFF_SIZE];
+ 
+   VENDOR_ASSERT( ( NULL!=deviceId ) );
+   VENDOR_ASSERT( ( NULL!=returned_string ) );
+@@ -161,21 +161,31 @@
+     }
+     break;
+ 
++    case BSKYB_PHYSICAL_MEDIUM_UPTIME:
++    {
++      /* Powered On Time */
++      smartVar = BSKYB_SMART_UPTIME;
++    }
++    break;
++	
++
+     case BSKYB_PHYSICAL_MEDIUM_STATUS:
+     {
+ #ifndef VENDOR_HOOK_SMART_USE_STATIC_TEST_DATA
+-      int fd = open(deviceId, O_RDWR);
+-
+-      if(!ioctl(fd, HDIO_DRIVE_CMD, buf)){
+-        if(BSKYB_SMART_DISK_STATUS_ONLINE == buf[BSKYB_SMART_POWER_MODE_INDEX]){
+-          strncpy(returned_string, "ONLINE", max_string_size);
+-        }else{
+-          strncpy(returned_string, "STANDBY", max_string_size);
+-        }
+-      }else{
++	memset(buffer, 0, sizeof(buffer));
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_HDS, deviceId, buffer, sizeof (buffer))) {
++		syslog(LOG_ERR, "Error: ProcProxy Failure\n");
+         strncpy(returned_string, "OFFLINE", max_string_size);
+-      }
+-      close(fd);
++		break;
++	}else{
++		result = atoi(buffer);	
++	}
++	if(-1 == result){
++		syslog(LOG_ERR, "Error: ProcProxy returned -1\n");
++        strncpy(returned_string, "OFFLINE", max_string_size);
++		break;
++	}
++	strncpy(returned_string, buffer, max_string_size);
+ #else
+       strncpy(returned_string, "ONLINE", max_string_size);
+ #endif
+@@ -284,12 +294,6 @@
+     }
+     break;
+ 
+-    case BSKYB_PHYSICAL_MEDIUM_UPTIME:
+-    {
+-      /* Since local time has never been set, it should be uptime */
+-      smartVar = BSKYB_SMART_POWERONHOURS;
+-    }
+-    break;
+     case BSKYB_PHYSICAL_MEDIUM_SMARTCAPABLE:
+     {
+       result = VENDOR_STATUS_UNSUPPORTED;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_physicalmedium.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_physicalmedium.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_physicalmedium.h	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_physicalmedium.h	2015-08-04 17:08:40.385350477 +0100
+@@ -51,6 +51,7 @@
+ 	BSKYB_PHYSICAL_MEDIUM_FIRMWAREVERSION,
+ 	BSKYB_PHYSICAL_MEDIUM_STATUS,
+ 	BSKYB_PHYSICAL_MEDIUM_HEALTH,
++	BSKYB_PHYSICAL_MEDIUM_UPTIME,
+ 
+ 	BSKYB_PHYSICAL_MEDIUM_LAST_STRING
+ 
+@@ -58,7 +59,6 @@
+ 
+ typedef enum {
+ 	BSKYB_PHYSICAL_MEDIUM_CAPACITY = 0,
+-	BSKYB_PHYSICAL_MEDIUM_UPTIME,
+ 	BSKYB_PHYSICAL_MEDIUM_SMARTCAPABLE,
+ 
+ 	BSKYB_PHYSICAL_MEDIUM_LAST_INT
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.c	2015-08-04 13:10:35.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.c	2015-08-04 16:25:07.530612485 +0100
+@@ -207,7 +207,7 @@
+ 		return eVENDORHOOK_PROCDEVICE_FAIL;
+     }
+ 
+-	/* Only 2 types of request required for TR069. */
++	/* Only 4 types of request required for TR069. */
+ 	switch(req){
+ 		case PROCPROXY_GET_INFO:
+ 			snprintf(message,PROCPROXY_MSG_SIZE,"GET,%s", pProcDevice);
+@@ -215,6 +215,12 @@
+ 		case PROCPROXY_GET_DIR:
+ 			snprintf(message,PROCPROXY_MSG_SIZE,"DIR,%s", pProcDevice);
+ 			break;
++		case PROCPROXY_GET_SMT:
++			snprintf(message,PROCPROXY_MSG_SIZE,"SMT,%s", pProcDevice);
++			break;
++		case PROCPROXY_GET_HDS:
++			snprintf(message,PROCPROXY_MSG_SIZE,"HDS,%s", pProcDevice);
++			break;
+ 		default:
+ 			VENDOR_LOG_ERROR("Incorrect request: %d\n", req);
+ 			return eVENDORHOOK_PROCDEVICE_FAIL;
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.h diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.h
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hooks.h	2015-08-04 13:10:35.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hooks.h	2015-08-04 16:24:11.928941498 +0100
+@@ -154,7 +154,9 @@
+ 		PROCPROXY_GET_INFO,
+ 		PROCPROXY_GET_PID,
+ 		PROCPROXY_PUT_VAL,
+-		PROCPROXY_GET_DIR
++		PROCPROXY_GET_DIR,
++		PROCPROXY_GET_SMT,
++		PROCPROXY_GET_HDS
+ }procproxyReq_t;
+ 
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_smart.c diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_smart.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/vendor_hook_smart.c	2015-08-04 13:10:35.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/vendor_hook_smart.c	2015-08-05 09:10:30.210155967 +0100
+@@ -32,9 +32,6 @@
+ #include "vendor_hooks.h"
+ #include "vendor_hook_smart.h"
+ #include "vendor_hook_physicalmedium.h"
+-#ifndef VENDOR_HOOK_SMART_USE_STATIC_TEST_DATA
+-#include "atasmart.h"
+-#endif
+ 
+ #ifdef __TEST_APP__
+ #include "linux_stub.h"
+@@ -366,6 +363,11 @@
+       strcpy( searchString, "Size:" );
+     }
+     break;
++	case BSKYB_SMART_UPTIME:
++	{
++		strcpy( searchString, "Powered On:" );
++	}
++	break;
+     default:
+     {
+       VENDOR_LOG_WARN("%s: Unsupported SMART Variable Requested: %d\n", __FUNCTION__, variable);
+@@ -385,7 +387,7 @@
+ #endif
+   if ( TRUE == vendor_hooks_extractFormattedStringFromData(
+       pSmartInfo->pFullData, searchString,
+-      " %s",
++      "  %[^\n]",
+       returned_string
+       ) ){
+     result = VENDOR_STATUS_OK;
+@@ -425,7 +427,8 @@
+   char *pSearch = NULL;
+   smart_info_t *pSmartInfo = NULL;
+   int32_t searchLength =0;
+-  int ret ;
++  char buffer[PROCPROXY_BUFF_SIZE];
++  FILE * fp = NULL;
+ 
+   VENDOR_LOG_TRACE("%s\n",__FUNCTION__);
+ 
+@@ -448,95 +451,27 @@
+ 
+ #ifndef VENDOR_HOOK_SMART_USE_STATIC_TEST_DATA
+   {
+-    FILE * fp = NULL;
+-
+-    int fdRedirect  = BSKYB_SMART_FILE_IO_ERROR;
+-    int fdStdOut    = BSKYB_SMART_FILE_IO_ERROR;
+-
+-    SkDisk *d;
+-    if ((ret = sk_disk_open(deviceId, &d)) < 0) {
+-      syslog(LOG_ERR, "Failed to open Disk \n");
+-	  if(NULL != pSmartInfo){
+-			free(pSmartInfo);
+-			pSmartInfo = NULL;
+-	  }
+-      return NULL;
+-    }
+-    if(NULL == d){
+-		if(NULL != pSmartInfo){
+-			  free(pSmartInfo);
+-			  pSmartInfo = NULL;
+-		}
+-	    return NULL;
+-    }
+-
+-    /**
+-     * Open a temporary file and redirect stdout to it
+-     */
+-    fdRedirect = open(BSKYB_SMART_FILE_NAME, O_RDWR | O_CREAT);
+-    if (fdRedirect == BSKYB_SMART_FILE_IO_ERROR) {
+-		syslog(LOG_ERR, "Failed to open temp file\n");
+-		sk_disk_free(d);
++	memset(buffer, 0, sizeof(buffer));
++	if (eVENDORHOOK_OK != vendor_hook_read_proc_device(PROCPROXY_GET_SMT, deviceId, buffer, sizeof (buffer))) {
+ 		if(NULL != pSmartInfo){
+ 			  free(pSmartInfo);
+ 			  pSmartInfo = NULL;
+ 		}
+ 		return NULL;
+-    }
+-    /*flush the stdout and take a back of file descriptor*/
+-    fflush(stdout);
+-    fdStdOut = dup(STDOUT_FILENO);
+-    if (fdStdOut < VENDOR_STATUS_OK) {
+-		syslog(LOG_ERR, "stdout fd duplication failed\n");
+-		sk_disk_free(d);
++	}else{
++		result = atoi(buffer);	
++	}
++	if(-1 == result){
++		syslog(LOG_ERR, "Error: ProcProxy returned -1\n");
+ 		if(NULL != pSmartInfo){
+ 			  free(pSmartInfo);
+ 			  pSmartInfo = NULL;
+ 		}
+ 		return NULL;
+-    }
+-
+-    result = dup2(fdRedirect, STDOUT_FILENO);
+-    if (result < VENDOR_STATUS_OK) {
+-		syslog(LOG_ERR, "stdout redirection failed\n");
+-		sk_disk_free(d);
+-		if(NULL != pSmartInfo){
+-			  free(pSmartInfo);
+-			  pSmartInfo = NULL;
+-		}
+-		return NULL;
+-    }
+-    close(fdRedirect);
+-
+-    if ((ret = sk_disk_dump(d)) < 0) {
+-      syslog(LOG_ERR, "Failed to dump disk data \n");
+-      sk_disk_free(d);
+-	  if(NULL != pSmartInfo){
+-			free(pSmartInfo);
+-			pSmartInfo = NULL;
+-	  }
+-      return NULL;
+-    }
+-
+-    /**
+-     * Flush stdout and redirect it back to orginal fd
+-     */
+-    fflush(stdout);
+-    result = dup2(fdStdOut, STDOUT_FILENO);
+-    if (result < VENDOR_STATUS_OK) {
+-		syslog(LOG_ERR, "stdout redirection failed\n");
+-		sk_disk_free(d);
+-		if(NULL != pSmartInfo){
+-			  free(pSmartInfo);
+-			  pSmartInfo = NULL;
+-		}
+-		return NULL;
+-    }
+-    close(fdStdOut);
++	}
+ 
+     if(NULL == (fp = fopen(BSKYB_SMART_FILE_NAME, "rb")) ){
+       syslog(LOG_ERR, "Unable to open Smart File \n");
+-      sk_disk_free(d);
+ 	  if(NULL != pSmartInfo){
+ 			free(pSmartInfo);
+ 			pSmartInfo = NULL;
+@@ -550,7 +485,6 @@
+ 
+     pSmartInfo->uFullDataSize = strlen( pSmartInfo->pFullData );
+     remove(BSKYB_SMART_FILE_NAME);
+-    sk_disk_free(d);
+   }
+ #else
+   strcpy( pSmartInfo->pFullData, ( char* ) testSmartInfo );

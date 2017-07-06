@@ -1,0 +1,28 @@
+config BR2_PACKAGE_SKY_SKELMIR
+	bool "Skelmir Java VM"
+	default N
+	help
+	  Include the Skelmir Java VM in the rootfs.
+
+if BR2_PACKAGE_SKY_SKELMIR
+
+# When adding new versions, make sure that a corresponding entry is
+# added to the default values of BR2_PACKAGE_SKELMIR_VERSION below.
+
+choice
+	prompt "Skelmir VM version"
+	depends on BR2_PACKAGE_SKY_SKELMIR
+	default BR2_PACKAGE_SKY_SKELMIR_0_1
+
+config BR2_PACKAGE_SKY_SKELMIR_0_1
+	bool "Use Skelmir VM 0.1"
+	depends on BR2_PACKAGE_SKY_SKELMIR
+
+endchoice
+
+config BR2_PACKAGE_SKY_SKELMIR_VERSION
+	string
+	default "0.1"		if BR2_PACKAGE_SKY_SKELMIR_0_1
+
+endif
+

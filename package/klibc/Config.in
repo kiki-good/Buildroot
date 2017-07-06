@@ -1,0 +1,7 @@
+config BR2_PACKAGE_KLIBC
+	bool "klibc"
+	help
+	   klibc is a minimalistic subset of the standard C
+	   library.  It contains a basic set of utils for
+	   use in an initramfs image.
+

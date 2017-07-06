@@ -1,0 +1,11 @@
+diff -Naur bridge-utils-1.5_mod/libbridge/libbridge.h bridge-utils-1.5/libbridge/libbridge.h
+--- bridge-utils-1.5_mod/libbridge/libbridge.h	2011-03-29 01:52:54.000000000 +0100
++++ bridge-utils-1.5/libbridge/libbridge.h	2015-04-09 18:19:37.939562700 +0100
+@@ -20,6 +20,7 @@
+ #define _LIBBRIDGE_H
+ 
+ #include <sys/socket.h>
++#include <netinet/in.h>
+ #include <linux/if.h>
+ #include <linux/if_bridge.h>
+ 

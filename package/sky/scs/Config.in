@@ -1,0 +1,8 @@
+config BR2_PACKAGE_SKY_SCS
+	bool "Service Centre Software (SCS)"
+	default N
+	help
+	  Include the SCS software in the rootfs. If this package is
+	  included, SCS software will be automatically started at
+	  boot time.
+

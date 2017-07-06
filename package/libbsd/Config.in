@@ -1,0 +1,5 @@
+config BR2_PACKAGE_LIBBSD
+	bool "libbsd"
+	help
+	    This library provides useful functions commonly found on BSD systems,
+	    and lacking on others like GNU systems.

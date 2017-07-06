@@ -1,0 +1,56 @@
+From 33d30da8730e8c2964c9b797d7dc58ff16df80aa Mon Sep 17 00:00:00 2001
+From: bilal <bilal@airties.com>
+Date: Wed, 21 Mar 2012 15:16:10 +0200
+Subject: [PATCH 11/26] Issue #23531
+
+decrease IW_SCAN_MAX_DATA to 4k.
+
+git-svn-id: http://svn.corp.airties.com/svn/atlantis/packages/devel/wireless_tools/wireless_tools.29@32393
+---
+ wireless.20.h | 2 +-
+ wireless.21.h | 2 +-
+ wireless.h    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/wireless.20.h b/wireless.20.h
+index 2e7b04b..ae7bd99 100644
+--- a/wireless.20.h
++++ b/wireless.20.h
+@@ -522,7 +522,7 @@
+ #define IW_SCAN_TYPE_ACTIVE 0
+ #define IW_SCAN_TYPE_PASSIVE 1
+ /* Maximum size of returned data */
+-#define IW_SCAN_MAX_DATA	32*1024	/* In bytes */
++#define IW_SCAN_MAX_DATA	4*1024	/* In bytes */
+ 
+ /* Max number of char in custom event - use multiple of them if needed */
+ #define IW_CUSTOM_MAX		256	/* In bytes */
+diff --git a/wireless.21.h b/wireless.21.h
+index 233b54f..e886da1 100644
+--- a/wireless.21.h
++++ b/wireless.21.h
+@@ -537,7 +537,7 @@
+ #define IW_SCAN_TYPE_ACTIVE 0
+ #define IW_SCAN_TYPE_PASSIVE 1
+ /* Maximum size of returned data */
+-#define IW_SCAN_MAX_DATA	32*1024	/* In bytes */
++#define IW_SCAN_MAX_DATA	4*1024	/* In bytes */
+ 
+ /* Max number of char in custom event - use multiple of them if needed */
+ #define IW_CUSTOM_MAX		256	/* In bytes */
+diff --git a/wireless.h b/wireless.h
+index 233b54f..e886da1 100644
+--- a/wireless.h
++++ b/wireless.h
+@@ -537,7 +537,7 @@
+ #define IW_SCAN_TYPE_ACTIVE 0
+ #define IW_SCAN_TYPE_PASSIVE 1
+ /* Maximum size of returned data */
+-#define IW_SCAN_MAX_DATA	32*1024	/* In bytes */
++#define IW_SCAN_MAX_DATA	4*1024	/* In bytes */
+ 
+ /* Max number of char in custom event - use multiple of them if needed */
+ #define IW_CUSTOM_MAX		256	/* In bytes */
+-- 
+1.9.1
+

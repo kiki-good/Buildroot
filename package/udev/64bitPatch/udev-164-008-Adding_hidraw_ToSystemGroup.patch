@@ -1,0 +1,11 @@
+diff -Naur udev-164/rules/rules.d/50-udev-default.rules udev-164-mod/rules/rules.d/50-udev-default.rules
+--- udev-164/rules/rules.d/50-udev-default.rules	2015-07-16 12:57:20.587569298 +0100
++++ udev-164-mod/rules/rules.d/50-udev-default.rules	2015-07-16 13:14:32.582152961 +0100
+@@ -11,6 +11,7 @@
+ # input
+ KERNEL=="mouse*|mice|event*",	MODE="0640"
+ KERNEL=="ts[0-9]*|uinput",	MODE="0640"
++KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="RCU_DRI"
+ 
+ # libusb device nodes
+ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", MODE="0660", GROUP="NDS_MW"

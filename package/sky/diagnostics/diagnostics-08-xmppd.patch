@@ -1,0 +1,11 @@
+--- tr69-data-model_Orig/apps/xmppd/Makefile.am	2014-02-18 16:15:34.655408064 +0000
++++ tr69-data-model/apps/xmppd/Makefile.am	2014-02-18 16:30:14.492509056 +0000
+@@ -4,7 +4,7 @@
+ 
+ xmppd_SOURCES = main.c xmpp.c
+ 
+-xmppd_LDFLAGS = -liksemel -lpthread
++xmppd_LDFLAGS = -liksemel -lpthread -lresolv
+ 
+ xmppd_LDADD = $(proj_libarpc)
+ xmppd_LDADD += $(proj_libcm_client)

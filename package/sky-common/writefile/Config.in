@@ -1,0 +1,5 @@
+config BR2_PACKAGE_SKY_WRITEFILE
+	bool "writefile"
+	help
+	  writefile is a simple, small, static, portable 
+	  app for writing values to files (similar to echo)

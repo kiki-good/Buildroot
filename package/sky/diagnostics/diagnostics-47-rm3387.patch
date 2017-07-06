@@ -1,0 +1,38 @@
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_videooutput.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_videooutput.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_components_videooutput.c	2015-09-28 10:02:22.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_components_videooutput.c	2015-09-28 10:37:19.981706916 +0100
+@@ -193,7 +193,6 @@
+             return EFAIL;
+         }
+     }
+-    syslog(LOG_ERR, "Error in %s: Variable : %d\n", __FUNCTION__, id);
+     return EFAIL;
+ }
+ 
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface_stats.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface_stats.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface_stats.c	2015-09-28 10:02:22.000000000 +0100
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_device_ethernet_interface_stats.c	2015-09-28 10:43:26.616487257 +0100
+@@ -118,7 +118,6 @@
+ 				ma->ma_flags |= (MIF_ATTR_FLAG_READOK);
+ 				break;
+ 			default:
+-				syslog(LOG_ERR, "Invalid Entry in : %s\n", __func__);
+ 				break;
+ 		}
+ 	}
+diff -Naurr diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_managementserver_x_00d09e_xmppconnreq.c diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_managementserver_x_00d09e_xmppconnreq.c
+--- diagnostics-1.3_orig/apps/mifd/mgmtif/mgmtif_dslf_managementserver_x_00d09e_xmppconnreq.c	2014-12-04 12:41:40.000000000 +0000
++++ diagnostics-1.3_new/apps/mifd/mgmtif/mgmtif_dslf_managementserver_x_00d09e_xmppconnreq.c	2015-09-28 11:24:56.618056585 +0100
+@@ -178,10 +178,10 @@
+ 			return mif_request_set_value(req, id, buf, sizeof(buf));
+ 		}
+ 		default:
+-			sts = ENOENT;
++			return ENOENT;
+ 		break;
+ 	}
+-	return sts;
++	return EFAIL;
+ }
+ 
+ int

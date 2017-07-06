@@ -1,0 +1,5 @@
+config BR2_PACKAGE_FALSE
+	bool "false"
+	help
+	  false is a simple, small, static, portable 
+	  app for replacing the busybox false

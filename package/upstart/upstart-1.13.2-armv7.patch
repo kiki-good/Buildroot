@@ -1,0 +1,12 @@
+diff -Naur upstart-1.13.2/config.sub upstart-1.13.2_mod/config.sub
+--- upstart-1.13.2/config.sub	2014-08-14 10:35:51.000000000 +0100
++++ upstart-1.13.2_mod/config.sub	2015-03-23 10:27:10.245222587 +0000
+@@ -253,7 +253,7 @@
+ 	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
+ 	| am33_2.0 \
+ 	| arc | arceb \
+-	| arm | arm[bl]e | arme[lb] | armv[2-8] | armv[3-8][lb] | armv7[arm] \
++	| arm | armv7 | arm[bl]e | arme[lb] | armv[2-8] | armv[3-8][lb] | armv7[arm] \
+ 	| avr | avr32 \
+ 	| be32 | be64 \
+ 	| bfin \

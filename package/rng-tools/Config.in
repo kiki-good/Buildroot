@@ -1,0 +1,7 @@
+config BR2_PACKAGE_RNG_TOOLS
+        bool "rng-tools"
+        help
+		The rng-tools is a set of utilities related to random number 
+		generation in kernel. The main program is rngd, a daemon 
+		developed to check and feed random data from hardware device 
+		to kernel entropy pool.

@@ -1,0 +1,36 @@
+--- a/bus/Makefile.am	2014-09-22 10:40:16.878145077 +0100
++++ b/bus/Makefile.am	2014-09-22 10:40:45.622145818 +0100
+@@ -222,12 +222,12 @@
+ if HAVE_SYSTEMD
+ # Install dbus.socket as default implementation of a D-Bus stack
+ 	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants
+-	$(LN_S) ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants/dbus.socket
++	-$(LN_S) ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants/dbus.socket
+ # Unconditionally enable D-Bus on systemd installations
+ 	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants
+-	$(LN_S) ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
++	-$(LN_S) ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
+ 	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants
+-	$(LN_S) ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
++	-$(LN_S) ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
+ endif
+ 
+ #### Init scripts fun
+--- a/bus/Makefile.in	2014-09-22 10:40:08.774144872 +0100
++++ b/bus/Makefile.in	2014-09-22 10:41:06.486146353 +0100
+@@ -2586,12 +2586,12 @@
+ @DBUS_UNIX_TRUE@	fi
+ # Install dbus.socket as default implementation of a D-Bus stack
+ @HAVE_SYSTEMD_TRUE@	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants
+-@HAVE_SYSTEMD_TRUE@	$(LN_S) ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants/dbus.socket
++@HAVE_SYSTEMD_TRUE@	-$(LN_S) ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/dbus.target.wants/dbus.socket
+ # Unconditionally enable D-Bus on systemd installations
+ @HAVE_SYSTEMD_TRUE@	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants
+-@HAVE_SYSTEMD_TRUE@	$(LN_S) ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
++@HAVE_SYSTEMD_TRUE@	-$(LN_S) ../dbus.socket $(DESTDIR)$(systemdsystemunitdir)/sockets.target.wants/dbus.socket
+ @HAVE_SYSTEMD_TRUE@	$(mkinstalldirs) $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants
+-@HAVE_SYSTEMD_TRUE@	$(LN_S) ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
++@HAVE_SYSTEMD_TRUE@	-$(LN_S) ../dbus.service $(DESTDIR)$(systemdsystemunitdir)/multi-user.target.wants/dbus.service
+ 
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.
